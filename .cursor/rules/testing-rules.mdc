@@ -1,6 +1,6 @@
 ---
 description: Rules for testing best practices
-globs: 
+globs:
 alwaysApply: false
 ---
 # VibeBiz Testing Best Practices - .cursor/rules
@@ -12,7 +12,7 @@ alwaysApply: false
 
 ## Mandatory Coverage Thresholds
 - NEVER merge code without 90% minimum coverage
-- ALWAYS test security functions with 100% coverage 
+- ALWAYS test security functions with 100% coverage
 - ALWAYS test multi-tenant isolation in integration tests
 - NEVER skip testing authentication/authorization flows
 - ALWAYS test API endpoints with 100% integration coverage

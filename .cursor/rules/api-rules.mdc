@@ -1,6 +1,6 @@
 ---
 description: Rules for api design and configuration
-globs: 
+globs:
 alwaysApply: false
 ---
 # VibeBiz API Design Best Practices - .cursor/rules
@@ -44,7 +44,7 @@ async def tenant_context_middleware(request: Request, call_next):
         user = await get_current_user(request)
         await ensure_user_belongs_to_org(user, org_id)
         await set_tenant_context(org_id)
-    
+
     response = await call_next(request)
     return response
 ```
@@ -98,7 +98,7 @@ class JWTClaims(BaseModel):
     jti: str  # JWT ID for blacklisting
     organizations: List[str]  # accessible org IDs
     permissions: List[str]  # user permissions
-    
+
     class Config:
         validate_assignment = True
 ```
@@ -147,11 +147,11 @@ async def validate_api_key(api_key: str = Header(None, alias="X-API-Key")) -> AP
     """Validates API key and returns associated metadata"""
     if not api_key:
         raise HTTPException(401, "API key required")
-    
+
     key_data = await api_key_service.validate_key(api_key)
     if not key_data or not key_data.is_active:
         raise HTTPException(401, "Invalid or inactive API key")
-    
+
     # Log API key usage
     await usage_service.log_api_usage(
         api_key_id=key_data.id,
@@ -159,7 +159,7 @@ async def validate_api_key(api_key: str = Header(None, alias="X-API-Key")) -> AP
         endpoint=request.url.path,
         timestamp=datetime.utcnow()
     )
-    
+
     return key_data
 ```
 
@@ -178,29 +178,29 @@ Required validation patterns:
 ```python
 class UserCreate(BaseModel):
     email: EmailStr = Field(
-        ..., 
+        ...,
         max_length=255,
         description="User email address"
     )
     full_name: str = Field(
-        ..., 
-        min_length=1, 
+        ...,
+        min_length=1,
         max_length=255,
         pattern=r'^[a-zA-Z\s\-\.\']+$',
         description="User full name"
     )
     password: SecretStr = Field(
-        ..., 
+        ...,
         min_length=12,
         description="User password (minimum 12 characters)"
     )
-    
+
     @field_validator('full_name')
     @classmethod
     def sanitize_name(cls, v: str) -> str:
         """Sanitize name to prevent XSS"""
         return html.escape(v.strip())
-    
+
     @field_validator('email')
     @classmethod
     def validate_email_domain(cls, v: str) -> str:
@@ -208,7 +208,7 @@ class UserCreate(BaseModel):
         if v.endswith('.test') and not settings.TESTING:
             raise ValueError('Test email domains not allowed in production')
         return v.lower()
-    
+
     model_config = ConfigDict(
         validate_assignment=True,
         str_strip_whitespace=True,
@@ -229,7 +229,7 @@ class FileUpload(BaseModel):
     filename: str = Field(..., max_length=255)
     content_type: str = Field(..., max_length=100)
     size_bytes: int = Field(..., gt=0, le=100_000_000)  # 100MB max
-    
+
     @field_validator('filename')
     @classmethod
     def validate_filename(cls, v: str) -> str:
@@ -249,12 +249,12 @@ async def upload_file(
 ):
     # Validate file magic bytes
     await validate_file_type(file)
-    
+
     # Virus scan
     scan_result = await virus_scanner.scan_file(file)
     if not scan_result.is_clean:
         raise HTTPException(400, "File failed security scan")
-    
+
     # Store with unique ID
     file_id = await file_service.store_file(file, org_id, current_user.id)
     return {"file_id": file_id, "status": "uploaded"}
@@ -283,7 +283,7 @@ class ErrorResponse(BaseModel):
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     correlation_id = getattr(request.state, 'correlation_id', str(uuid.uuid4()))
-    
+
     logger.error(
         "HTTP exception occurred",
         extra={
@@ -297,7 +297,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
             "ip_address": request.client.host
         }
     )
-    
+
     return JSONResponse(
         status_code=exc.status_code,
         content=ErrorResponse(
@@ -338,7 +338,7 @@ async def log_security_event(
             "service": "api"
         }
     )
-    
+
     # Also store in security events table for SOC2 compliance
     await security_service.log_event(
         event_type=event_type,
@@ -366,7 +366,7 @@ Required endpoint patterns:
 GET    /v1/orgs/{org_id}/projects          # List projects
 POST   /v1/orgs/{org_id}/projects          # Create project
 
-# Resource endpoints  
+# Resource endpoints
 GET    /v1/orgs/{org_id}/projects/{id}     # Get project
 PUT    /v1/orgs/{org_id}/projects/{id}     # Replace project
 PATCH  /v1/orgs/{org_id}/projects/{id}     # Update project
@@ -492,7 +492,7 @@ Required database patterns:
 class ProjectRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
-    
+
     async def create(self, project_data: ProjectCreate, org_id: str) -> Project:
         """Create project with automatic audit logging"""
         project = Project(
@@ -500,60 +500,60 @@ class ProjectRepository:
             organization_id=org_id,
             **project_data.model_dump(exclude_unset=True)
         )
-        
+
         self.db.add(project)
         await self.db.flush()  # Get ID without committing
-        
+
         # Log creation for audit trail
         await self._log_creation(project)
-        
+
         await self.db.commit()
         await self.db.refresh(project)
         return project
-    
+
     async def list_by_org(
-        self, 
-        org_id: str, 
+        self,
+        org_id: str,
         pagination: PaginationParams
     ) -> PaginatedResponse[Project]:
         """List projects with efficient pagination"""
         query = select(Project).where(Project.organization_id == org_id)
-        
+
         # Apply filtering
         if pagination.search:
             query = query.where(
                 Project.name.icontains(pagination.search)
             )
-        
+
         # Apply sorting
         if pagination.sort == "name":
             order_col = Project.name
         else:
             order_col = Project.created_at
-            
+
         if pagination.order == "desc":
             query = query.order_by(desc(order_col))
         else:
             query = query.order_by(asc(order_col))
-        
+
         # Apply pagination
         query = query.limit(pagination.limit + 1)  # +1 to check has_more
-        
+
         if pagination.cursor:
             cursor_data = decode_cursor(pagination.cursor)
             query = query.where(order_col > cursor_data.value)
-        
+
         result = await self.db.execute(query)
         items = result.scalars().all()
-        
+
         has_more = len(items) > pagination.limit
         if has_more:
             items = items[:-1]
-        
+
         next_cursor = None
         if has_more and items:
             next_cursor = encode_cursor(items[-1], pagination.sort)
-        
+
         return PaginatedResponse(
             items=items,
             next_cursor=next_cursor,
@@ -594,7 +594,7 @@ async def create_project(
             detail="User rate limit exceeded",
             headers={"Retry-After": "60"}
         )
-    
+
     return await project_service.create(project_data, org_id, current_user.id)
 ```
 
@@ -614,7 +614,7 @@ Required security middleware:
 @app.middleware("http")
 async def security_headers_middleware(request: Request, call_next):
     response = await call_next(request)
-    
+
     # Security headers
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
@@ -622,10 +622,10 @@ async def security_headers_middleware(request: Request, call_next):
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
-    
+
     # Remove server identification
     response.headers.pop("Server", None)
-    
+
     return response
 
 # CORS configuration
@@ -653,10 +653,10 @@ async def request_middleware(request: Request, call_next):
     # Generate correlation ID
     correlation_id = str(uuid.uuid4())
     request.state.correlation_id = correlation_id
-    
+
     # Start timing
     start_time = time.time()
-    
+
     # Log request
     logger.info(
         "API request started",
@@ -669,16 +669,16 @@ async def request_middleware(request: Request, call_next):
             "user_agent": request.headers.get("user-agent")
         }
     )
-    
+
     response = await call_next(request)
-    
+
     # Calculate response time
     process_time = time.time() - start_time
-    
+
     # Add headers
     response.headers["X-Correlation-ID"] = correlation_id
     response.headers["X-Response-Time"] = str(process_time)
-    
+
     # Log response
     logger.info(
         "API request completed",
@@ -688,6 +688,6 @@ async def request_middleware(request: Request, call_next):
             "response_time": process_time
         }
     )
-    
+
     return response
 ```

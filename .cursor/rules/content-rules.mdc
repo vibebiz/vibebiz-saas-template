@@ -1,6 +1,6 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
 # Voice and Tone Rules
@@ -8,7 +8,7 @@ alwaysApply: true
 ## Context
 This is an application for public end users, internal administrators, and experianced professionals who are new to the services we offer.
 
-## Audience 
+## Audience
 Public end users, of all ages and abilities, and experienced Professionals working in Digital Services.
 
 ## Core Principles

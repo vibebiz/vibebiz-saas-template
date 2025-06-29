@@ -1,6 +1,6 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: false
 ---
 # Post-Development Hygiene Rules for LLMs
@@ -9,6 +9,8 @@ alwaysApply: false
 
 ## 🎯 MANDATORY POST-DEVELOPMENT CHECKLIST
 Execute these steps **in order** after completing any development work on the VibeBiz platform.
+
+First, create an implimentation plan to run all the rules below.  check off and verify each rule as you run it.
 
 ---
 
@@ -21,7 +23,7 @@ Execute these steps **in order** after completing any development work on the Vi
 - **COMMAND**: `pnpm update --latest` followed by `pnpm install`
 - **VERIFY**: Run `pnpm audit` and `pnpm outdated` to check for issues
 
-### Python Packages  
+### Python Packages
 - **ALWAYS** update `pyproject.toml` dependencies to latest versions
 - Update both main dependencies and dev dependencies sections
 - **COMMAND**: `pip list --outdated` to check for updates
@@ -67,6 +69,12 @@ Execute these steps **in order** after completing any development work on the Vi
 - Ensure test data factories in `packages/test-utils/src/factories.ts` cover new models
 - **VERIFY**: Clean install with `pnpm db:reset && pnpm db:seed` works
 
+### TypeScript/Node.js Migrations
+- **IF** database schema was modified by a Node.js service:
+  - Create Prisma/Drizzle migration: `pnpm --filter <service-name> db:migrate-dev`
+  - Review generated migration for correctness
+  - **VERIFY**: Migrations apply cleanly and data access is type-safe
+
 ### Environment Variables
 - Add any new required environment variables to `.env.example`
 - Update `docs/DEPLOYMENT.md` with new environment variable documentation
@@ -85,7 +93,13 @@ Execute these steps **in order** after completing any development work on the Vi
   - Security patterns were implemented
 - Include diagrams using Mermaid syntax for complex changes
 
-### API Documentation
+### Architecture Decision Records (ADRs)
+- **IF** a significant architectural decision was made (e.g., new tech, pattern change):
+  - Create a new ADR: `npx adr-tools new "Title of decision"`
+  - Fill out the new file in `docs/adr/`
+  - **VERIFY**: Decision is clearly documented with context and consequences
+
+### Event & API Documentation
 - Update OpenAPI schemas in service directories
 - Regenerate API client types: `pnpm generate:api-types`
 - Update API documentation in `docs/api/` directory
@@ -104,8 +118,10 @@ Execute these steps **in order** after completing any development work on the Vi
 ### New Functionality Testing
 - **MANDATORY**: Create tests for all new functionality
 - **Unit Tests**: Test individual functions/methods (minimum 80% coverage)
-- **Integration Tests**: Test API endpoints and database interactions
-- **E2E Tests**: Test critical user journeys if UI was modified
+- **Integration Tests**: Test API endpoints and database interactions (using Testcontainers)
+- **E2E Tests**: Test critical user journeys if UI was modified (using Playwright)
+- **Contract Tests**: **IF** a consumer/provider contract changed, create/update Pact tests
+- **Advanced Tests**: Consider if Mutation (Stryker/Atheris) or Architecture (pytest-arch) tests are needed for complex changes
 
 ### Test Quality Validation
 - Tests must follow VibeBiz testing patterns from `packages/test-utils`
@@ -153,8 +169,11 @@ Execute these steps **in order** after completing any development work on the Vi
 
 ### Security Scanning
 - **COMMAND**: `pnpm audit` for JavaScript dependencies
+- **COMMAND**: `gitleaks detect --source . -v` for secret scanning
+- **COMMAND**: `semgrep scan --config auto` for deep static analysis
 - **COMMAND**: `bandit -r services/ packages/` for Python security issues
 - **COMMAND**: `safety check` for Python dependency vulnerabilities
+- **NOTE**: For IaC changes, run `tfsec` or `Checkov`. For Dockerfile changes, run `trivy`.
 - **REQUIREMENT**: No HIGH or CRITICAL security issues
 
 ### Code Formatting

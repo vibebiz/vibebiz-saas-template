@@ -1,6 +1,6 @@
 ---
 description: Rule for database and sql best practices
-globs: 
+globs:
 alwaysApply: false
 ---
 # Database Rules - VibeBiz Standards

@@ -78,7 +78,7 @@ global.ResizeObserver = class ResizeObserver {
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -93,7 +93,7 @@ Object.defineProperty(window, 'matchMedia', {
 // Setup global test utilities
 global.testUtils = {
   ...global.testUtils,
-  
+
   // Create mock component props
   createMockProps: (overrides = {}) => ({
     className: '',
@@ -102,7 +102,7 @@ global.testUtils = {
   }),
 
   // Mock API responses
-  mockApiCall: (data, status = 200) => 
+  mockApiCall: (data, status = 200) =>
     Promise.resolve({
       ok: status >= 200 && status < 300,
       status,
@@ -126,4 +126,4 @@ global.testUtils = {
     slug: 'test-org',
     ...overrides,
   }),
-}; 
+};

@@ -1,6 +1,6 @@
 ---
 description: rules for infrastructure best pracices
-globs: 
+globs:
 alwaysApply: false
 ---
 # Infrastructure Development Standards - VibeBiz

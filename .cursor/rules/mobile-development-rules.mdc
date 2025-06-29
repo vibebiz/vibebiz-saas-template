@@ -1,6 +1,6 @@
 ---
 description: rules for mobile development using react native best practices
-globs: 
+globs:
 alwaysApply: false
 ---
 # Mobile Development Rules - VibeBiz Standards

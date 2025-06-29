@@ -1,6 +1,6 @@
 ---
 description: rules for progressive archtitecture best practices
-globs: 
+globs:
 alwaysApply: false
 ---
 # Progressive Architecture Standards - VibeBiz

@@ -3,10 +3,12 @@ Pytest configuration and shared fixtures for VibeBiz Public API
 """
 
 import asyncio
-import pytest
-from datetime import datetime, timezone
-from typing import Any, Dict, Generator
+from collections.abc import Callable, Generator
+from datetime import UTC, datetime
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 
 @pytest.fixture(scope="session")
@@ -21,10 +23,10 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
 
 
 @pytest.fixture
-def mock_user() -> Dict[str, Any]:
+def mock_user() -> dict[str, Any]:
     """
     Create a mock user object for testing
-    
+
     Returns:
         Dictionary representing a user with common fields
     """
@@ -33,17 +35,17 @@ def mock_user() -> Dict[str, Any]:
         "email": "test@example.com",
         "full_name": "Test User",
         "avatar_url": "https://example.com/avatar.jpg",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
+        "updated_at": datetime.now(UTC).isoformat(),
         "status": "active",
     }
 
 
 @pytest.fixture
-def mock_organization() -> Dict[str, Any]:
+def mock_organization() -> dict[str, Any]:
     """
     Create a mock organization object for testing
-    
+
     Returns:
         Dictionary representing an organization with common fields
     """
@@ -52,17 +54,17 @@ def mock_organization() -> Dict[str, Any]:
         "name": "Test Organization",
         "slug": "test-org",
         "settings": {"theme": "light", "notifications": True},
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
+        "updated_at": datetime.now(UTC).isoformat(),
         "status": "active",
     }
 
 
 @pytest.fixture
-def mock_project() -> Dict[str, Any]:
+def mock_project() -> dict[str, Any]:
     """
     Create a mock project object for testing
-    
+
     Returns:
         Dictionary representing a project with common fields
     """
@@ -74,8 +76,8 @@ def mock_project() -> Dict[str, Any]:
         "description": "A test project for unit testing",
         "status": "active",
         "created_by": "user-123",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
+        "updated_at": datetime.now(UTC).isoformat(),
     }
 
 
@@ -83,7 +85,7 @@ def mock_project() -> Dict[str, Any]:
 def mock_database_session() -> AsyncMock:
     """
     Create a mock database session for testing
-    
+
     Returns:
         AsyncMock object that simulates a database session
     """
@@ -97,10 +99,10 @@ def mock_database_session() -> AsyncMock:
 
 
 @pytest.fixture
-def mock_jwt_payload() -> Dict[str, Any]:
+def mock_jwt_payload() -> dict[str, Any]:
     """
     Create a mock JWT payload for testing authentication
-    
+
     Returns:
         Dictionary representing a decoded JWT token payload
     """
@@ -109,35 +111,39 @@ def mock_jwt_payload() -> Dict[str, Any]:
         "email": "test@example.com",
         "org_id": "org-123",
         "role": "admin",
-        "iat": int(datetime.now(timezone.utc).timestamp()),
-        "exp": int(datetime.now(timezone.utc).timestamp()) + 3600,  # 1 hour from now
+        "iat": int(datetime.now(UTC).timestamp()),
+        "exp": int(datetime.now(UTC).timestamp()) + 3600,  # 1 hour from now
         "jti": "token-123",
     }
 
 
 @pytest.fixture
-def mock_api_response() -> Dict[str, Any]:
+def mock_api_response() -> Callable[[Any, int, str], dict[str, Any]]:
     """
     Create a mock API response structure
-    
+
     Returns:
         Dictionary representing a standard API response
     """
-    def _create_response(data: Any = None, status: int = 200, message: str = "Success") -> Dict[str, Any]:
+
+    def _create_response(
+        data: Any = None, status: int = 200, message: str = "Success"
+    ) -> dict[str, Any]:
         return {
             "data": data,
             "status": status,
             "message": message,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
+
     return _create_response
 
 
 @pytest.fixture
-def mock_pagination() -> Dict[str, Any]:
+def mock_pagination() -> dict[str, Any]:
     """
     Create a mock pagination object for testing list endpoints
-    
+
     Returns:
         Dictionary representing pagination metadata
     """
@@ -152,10 +158,10 @@ def mock_pagination() -> Dict[str, Any]:
 
 
 @pytest.fixture
-def mock_request_context() -> Dict[str, Any]:
+def mock_request_context() -> dict[str, Any]:
     """
     Create a mock request context for testing middleware and dependencies
-    
+
     Returns:
         Dictionary representing request context
     """
@@ -165,7 +171,7 @@ def mock_request_context() -> Dict[str, Any]:
         "organization_id": "org-123",
         "ip_address": "127.0.0.1",
         "user_agent": "pytest-test-client",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -173,7 +179,7 @@ def mock_request_context() -> Dict[str, Any]:
 def mock_redis_client() -> MagicMock:
     """
     Create a mock Redis client for testing caching and sessions
-    
+
     Returns:
         MagicMock object that simulates a Redis client
     """
@@ -187,10 +193,10 @@ def mock_redis_client() -> MagicMock:
 
 
 @pytest.fixture
-def sample_file_upload() -> Dict[str, Any]:
+def sample_file_upload() -> dict[str, Any]:
     """
     Create a sample file upload object for testing file handling
-    
+
     Returns:
         Dictionary representing an uploaded file
     """
@@ -203,13 +209,13 @@ def sample_file_upload() -> Dict[str, Any]:
 
 
 # Test data factory functions
-def create_test_user(**overrides: Any) -> Dict[str, Any]:
+def create_test_user(**overrides: Any) -> dict[str, Any]:
     """
     Factory function to create test user data with overrides
-    
+
     Args:
         **overrides: Fields to override in the default user data
-        
+
     Returns:
         Dictionary representing a test user
     """
@@ -218,20 +224,20 @@ def create_test_user(**overrides: Any) -> Dict[str, Any]:
         "email": f"test{id(overrides)}@example.com",
         "full_name": "Test User",
         "status": "active",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
+        "updated_at": datetime.now(UTC).isoformat(),
     }
     default_user.update(overrides)
     return default_user
 
 
-def create_test_organization(**overrides: Any) -> Dict[str, Any]:
+def create_test_organization(**overrides: Any) -> dict[str, Any]:
     """
     Factory function to create test organization data with overrides
-    
+
     Args:
         **overrides: Fields to override in the default organization data
-        
+
     Returns:
         Dictionary representing a test organization
     """
@@ -240,8 +246,8 @@ def create_test_organization(**overrides: Any) -> Dict[str, Any]:
         "name": "Test Organization",
         "slug": f"test-org-{id(overrides)}",
         "status": "active",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": datetime.now(UTC).isoformat(),
+        "updated_at": datetime.now(UTC).isoformat(),
     }
     default_org.update(overrides)
     return default_org
@@ -253,10 +259,16 @@ def pytest_configure(config: pytest.Config) -> None:
     Pytest configuration hook
     """
     # Register custom markers
-    config.addinivalue_line("markers", "unit: Fast unit tests with no external dependencies")
-    config.addinivalue_line("markers", "integration: Integration tests with external dependencies")
+    config.addinivalue_line(
+        "markers", "unit: Fast unit tests with no external dependencies"
+    )
+    config.addinivalue_line(
+        "markers", "integration: Integration tests with external dependencies"
+    )
     config.addinivalue_line("markers", "slow: Tests that take longer than usual to run")
-    config.addinivalue_line("markers", "auth: Authentication and authorization related tests")
+    config.addinivalue_line(
+        "markers", "auth: Authentication and authorization related tests"
+    )
     config.addinivalue_line("markers", "api: API endpoint tests")
     config.addinivalue_line("markers", "database: Database related tests")
     config.addinivalue_line("markers", "security: Security related tests")
@@ -269,6 +281,17 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list) -> None:
     """
     for item in items:
         # Add 'unit' marker to tests that don't have other markers
-        if not any(marker.name in ['integration', 'slow', 'auth', 'api', 'database', 'security', 'performance'] 
-                  for marker in item.iter_markers()):
-            item.add_marker(pytest.mark.unit) 
+        if not any(
+            marker.name
+            in [
+                "integration",
+                "slow",
+                "auth",
+                "api",
+                "database",
+                "security",
+                "performance",
+            ]
+            for marker in item.iter_markers()
+        ):
+            item.add_marker(pytest.mark.unit)

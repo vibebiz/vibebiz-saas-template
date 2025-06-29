@@ -8,7 +8,7 @@ import {
   isUser,
   isOrganization,
   User,
-  Organization
+  Organization,
 } from '../src/index';
 
 describe('Email validation', () => {
@@ -18,10 +18,10 @@ describe('Email validation', () => {
         'test@example.com',
         'user.name@domain.co.uk',
         'admin+tag@company.org',
-        'number123@test.io'
+        'number123@test.io',
       ];
 
-      validEmails.forEach(email => {
+      validEmails.forEach((email) => {
         expect(isValidEmail(email)).toBe(true);
       });
     });
@@ -34,10 +34,10 @@ describe('Email validation', () => {
         'user@',
         'user@domain',
         'user name@domain.com',
-        'user..name@domain.com'
+        'user..name@domain.com',
       ];
 
-      invalidEmails.forEach(email => {
+      invalidEmails.forEach((email) => {
         expect(isValidEmail(email)).toBe(false);
       });
     });
@@ -84,7 +84,7 @@ describe('Type guards', () => {
         email: 'test@example.com',
         full_name: 'Test User',
         created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z'
+        updated_at: '2025-01-01T00:00:00Z',
       };
 
       expect(isUser(validUser)).toBe(true);
@@ -97,7 +97,7 @@ describe('Type guards', () => {
         full_name: 'Test User',
         avatar_url: 'https://example.com/avatar.jpg',
         created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z'
+        updated_at: '2025-01-01T00:00:00Z',
       };
 
       expect(isUser(userWithAvatar)).toBe(true);
@@ -111,10 +111,10 @@ describe('Type guards', () => {
         { id: 'test' }, // missing required fields
         { id: 123, email: 'test@example.com' }, // wrong type for id
         'not an object',
-        []
+        [],
       ];
 
-      invalidObjects.forEach(obj => {
+      invalidObjects.forEach((obj) => {
         expect(isUser(obj)).toBe(false);
       });
     });
@@ -127,7 +127,7 @@ describe('Type guards', () => {
         name: 'Test Organization',
         slug: 'test-org',
         created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z'
+        updated_at: '2025-01-01T00:00:00Z',
       };
 
       expect(isOrganization(validOrg)).toBe(true);
@@ -140,7 +140,7 @@ describe('Type guards', () => {
         slug: 'test-org',
         settings: { theme: 'dark', notifications: true },
         created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z'
+        updated_at: '2025-01-01T00:00:00Z',
       };
 
       expect(isOrganization(orgWithSettings)).toBe(true);
@@ -154,12 +154,12 @@ describe('Type guards', () => {
         { id: 'test' }, // missing required fields
         { id: 123, name: 'Test' }, // wrong type for id
         'not an object',
-        []
+        [],
       ];
 
-      invalidObjects.forEach(obj => {
+      invalidObjects.forEach((obj) => {
         expect(isOrganization(obj)).toBe(false);
       });
     });
   });
-}); 
+});
