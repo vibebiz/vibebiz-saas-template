@@ -1,0 +1,272 @@
+---
+description: Rule for database and sql best practices
+globs: 
+alwaysApply: false
+---
+# Database Rules - VibeBiz Standards
+# For multi-tenant PostgreSQL design, performance, and security
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 🚨 CRITICAL DATABASE SECURITY RULES
+# =============================================================================
+
+## Multi-Tenant Data Isolation (HIGHEST PRIORITY)
+- ALWAYS implement Row-Level Security (RLS) for every tenant-specific table
+- NEVER query data without proper organization_id filtering
+- ALWAYS use current_setting('app.current_org_id') in RLS policies
+- NEVER hardcode organization IDs in application code
+- ALWAYS validate tenant context before database operations
+- NEVER allow cross-tenant data leakage
+
+## SQL Injection Prevention
+- ALWAYS use parameterized queries with SQLAlchemy ORM
+- NEVER concatenate user input directly into SQL strings
+- ALWAYS validate input types and constraints at application layer
+- NEVER use raw SQL without explicit parameterization
+- ALWAYS sanitize dynamic table/column names if absolutely necessary
+- NEVER trust any external input in database queries
+
+## Access Control & Authentication
+- ALWAYS use dedicated database users for each service
+- NEVER share database credentials between environments
+- ALWAYS implement connection pooling with proper limits
+- NEVER use superuser accounts for application connections
+- ALWAYS rotate database passwords regularly
+- NEVER log database passwords or connection strings
+
+# =============================================================================
+# 🏗️ MULTI-TENANT DATABASE DESIGN
+# =============================================================================
+
+## Tenant Isolation Strategy
+- ALWAYS add organization_id column to all tenant-specific tables
+- NEVER use shared tables for tenant-specific data
+- ALWAYS include organization_id in primary keys for tenant data
+- NEVER allow queries without organization_id filtering
+- ALWAYS implement foreign key constraints with organization_id
+- NEVER assume single-tenant in any database design
+
+## Row-Level Security Implementation
+```sql
+-- Required RLS pattern for all tenant tables
+CREATE POLICY tenant_isolation ON projects
+FOR ALL TO application_role
+USING (organization_id = current_setting('app.current_org_id')::uuid);
+
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+```
+
+## Tenant Data Relationships
+- ALWAYS ensure all related tables share the same organization_id
+- NEVER allow foreign keys across organization boundaries
+- ALWAYS include organization_id in compound foreign keys
+- NEVER create relationships that could leak data between tenants
+- ALWAYS validate organization consistency in application layer
+
+# =============================================================================
+# 📊 DATABASE SCHEMA DESIGN
+# =============================================================================
+
+## Table Design Standards
+- ALWAYS use UUIDs for primary keys in multi-tenant tables
+- ALWAYS include created_at and updated_at timestamps
+- NEVER use auto-incrementing integers for public IDs
+- ALWAYS include organization_id in all tenant-specific tables
+- ALWAYS use descriptive, consistent naming conventions
+- NEVER abbreviate table or column names unnecessarily
+
+## Column Standards
+- ALWAYS use appropriate data types (no oversized columns)
+- ALWAYS implement NOT NULL constraints where appropriate
+- NEVER store JSON data without proper validation
+- ALWAYS use ENUM types for limited value sets
+- ALWAYS implement check constraints for data validation
+- NEVER store sensitive data in plain text
+
+## Indexing Strategy
+- ALWAYS create indexes on organization_id for tenant tables
+- ALWAYS index frequently queried columns
+- NEVER create unnecessary indexes (impacts write performance)
+- ALWAYS include organization_id in compound indexes
+- ALWAYS monitor index usage and remove unused indexes
+- NEVER ignore query performance without proper indexing
+
+# =============================================================================
+# 🔄 MIGRATIONS & SCHEMA CHANGES
+# =============================================================================
+
+## Migration Best Practices
+- ALWAYS use Alembic for database migrations
+- ALWAYS test migrations on production-like data volumes
+- NEVER apply destructive migrations without backup
+- ALWAYS include rollback instructions for schema changes
+- ALWAYS coordinate migrations with application deployments
+- NEVER skip testing migrations in staging environment
+
+## Schema Change Process
+- ALWAYS use backward-compatible changes when possible
+- NEVER remove columns without multi-step migration process
+- ALWAYS add new columns as nullable initially
+- NEVER rename tables/columns without deprecation period
+- ALWAYS communicate schema changes to all team members
+- NEVER apply migrations during peak traffic hours
+
+## Data Migration Safety
+- ALWAYS backup data before large migrations
+- ALWAYS implement migration progress monitoring
+- NEVER run migrations without timeout protections
+- ALWAYS validate data integrity after migrations
+- ALWAYS test rollback procedures before applying
+- NEVER ignore migration warnings or errors
+
+# =============================================================================
+# ⚡ PERFORMANCE OPTIMIZATION
+# =============================================================================
+
+## Query Performance
+- ALWAYS use EXPLAIN ANALYZE for slow queries
+- ALWAYS optimize queries before adding hardware resources
+- NEVER ignore N+1 query problems
+- ALWAYS use appropriate JOIN types
+- ALWAYS limit result sets with proper pagination
+- NEVER use SELECT * in production code
+
+## Connection Management
+- ALWAYS use connection pooling (PgBouncer recommended)
+- ALWAYS set appropriate connection limits
+- NEVER create connections without proper cleanup
+- ALWAYS monitor connection pool utilization
+- ALWAYS implement connection retry logic with backoff
+- NEVER ignore connection pool exhaustion warnings
+
+## Caching Strategy
+- ALWAYS implement application-level caching for read-heavy data
+- ALWAYS use Redis for distributed caching
+- NEVER cache data without proper invalidation strategy
+- ALWAYS cache query results, not database connections
+- ALWAYS implement cache warming for critical queries
+- NEVER ignore cache hit ratios and performance metrics
+
+# =============================================================================
+# 💾 BACKUP & RECOVERY
+# =============================================================================
+
+## Backup Requirements
+- ALWAYS maintain automated daily backups
+- ALWAYS test backup restoration procedures monthly
+- NEVER store backups in same location as primary database
+- ALWAYS encrypt backups at rest and in transit
+- ALWAYS maintain point-in-time recovery capability
+- NEVER ignore backup failure notifications
+
+## Recovery Planning
+- ALWAYS document recovery procedures for all scenarios
+- ALWAYS test database failover procedures quarterly
+- NEVER assume recovery will work without testing
+- ALWAYS maintain multiple recovery options (backup, replica, snapshot)
+- ALWAYS measure and optimize recovery time objectives
+- NEVER perform recovery without proper authorization
+
+## Data Retention
+- ALWAYS implement automated data archival for old records
+- ALWAYS comply with data retention policies (GDPR, etc.)
+- NEVER delete data without proper authorization
+- ALWAYS maintain audit trails for data deletions
+- ALWAYS implement soft deletes for critical business data
+- NEVER ignore storage growth and cleanup requirements
+
+# =============================================================================
+# 📈 MONITORING & OBSERVABILITY
+# =============================================================================
+
+## Database Monitoring
+- ALWAYS monitor query performance and slow queries
+- ALWAYS track connection pool metrics
+- NEVER ignore database error rates or connection failures
+- ALWAYS monitor disk space and growth trends
+- ALWAYS track replication lag in read replicas
+- NEVER ignore database health check failures
+
+## Performance Metrics
+- ALWAYS monitor: query latency, throughput, error rates
+- ALWAYS set up alerting for performance degradation
+- NEVER ignore gradual performance degradation trends
+- ALWAYS track database size and growth patterns
+- ALWAYS monitor index usage and effectiveness
+- NEVER ignore lock contention or deadlock issues
+
+## Query Analysis
+- ALWAYS log and analyze slow queries (>100ms)
+- ALWAYS identify and optimize N+1 query patterns
+- NEVER ignore query plans that show table scans
+- ALWAYS monitor for missing or unused indexes
+- ALWAYS track query frequency and patterns
+- NEVER ignore database-specific performance recommendations
+
+# =============================================================================
+# 🔐 DATABASE SECURITY
+# =============================================================================
+
+## Access Security
+- ALWAYS use SSL/TLS for all database connections
+- ALWAYS implement network-level access controls
+- NEVER expose database ports to public internet
+- ALWAYS use VPN or private networks for database access
+- ALWAYS implement audit logging for all database access
+- NEVER allow anonymous or guest database access
+
+## Data Protection
+- ALWAYS encrypt sensitive data at column level when required
+- ALWAYS implement proper data masking for non-production environments
+- NEVER store plaintext passwords or API keys in database
+- ALWAYS validate data integrity with checksums for critical data
+- ALWAYS implement data classification and handling procedures
+- NEVER ignore data access audit requirements
+
+## Compliance Requirements
+- ALWAYS implement GDPR data subject rights (access, deletion, portability)
+- ALWAYS maintain audit trails for all data modifications
+- NEVER ignore data privacy and protection regulations
+- ALWAYS implement data retention and deletion policies
+- ALWAYS provide data export capabilities for compliance
+- NEVER store unnecessary personal data
+
+# =============================================================================
+# 🚫 DATABASE ANTI-PATTERNS
+# =============================================================================
+
+## Never Do These
+- NEVER use database triggers for business logic
+- NEVER implement application logic in stored procedures
+- NEVER use database-specific features that limit portability
+- NEVER ignore foreign key constraints
+- NEVER use cursors or loops in database operations
+- NEVER perform file I/O operations from database
+- NEVER use database for session storage
+- NEVER implement queuing systems in database tables
+- NEVER ignore transaction boundaries and ACID properties
+- NEVER use database as message broker or cache
+
+# =============================================================================
+# 📋 QUALITY GATES
+# =============================================================================
+
+## Required Before Deployment
+- ✅ All migrations tested on staging with production-like data
+- ✅ RLS policies implemented and tested for all tenant tables
+- ✅ Query performance analyzed and optimized
+- ✅ Backup and recovery procedures verified
+- ✅ Security review completed for schema changes
+- ✅ Monitoring and alerting configured for new tables
+- ✅ Data migration integrity validated
+
+## Ongoing Monitoring
+- ✅ Database performance metrics within SLA targets
+- ✅ Backup restoration tested monthly
+- ✅ Security audit compliance maintained
+- ✅ Query performance trends monitored
+- ✅ Storage growth and capacity planning updated
+- ✅ Multi-tenant data isolation verified
+
+Remember: The database is the source of truth. Protect it, optimize it, and never compromise on data integrity or security.

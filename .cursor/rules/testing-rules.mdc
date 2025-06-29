@@ -1,0 +1,265 @@
+---
+description: Rules for testing best practices
+globs: 
+alwaysApply: false
+---
+# VibeBiz Testing Best Practices - .cursor/rules
+# Comprehensive testing standards for multi-tenant SaaS architecture
+
+# =============================================================================
+# 🚨 CRITICAL TESTING REQUIREMENTS
+# =============================================================================
+
+## Mandatory Coverage Thresholds
+- NEVER merge code without 90% minimum coverage
+- ALWAYS test security functions with 100% coverage 
+- ALWAYS test multi-tenant isolation in integration tests
+- NEVER skip testing authentication/authorization flows
+- ALWAYS test API endpoints with 100% integration coverage
+- NEVER deploy without E2E tests covering critical workflows
+
+## Test Types Required
+- Unit tests: Fast, isolated, mock all dependencies
+- Integration tests: Real database, test service interactions
+- E2E tests: Complete user workflows, cross-organizational scenarios
+- Security tests: OWASP Top 10 validation, penetration testing
+- Performance tests: Load testing, response time validation
+- Accessibility tests: WCAG 2.2 AA compliance validation
+
+# =============================================================================
+# 🔬 UNIT TESTING STANDARDS
+# =============================================================================
+
+## Python Unit Testing (pytest)
+- ALWAYS mock external dependencies (database, APIs, services)
+- ALWAYS use factories for test data generation
+- NEVER test implementation details, test behavior
+- ALWAYS test both success and failure scenarios
+- ALWAYS test edge cases and boundary conditions
+- NEVER write tests that depend on external state
+
+## TypeScript Unit Testing (Jest)
+- ALWAYS test React components with React Testing Library
+- ALWAYS mock API calls and external services
+- NEVER test implementation details, test user interactions
+- ALWAYS test component accessibility features
+- ALWAYS test error states and loading states
+- NEVER use shallow rendering, prefer full rendering
+
+## Test Structure Pattern
+```
+// Arrange: Set up test data and mocks
+// Act: Execute the function/component under test
+// Assert: Verify expected behavior and side effects
+```
+
+# =============================================================================
+# 🔗 INTEGRATION TESTING STANDARDS
+# =============================================================================
+
+## Database Integration Tests
+- ALWAYS use real database for integration tests
+- ALWAYS test with multiple organizations (multi-tenant isolation)
+- NEVER test with shared test data between tests
+- ALWAYS clean up test data after each test
+- ALWAYS test database constraints and validations
+- NEVER mock database layer in integration tests
+
+## API Integration Tests
+- ALWAYS test complete request/response cycles
+- ALWAYS test authentication and authorization
+- NEVER skip testing error responses (4xx, 5xx)
+- ALWAYS test rate limiting and input validation
+- ALWAYS test multi-tenant data isolation
+- NEVER test with real external services (use test doubles)
+
+## Service Integration Tests
+- ALWAYS test service-to-service communication
+- ALWAYS test event handling and message queues
+- NEVER test with production external services
+- ALWAYS test timeout and retry mechanisms
+- ALWAYS test circuit breaker functionality
+- NEVER skip testing distributed transaction scenarios
+
+# =============================================================================
+# 🌐 END-TO-END TESTING STANDARDS
+# =============================================================================
+
+## E2E Test Requirements
+- ALWAYS test complete user workflows
+- ALWAYS test cross-organizational scenarios
+- NEVER test individual components in isolation
+- ALWAYS test with realistic data volumes
+- ALWAYS test mobile and desktop viewports
+- NEVER skip testing critical business processes
+
+## E2E Tools and Patterns
+- ALWAYS use Playwright for browser automation
+- ALWAYS implement Page Object Model pattern
+- NEVER hardcode test data in E2E tests
+- ALWAYS test with multiple user roles
+- ALWAYS test error scenarios and edge cases
+- NEVER write flaky tests that randomly fail
+
+## Critical E2E Workflows
+- User registration and organization setup
+- Authentication with MFA
+- Organization switching and permissions
+- Payment and subscription management
+- Project creation and collaboration
+- API key generation and usage
+
+# =============================================================================
+# 🔒 SECURITY TESTING STANDARDS
+# =============================================================================
+
+## Security Test Requirements
+- ALWAYS test against OWASP Top 10 vulnerabilities
+- ALWAYS test authentication bypass scenarios
+- NEVER skip testing authorization controls
+- ALWAYS test input validation and sanitization
+- ALWAYS test SQL injection prevention
+- NEVER ignore security scanner findings
+
+## Multi-Tenant Security Testing
+- ALWAYS test cross-organization data access prevention
+- ALWAYS test organization switching security
+- NEVER skip testing data isolation at database level
+- ALWAYS test API endpoint authorization
+- ALWAYS test file upload security
+- NEVER allow tests with hardcoded organization IDs
+
+## Penetration Testing
+- ALWAYS conduct automated security scans in CI/CD
+- ALWAYS perform manual penetration testing quarterly
+- NEVER ignore vulnerability scan reports
+- ALWAYS test session management security
+- ALWAYS test API rate limiting effectiveness
+- NEVER skip testing input validation bypasses
+
+# =============================================================================
+# ⚡ PERFORMANCE TESTING STANDARDS
+# =============================================================================
+
+## Performance Test Requirements
+- ALWAYS test API response times under load
+- ALWAYS test database query performance
+- NEVER ignore memory leaks in long-running tests
+- ALWAYS test with realistic data volumes
+- ALWAYS test concurrent user scenarios
+- NEVER skip testing resource utilization
+
+## Load Testing Targets
+- API endpoints: < 200ms response time under normal load
+- Database queries: < 100ms for simple queries
+- Page loads: < 3s for initial load, < 1s for subsequent
+- File uploads: Support files up to 100MB
+- Concurrent users: 1000+ simultaneous users
+- Data processing: Handle 10k+ records per operation
+
+# =============================================================================
+# ♿ ACCESSIBILITY TESTING STANDARDS
+# =============================================================================
+
+## Accessibility Requirements
+- ALWAYS test with screen readers (NVDA, JAWS, VoiceOver)
+- ALWAYS validate keyboard navigation
+- NEVER ignore color contrast violations
+- ALWAYS test with assistive technologies
+- ALWAYS validate ARIA labels and roles
+- NEVER skip testing focus management
+
+## WCAG 2.2 AA Compliance
+- Color contrast ratio: 4.5:1 for normal text, 3:1 for large text
+- Keyboard navigation: All functionality accessible via keyboard
+- Screen reader compatibility: Proper semantic markup
+- Focus indicators: Visible focus indicators for all interactive elements
+- Alternative text: Meaningful alt text for all images
+- Form labels: Proper labels for all form controls
+
+# =============================================================================
+# 🛠️ TEST TOOLING AND INFRASTRUCTURE
+# =============================================================================
+
+## Required Testing Tools
+- Python: pytest, pytest-asyncio, pytest-cov, factory-boy
+- TypeScript: Jest, React Testing Library, MSW (mocking)
+- E2E: Playwright with TypeScript
+- Performance: K6 or Artillery for load testing
+- Security: OWASP ZAP, Bandit, Semgrep
+- Accessibility: axe-core, Pa11y
+
+## Test Environment Management
+- ALWAYS use isolated test databases
+- ALWAYS clean up test data between tests
+- NEVER share test environments between developers
+- ALWAYS use Docker for consistent test environments
+- ALWAYS seed test data with factories
+- NEVER use production data in tests
+
+## CI/CD Testing Pipeline
+- ALWAYS run tests in parallel when possible
+- ALWAYS fail fast on test failures
+- NEVER skip tests to speed up deployment
+- ALWAYS generate and publish test reports
+- ALWAYS track test performance over time
+- NEVER deploy without all tests passing
+
+# =============================================================================
+# 📊 TEST DATA MANAGEMENT
+# =============================================================================
+
+## Test Data Principles
+- ALWAYS use factories for generating test data
+- NEVER hardcode test data values
+- ALWAYS create realistic test scenarios
+- NEVER use production data in tests
+- ALWAYS clean up test data after tests
+- NEVER share test data between test cases
+
+## Multi-Tenant Test Data
+- ALWAYS create separate organizations for each test
+- NEVER test with shared organizational data
+- ALWAYS validate data isolation between tenants
+- NEVER skip testing cross-tenant access prevention
+- ALWAYS test with multiple user roles per organization
+- NEVER use the same user across multiple organizations
+
+# =============================================================================
+# 🚫 TESTING ANTI-PATTERNS
+# =============================================================================
+
+## Never Do These
+- NEVER write tests that depend on execution order
+- NEVER use sleep() or arbitrary timeouts in tests
+- NEVER test private methods directly
+- NEVER write tests that require manual setup
+- NEVER ignore intermittently failing tests
+- NEVER write tests without clear assertions
+- NEVER test multiple concerns in a single test
+- NEVER commit tests that don't run locally
+- NEVER write tests that take longer than necessary
+- NEVER skip writing tests because "it's simple code"
+
+# =============================================================================
+# 📋 QUALITY GATES
+# =============================================================================
+
+## Required Before Merge
+- ✅ All tests pass (unit, integration, E2E)
+- ✅ Coverage threshold met (90% minimum)
+- ✅ Security tests pass
+- ✅ Performance tests within acceptable limits
+- ✅ Accessibility tests pass
+- ✅ No flaky tests introduced
+- ✅ Test documentation updated
+
+## Continuous Monitoring
+- ✅ Test execution time trending
+- ✅ Test failure rate monitoring
+- ✅ Coverage trend analysis
+- ✅ Security scan results
+- ✅ Performance regression detection
+- ✅ Accessibility compliance monitoring
+
+Remember: Testing is not optional. Quality cannot be retrofitted. Test early, test often, and test comprehensively.

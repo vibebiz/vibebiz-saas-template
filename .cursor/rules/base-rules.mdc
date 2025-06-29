@@ -1,0 +1,423 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# VibeBiz .cursor/rules - Comprehensive Development Standards
+# Last Updated: 2025-06-24
+# Architecture Version: v4.2
+
+# =============================================================================
+# 🚨 CRITICAL SECURITY RULES - NEVER VIOLATE THESE
+# =============================================================================
+
+## Multi-Tenant Security (HIGHEST PRIORITY)
+- ALWAYS implement Row-Level Security (RLS) for any tenant-specific table
+- NEVER query database without proper tenant isolation via organization_id
+- ALWAYS validate user belongs to organization before accessing resources
+- ALWAYS use current_setting('app.current_org_id') in RLS policies
+- NEVER hardcode tenant IDs or organization IDs in code
+- ALWAYS validate tenant context in API middleware before processing requests
+
+## Authentication & Authorization
+- NEVER store plaintext passwords - use bcrypt/argon2 hashing only
+- ALWAYS implement JWT token validation with proper expiration
+- NEVER expose admin endpoints without proper role-based access control (RBAC)
+- ALWAYS check permissions at both API and database level
+- NEVER trust client-side user roles - validate server-side always
+- ALWAYS implement API key authentication for programmatic access
+- NEVER log authentication tokens, API keys, or sensitive credentials
+
+## SQL Injection Prevention
+- ALWAYS use parameterized queries via SQLAlchemy ORM
+- NEVER concatenate user input directly into SQL strings
+- ALWAYS validate and sanitize all database inputs
+- NEVER use raw SQL without explicit parameterization
+- ALWAYS use type hints for database model fields
+
+## Secrets Management
+- NEVER commit secrets, API keys, or credentials to git
+- ALWAYS use environment variables for sensitive configuration
+- NEVER hardcode Stripe keys, database passwords, or OAuth secrets
+- ALWAYS use Secret Manager (Growth+) or Vault (Full-Stack) for production
+- NEVER expose internal service URLs or connection strings in logs
+
+# =============================================================================
+# 🏗️ ARCHITECTURE & CODE QUALITY STANDARDS
+# =============================================================================
+
+## TypeScript/JavaScript Standards
+- ALWAYS use TypeScript with strict mode enabled
+- NEVER use 'any' type - use proper type definitions or unknown
+- ALWAYS generate API client types from OpenAPI schemas
+- NEVER skip type checking with @ts-ignore without justification comment
+- ALWAYS use const assertions for literal types
+- ALWAYS implement proper error boundaries in React components
+- NEVER use inline styles - use Tailwind CSS classes only
+
+## Python/FastAPI Standards
+- ALWAYS use type hints for all function parameters and return values
+- ALWAYS use Pydantic models for request/response validation
+- NEVER return raw database objects - use response models
+- ALWAYS implement proper exception handling with HTTPException
+- ALWAYS use async/await for database operations
+- NEVER use blocking I/O operations in async functions
+- ALWAYS validate request data with Pydantic before processing
+
+## Database & ORM Standards
+- ALWAYS use Alembic migrations for schema changes
+- NEVER modify database schema without creating migration
+- ALWAYS include rollback logic in database migrations
+- NEVER use CASCADE deletes without explicit business justification
+- ALWAYS use database transactions for multi-operation changes
+- ALWAYS include created_at and updated_at timestamps on entities
+- NEVER expose internal database IDs in public APIs
+
+## API Design Standards
+- ALWAYS version APIs with /v1/, /v2/ prefixes
+- ALWAYS implement proper HTTP status codes (200, 201, 400, 401, 403, 404, 500)
+- NEVER expose stack traces or internal errors to API consumers
+- ALWAYS implement rate limiting for public endpoints
+- ALWAYS validate request sizes and implement proper pagination
+- NEVER allow unlimited query results - implement default page sizes
+- ALWAYS implement CORS policies appropriate for environment
+
+# =============================================================================
+# 🧪 TESTING REQUIREMENTS - MANDATORY BEFORE PUSH
+# =============================================================================
+
+## Unit Testing Requirements
+- ALWAYS write unit tests with minimum 80% code coverage
+- NEVER commit code without corresponding unit tests
+- ALWAYS test error conditions and edge cases
+- ALWAYS mock external dependencies in unit tests
+- NEVER use real database connections in unit tests
+- ALWAYS test with realistic mock data for multi-tenant scenarios
+
+## Integration Testing Requirements
+- ALWAYS write integration tests for database operations
+- ALWAYS use Testcontainers for database integration tests
+- NEVER skip testing multi-tenant data isolation
+- ALWAYS test API endpoints with proper authentication
+- ALWAYS verify RLS policies work correctly in integration tests
+- NEVER commit breaking changes without updating integration tests
+
+## End-to-End Testing Requirements
+- ALWAYS write E2E tests for critical user journeys
+- ALWAYS test multi-tenant organization switching flows
+- NEVER skip testing payment and subscription workflows
+- ALWAYS test mobile app critical paths with Expo testing
+- ALWAYS verify accessibility compliance with axe-core
+- NEVER deploy without passing E2E test suite
+
+## Security Testing Requirements
+- ALWAYS run OWASP ZAP security scans in CI pipeline
+- ALWAYS test for SQL injection vulnerabilities
+- NEVER skip CSRF protection testing for state-changing operations
+- ALWAYS verify authentication bypass scenarios are blocked
+- ALWAYS test rate limiting and DDoS protection
+- NEVER deploy without security vulnerability scan completion
+
+# =============================================================================
+# 🔒 COMPLIANCE & AUDIT REQUIREMENTS
+# =============================================================================
+
+## GDPR Compliance
+- ALWAYS implement audit logging for all user data access
+- ALWAYS provide data export endpoints for user data
+- NEVER store unnecessary personal data without consent
+- ALWAYS implement data retention policies with automated cleanup
+- ALWAYS provide data erasure capabilities (right to be forgotten)
+- NEVER process personal data without proper legal basis
+
+## SOC 2 Compliance
+- ALWAYS log all administrative actions with user attribution
+- ALWAYS implement proper access controls with principle of least privilege
+- NEVER allow shared accounts or generic user access
+- ALWAYS encrypt sensitive data at rest and in transit
+- ALWAYS implement proper backup and disaster recovery procedures
+- NEVER skip security incident response documentation
+
+## Audit Logging Requirements
+- ALWAYS log who, what, when, where for all significant actions
+- ALWAYS include organization_id in audit logs for multi-tenant tracking
+- NEVER log sensitive data like passwords or API keys
+- ALWAYS implement tamper-proof audit logging
+- ALWAYS retain audit logs per compliance requirements
+- NEVER allow users to modify their own audit logs
+
+# =============================================================================
+# 🚀 PERFORMANCE & SCALABILITY STANDARDS
+# =============================================================================
+
+## Database Performance
+- ALWAYS create proper indexes for frequently queried columns
+- NEVER perform N+1 queries - use proper joins or batching
+- ALWAYS implement database connection pooling
+- NEVER execute long-running queries without pagination
+- ALWAYS monitor and optimize slow queries
+- NEVER use SELECT * in production code
+
+## API Performance
+- ALWAYS implement response caching where appropriate
+- ALWAYS set proper cache headers for static content
+- NEVER return unlimited data sets - implement pagination
+- ALWAYS compress API responses for large payloads
+- ALWAYS implement request timeout handling
+- NEVER block event loops with synchronous operations
+
+## Frontend Performance
+- ALWAYS implement code splitting for large applications
+- ALWAYS optimize images with proper formats and sizes
+- NEVER load unnecessary JavaScript bundles
+- ALWAYS implement lazy loading for non-critical components
+- ALWAYS use React.memo and useMemo for expensive computations
+- NEVER skip Core Web Vitals optimization (LCP, FID, CLS)
+
+# =============================================================================
+# 🌐 INTERNATIONALIZATION & ACCESSIBILITY
+# =============================================================================
+
+## Accessibility Requirements (WCAG 2.2 AA)
+- ALWAYS include proper ARIA labels for interactive elements
+- ALWAYS ensure keyboard navigation works for all functionality
+- NEVER use color alone to convey information
+- ALWAYS maintain proper color contrast ratios (4.5:1 normal, 3:1 large)
+- ALWAYS provide alt text for images and meaningful content
+- NEVER create focus traps without proper escape mechanisms
+- ALWAYS test with screen readers and assistive technologies
+
+## Internationalization Standards
+- ALWAYS use next-intl for internationalization in Next.js apps
+- NEVER hardcode user-facing strings - use translation keys
+- ALWAYS support RTL languages with proper CSS logical properties
+- ALWAYS format dates, numbers, and currencies based on locale
+- NEVER assume English-only user base
+- ALWAYS test UI with longer text strings (German, Finnish)
+
+# =============================================================================
+# 🤖 AI/LLM INTEGRATION STANDARDS
+# =============================================================================
+
+## MCP Server Development
+- ALWAYS validate tool schemas with proper JSON Schema validation
+- NEVER expose internal system functions without proper authorization
+- ALWAYS implement rate limiting for AI agent tool calls
+- ALWAYS sanitize and validate all tool inputs
+- NEVER allow AI agents to bypass authentication or authorization
+- ALWAYS log all AI agent actions for audit purposes
+
+## LangGraph Workflow Security
+- ALWAYS sandbox AI workflow execution environments
+- NEVER allow workflows to access unauthorized system resources
+- ALWAYS implement timeouts for long-running AI operations
+- ALWAYS validate AI-generated content before execution
+- NEVER trust AI-generated SQL or code without validation
+- ALWAYS implement human-in-the-loop for critical AI decisions
+
+## AI Observability
+- ALWAYS implement tracing for AI workflows with LangSmith
+- ALWAYS monitor token usage and costs for LLM operations
+- NEVER skip error handling for AI service failures
+- ALWAYS implement fallback mechanisms for AI service outages
+- ALWAYS track and analyze AI performance metrics
+- NEVER expose AI model internals or prompts to end users
+
+# =============================================================================
+# 📱 MOBILE DEVELOPMENT STANDARDS (React Native + Expo)
+# =============================================================================
+## React Native Security
+- ALWAYS use Expo SecureStore for sensitive data storage
+- NEVER store API keys or tokens in AsyncStorage
+- ALWAYS implement certificate pinning for API communications
+- ALWAYS validate deep link parameters to prevent injection attacks
+- NEVER trust client-side validation alone
+- ALWAYS implement proper biometric authentication flows
+
+## Mobile Performance
+- ALWAYS optimize bundle size with Metro bundler tree shaking
+- ALWAYS implement proper image caching and optimization
+- NEVER load large datasets without proper pagination
+- ALWAYS implement offline capability for critical features
+- ALWAYS test on both iOS and Android devices
+- NEVER skip testing on low-end devices
+
+# =============================================================================
+# 🏢 ENTERPRISE & PRODUCTION STANDARDS
+# =============================================================================
+
+## Production Deployment
+- ALWAYS use Terraform for infrastructure as code
+- NEVER deploy without proper health checks configured
+- ALWAYS implement proper logging and monitoring
+- ALWAYS use blue-green or canary deployment strategies
+- NEVER deploy during peak usage hours without maintenance windows
+- ALWAYS verify rollback procedures before deployment
+
+## Enterprise Integration
+- ALWAYS implement proper SSO integration with SAML/OIDC
+- NEVER skip enterprise security questionnaire requirements
+- ALWAYS provide detailed API documentation with examples
+- ALWAYS implement proper webhook delivery with retry logic
+- NEVER expose internal service dependencies to enterprise customers
+- ALWAYS maintain backwards compatibility for API versions
+
+## Monitoring & Alerting
+- ALWAYS implement comprehensive health checks for all services
+- ALWAYS set up proper alerting for critical system failures
+- NEVER ignore warning-level alerts - investigate and resolve
+- ALWAYS monitor business metrics alongside technical metrics
+- ALWAYS implement proper on-call procedures and runbooks
+- NEVER deploy without verifying monitoring and alerting works
+
+# =============================================================================
+# 📋 CODE REVIEW & DOCUMENTATION STANDARDS
+# =============================================================================
+
+## Code Review Requirements
+- ALWAYS require at least one code review before merging
+- NEVER merge code that doesn't pass all automated checks
+- ALWAYS review security implications of code changes
+- ALWAYS verify tests are comprehensive and meaningful
+- NEVER approve code with TODO comments without GitHub issues
+- ALWAYS ensure code follows established patterns and conventions
+
+## Documentation Requirements
+- ALWAYS document public APIs with comprehensive examples
+- ALWAYS maintain up-to-date README files for each service
+- NEVER commit code without proper inline documentation
+- ALWAYS document complex business logic and algorithms
+- ALWAYS maintain deployment and troubleshooting guides
+- NEVER skip documenting configuration options and environment variables
+
+## Git Standards
+- ALWAYS use conventional commit messages (feat:, fix:, docs:, etc.)
+- NEVER commit directly to main/master branch
+- ALWAYS create feature branches with descriptive names
+- ALWAYS squash commits before merging to maintain clean history
+- NEVER commit generated files or build artifacts
+- ALWAYS include issue numbers in commit messages when applicable
+
+# =============================================================================
+# 🔧 DEVELOPMENT ENVIRONMENT STANDARDS
+# =============================================================================
+
+## Local Development
+- ALWAYS use Docker Compose for consistent development environments
+- ALWAYS include sample environment files (.env.example)
+- NEVER commit actual environment files (.env) to version control
+- ALWAYS document setup steps in service README files
+- ALWAYS use consistent port assignments across services
+- NEVER require manual database setup - use migrations and seeders
+
+## IDE Configuration
+- ALWAYS configure ESLint and Prettier for consistent code formatting
+- ALWAYS use proper TypeScript configuration with strict mode
+- NEVER disable linting rules without proper justification
+- ALWAYS use consistent import ordering and organization
+- ALWAYS configure proper debugger settings for each service
+- NEVER commit IDE-specific configuration files
+
+# =============================================================================
+# 🚫 ANTI-PATTERNS TO AVOID
+# =============================================================================
+
+## Security Anti-Patterns
+- NEVER use eval() or similar dynamic code execution
+- NEVER trust user input without proper validation and sanitization
+- NEVER implement custom cryptography - use established libraries
+- NEVER log sensitive information like passwords or API keys
+- NEVER use HTTP for production APIs - HTTPS only
+- NEVER implement authentication without proper session management
+
+## Performance Anti-Patterns
+- NEVER use blocking operations in event loops
+- NEVER implement infinite loops without proper break conditions
+- NEVER ignore memory leaks or resource cleanup
+- NEVER use synchronous file operations in production
+- NEVER implement recursive operations without depth limits
+- NEVER skip implementing proper caching strategies
+
+## Code Quality Anti-Patterns
+- NEVER use magic numbers or strings - use proper constants
+- NEVER implement God objects or functions with too many responsibilities
+- NEVER skip error handling or use empty catch blocks
+- NEVER use global variables or shared mutable state
+- NEVER implement circular dependencies between modules
+- NEVER copy-paste code - extract into reusable functions
+
+# =============================================================================
+# 📊 QUALITY GATES - MUST PASS BEFORE MERGE
+# =============================================================================
+
+## Automated Quality Checks
+- ✅ All unit tests pass with minimum 80% coverage
+- ✅ All integration tests pass with real database scenarios
+- ✅ All E2E tests pass including multi-tenant flows
+- ✅ ESLint and Prettier formatting checks pass
+- ✅ TypeScript compilation succeeds with no errors
+- ✅ Python type checking passes with mypy
+- ✅ Security vulnerability scans pass (OWASP ZAP, Dependabot)
+- ✅ Accessibility tests pass (axe-core, WCAG 2.2 AA)
+- ✅ Performance budgets met (bundle size, Core Web Vitals)
+- ✅ Docker images build successfully
+- ✅ Database migrations run successfully in both directions
+
+## Manual Review Requirements
+- ✅ Code review approved by qualified team member
+- ✅ Security review completed for authentication/authorization changes
+- ✅ Architecture review completed for significant design changes
+- ✅ Product review completed for user-facing changes
+- ✅ Documentation updated for API or configuration changes
+
+# =============================================================================
+# 🔄 CONTINUOUS IMPROVEMENT
+# =============================================================================
+
+## Regular Review Cycles
+- ALWAYS conduct monthly security reviews of authentication flows
+- ALWAYS review and update dependencies quarterly
+- ALWAYS conduct performance reviews before major releases
+- ALWAYS review and update these rules based on lessons learned
+- ALWAYS conduct post-mortem reviews for production incidents
+- ALWAYS update documentation after architectural changes
+
+## Metrics to Track
+- ALWAYS monitor test coverage trends over time
+- ALWAYS track security vulnerability resolution time
+- ALWAYS measure deployment frequency and success rates
+- ALWAYS track time-to-resolution for critical bugs
+- ALWAYS monitor performance metrics trends
+- ALWAYS track customer satisfaction and support ticket volume
+
+---
+
+# 🎯 ENFORCEMENT
+These rules are enforced through:
+1. Pre-commit hooks for code quality and security
+2. GitHub Actions CI/CD pipeline checks
+3. SonarCloud quality gates
+4. Manual code review process
+5. Automated dependency scanning
+6. Regular security audits
+
+Violations of security rules (🚨) will result in immediate pull request rejection.
+All other violations should be addressed before merge approval.
+
+## Quick Commands for Quality Checks
+```bash
+# Run all quality checks locally
+./scripts/quality-check.sh
+
+# Run security scans
+./scripts/security-scan.sh
+
+# Run accessibility tests
+./scripts/a11y-test.sh
+
+# Run full test suite
+./scripts/test-all.sh
+```
+
+Remember: Quality is not negotiable in a multi-tenant SaaS platform. 
+Every line of code affects multiple organizations and users.

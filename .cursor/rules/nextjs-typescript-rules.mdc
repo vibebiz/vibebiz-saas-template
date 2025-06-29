@@ -1,0 +1,302 @@
+---
+description: rules for nextjs and typescript best practices
+globs: 
+alwaysApply: false
+---
+# Next.js/TypeScript Development Standards - VibeBiz
+# For Public Web, Admin, Developer Portal, and Support Apps
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 🏗️ TYPESCRIPT QUALITY & TYPE SAFETY
+# =============================================================================
+
+## TypeScript Configuration Standards
+- ALWAYS use strict mode in tsconfig.json
+- ALWAYS enable noUncheckedIndexedAccess for array safety
+- NEVER use 'any' type without explicit justification comment
+- ALWAYS use proper union types instead of any
+- ALWAYS use const assertions for immutable data
+- ALWAYS define explicit return types for functions
+- NEVER use non-null assertion (!) without safety checks
+- ALWAYS use proper generic constraints
+
+## Type Generation & API Integration
+- ALWAYS generate TypeScript types from OpenAPI schemas
+- ALWAYS use auto-generated API client types
+- NEVER manually maintain API types
+- ALWAYS validate API responses at runtime
+- ALWAYS use branded types for IDs and sensitive data
+- NEVER trust external data without validation
+
+## Type Safety Best Practices
+- ALWAYS implement proper type guards
+- ALWAYS use exhaustive switch statements with never checks
+- NEVER use function overloads when union types suffice
+- ALWAYS prefer readonly for immutable data
+- ALWAYS use proper generic constraints
+- NEVER bypass type checking with assertions without validation
+
+# =============================================================================
+# ⚛️ REACT COMPONENT STANDARDS
+# =============================================================================
+
+## Component Architecture
+- ALWAYS use functional components with hooks
+- ALWAYS implement proper component composition
+- NEVER use class components unless absolutely necessary
+- ALWAYS use proper prop types with TypeScript interfaces
+- ALWAYS implement error boundaries for fault isolation
+- NEVER pass entire objects as props when specific fields suffice
+- ALWAYS use React.memo for expensive components
+
+## Hooks and State Management
+- ALWAYS use useCallback for event handlers and complex functions
+- ALWAYS use useMemo for expensive calculations
+- NEVER create functions inside JSX render
+- ALWAYS use proper dependency arrays in useEffect
+- ALWAYS implement cleanup in useEffect when needed
+- NEVER use useLayoutEffect unless necessary for measurements
+- ALWAYS prefer useReducer for complex state logic
+
+## Component Patterns
+- ALWAYS implement compound components for complex UI
+- ALWAYS use render props or custom hooks for logic sharing
+- NEVER prop drill more than 2 levels deep
+- ALWAYS use context for truly global state
+- ALWAYS implement proper loading and error states
+- NEVER ignore accessibility requirements
+
+# =============================================================================
+# 🎨 STYLING & UI STANDARDS
+# =============================================================================
+
+## Tailwind CSS Implementation
+- ALWAYS use Tailwind CSS for styling
+- ALWAYS implement design system with consistent spacing
+- NEVER use arbitrary values without design system approval
+- ALWAYS use CSS variables for theme colors
+- ALWAYS implement responsive design mobile-first
+- NEVER use !important unless absolutely necessary
+- ALWAYS use component variants with class-variance-authority
+
+## UI Component Library
+- ALWAYS use shadcn/ui as base component library
+- ALWAYS extend base components rather than replacing
+- NEVER create custom components when library versions exist
+- ALWAYS implement proper component variants
+- ALWAYS maintain consistent component APIs
+- NEVER hardcode colors or spacing values
+
+## Responsive Design
+- ALWAYS implement mobile-first responsive design
+- ALWAYS test on multiple screen sizes
+- NEVER ignore touch accessibility on mobile
+- ALWAYS use appropriate breakpoints
+- ALWAYS implement proper keyboard navigation
+- NEVER sacrifice performance for visual effects
+
+# =============================================================================
+# 🔄 STATE MANAGEMENT
+# =============================================================================
+
+## State Management Strategy
+- ALWAYS use Zustand for global state management
+- ALWAYS implement proper state slicing
+- NEVER store derived data in state
+- ALWAYS use React Query for server state
+- ALWAYS implement proper loading and error states
+- NEVER mutate state directly
+- ALWAYS implement optimistic updates where appropriate
+
+## React Query Integration
+- ALWAYS use React Query for all API calls
+- ALWAYS implement proper cache invalidation
+- NEVER fetch data in useEffect when React Query available
+- ALWAYS implement proper error boundaries
+- ALWAYS use mutations for data modification
+- NEVER ignore stale data handling
+- ALWAYS implement proper retry strategies
+
+## Form State Management
+- ALWAYS use React Hook Form for complex forms
+- ALWAYS implement proper form validation
+- NEVER trust client-side validation alone
+- ALWAYS implement proper error handling
+- ALWAYS use controlled components for form inputs
+- NEVER ignore accessibility in forms
+- ALWAYS implement proper form submission states
+
+# =============================================================================
+# 🌐 INTERNATIONALIZATION & ACCESSIBILITY
+# =============================================================================
+
+## Internationalization (i18n)
+- ALWAYS use next-intl for internationalization
+- ALWAYS implement proper locale routing
+- NEVER hardcode user-facing strings
+- ALWAYS implement proper RTL support
+- ALWAYS test with longer text strings
+- NEVER ignore date/number formatting
+- ALWAYS implement proper fallback language
+
+## Accessibility (a11y)
+- ALWAYS implement proper ARIA labels and roles
+- ALWAYS ensure keyboard navigation works
+- NEVER use color alone to convey information
+- ALWAYS maintain proper contrast ratios
+- ALWAYS implement proper focus management
+- NEVER ignore screen reader compatibility
+- ALWAYS test with assistive technologies
+
+# =============================================================================
+# 🔒 SECURITY STANDARDS
+# =============================================================================
+
+## Authentication & Authorization
+- ALWAYS use NextAuth.js for authentication
+- ALWAYS implement proper CSRF protection
+- NEVER store sensitive data in localStorage
+- ALWAYS use httpOnly cookies for tokens
+- ALWAYS implement proper session management
+- NEVER expose sensitive data in client-side code
+- ALWAYS implement proper logout functionality
+
+## Input Validation & Sanitization
+- ALWAYS validate and sanitize all user inputs
+- ALWAYS use proper Content Security Policy
+- NEVER trust data from URL parameters
+- ALWAYS implement proper XSS prevention
+- ALWAYS use proper HTML sanitization
+- NEVER execute user-provided code
+- ALWAYS implement rate limiting for sensitive operations
+
+# =============================================================================
+# ⚡ PERFORMANCE OPTIMIZATION
+# =============================================================================
+
+## Code Splitting & Bundling
+- ALWAYS implement proper code splitting
+- ALWAYS use dynamic imports for large components
+- NEVER bundle unnecessary code
+- ALWAYS implement proper lazy loading
+- ALWAYS optimize bundle size
+- NEVER ignore Core Web Vitals
+- ALWAYS implement proper preloading strategies
+
+## Image & Asset Optimization
+- ALWAYS use Next.js Image component
+- ALWAYS implement proper image optimization
+- NEVER serve unoptimized images
+- ALWAYS use proper image formats (WebP, AVIF)
+- ALWAYS implement lazy loading for images
+- NEVER ignore image alt text
+- ALWAYS implement proper image placeholder strategies
+
+## Runtime Performance
+- ALWAYS implement proper memoization
+- ALWAYS avoid unnecessary re-renders
+- NEVER perform expensive operations in render
+- ALWAYS implement proper virtualization for long lists
+- ALWAYS debounce expensive operations
+- NEVER ignore memory leaks
+- ALWAYS implement proper component cleanup
+
+# =============================================================================
+# 🚀 NEXT.JS SPECIFIC STANDARDS
+# =============================================================================
+
+## App Router Implementation
+- ALWAYS use App Router for new projects
+- ALWAYS implement proper layout hierarchy
+- NEVER mix App Router with Pages Router
+- ALWAYS use proper loading.tsx and error.tsx files
+- ALWAYS implement proper metadata generation
+- NEVER ignore SEO optimization
+- ALWAYS implement proper route groups
+
+## Server Components & Actions
+- ALWAYS use Server Components when possible
+- ALWAYS implement proper data fetching patterns
+- NEVER use Server Components for interactive elements
+- ALWAYS use Server Actions for form submissions
+- ALWAYS implement proper error handling in Server Actions
+- NEVER ignore hydration mismatches
+- ALWAYS implement proper streaming
+
+## API Routes & Middleware
+- ALWAYS implement proper API route structure
+- ALWAYS use proper HTTP status codes
+- NEVER expose internal errors to clients
+- ALWAYS implement proper middleware
+- ALWAYS use proper request validation
+- NEVER ignore API security
+- ALWAYS implement proper rate limiting
+
+# =============================================================================
+# 🧪 TESTING STANDARDS
+# =============================================================================
+
+## Component Testing
+- ALWAYS write tests for all components
+- ALWAYS test component behavior, not implementation
+- NEVER test internal component state directly
+- ALWAYS use React Testing Library
+- ALWAYS test accessibility in components
+- NEVER ignore edge cases in tests
+- ALWAYS implement proper test utilities
+
+## Integration Testing
+- ALWAYS test critical user flows end-to-end
+- ALWAYS test with realistic data
+- NEVER skip testing error states
+- ALWAYS test responsive behavior
+- ALWAYS test keyboard navigation
+- NEVER ignore performance in tests
+- ALWAYS implement proper test data setup
+
+# =============================================================================
+# 📋 DEVELOPMENT WORKFLOW
+# =============================================================================
+
+## Code Quality Standards
+- ALWAYS use ESLint with strict configuration
+- ALWAYS use Prettier for code formatting
+- NEVER commit code without running linters
+- ALWAYS implement proper pre-commit hooks
+- ALWAYS use TypeScript strict mode
+- NEVER ignore type errors
+- ALWAYS implement proper code review process
+
+## Development Environment
+- ALWAYS use consistent Node.js version
+- ALWAYS implement proper environment configuration
+- NEVER commit environment secrets
+- ALWAYS use proper debugging tools
+- ALWAYS implement hot reload for development
+- NEVER ignore development tooling setup
+- ALWAYS document setup procedures
+
+# =============================================================================
+# 📊 MONITORING & ANALYTICS
+# =============================================================================
+
+## Error Tracking
+- ALWAYS implement comprehensive error tracking
+- ALWAYS track user interactions and errors
+- NEVER ignore client-side errors
+- ALWAYS implement proper error boundaries
+- ALWAYS track performance metrics
+- NEVER expose sensitive data in error logs
+- ALWAYS implement proper alerting
+
+## User Analytics
+- ALWAYS implement privacy-compliant analytics
+- ALWAYS track meaningful user interactions
+- NEVER track without user consent
+- ALWAYS implement proper data retention
+- ALWAYS respect user privacy settings
+- NEVER ignore GDPR compliance
+- ALWAYS implement proper data anonymization
+
+Remember: These standards ensure type-safe, performant, accessible, and maintainable Next.js applications for VibeBiz's multi-tenant SaaS platform.

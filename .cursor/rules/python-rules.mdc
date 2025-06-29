@@ -1,0 +1,299 @@
+---
+description: 
+globs: *.py
+alwaysApply: false
+---
+# Python Development Standards - VibeBiz
+# For FastAPI Services, AI/LLM Integration, and Backend Development
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 🐍 PYTHON CODE QUALITY & STANDARDS
+# =============================================================================
+
+## Python Code Quality Requirements
+- ALWAYS use Python 3.12+ for new projects
+- ALWAYS use type hints for all function parameters and return values
+- NEVER use mutable default arguments in function definitions
+- ALWAYS use f-strings for string formatting
+- ALWAYS follow PEP 8 style guidelines with Black formatter
+- NEVER ignore linting errors from Ruff or mypy
+- ALWAYS use descriptive variable and function names
+- ALWAYS implement proper error handling with specific exceptions
+
+## Type Safety & Annotations
+- ALWAYS use type hints for all public APIs
+- ALWAYS use Union types or | operator for optional types
+- NEVER use Any type without explicit justification
+- ALWAYS use Literal types for string constants
+- ALWAYS use Protocol for structural typing
+- NEVER ignore mypy type checking errors
+- ALWAYS use TypedDict for structured dictionaries
+- ALWAYS implement proper generic types when needed
+
+## Code Organization & Structure
+- ALWAYS organize code into logical modules and packages
+- ALWAYS use __init__.py files for package initialization
+- NEVER create circular imports between modules
+- ALWAYS implement proper separation of concerns
+- ALWAYS use dependency injection for external dependencies
+- NEVER hardcode configuration values in source code
+- ALWAYS implement proper factory patterns for complex objects
+
+# =============================================================================
+# ⚡ FASTAPI SERVICE DEVELOPMENT
+# =============================================================================
+
+## FastAPI Best Practices
+- ALWAYS use FastAPI for all HTTP API services
+- ALWAYS implement proper request/response models with Pydantic
+- NEVER return raw database objects from API endpoints
+- ALWAYS implement proper HTTP status codes
+- ALWAYS use dependency injection for common functionality
+- NEVER skip input validation on API endpoints
+- ALWAYS implement proper error handling and responses
+- ALWAYS use async/await for I/O operations
+
+## API Design Standards
+- ALWAYS version APIs with /v1/, /v2/ prefixes
+- ALWAYS implement proper OpenAPI documentation
+- NEVER expose internal service details in API responses
+- ALWAYS implement proper pagination for list endpoints
+- ALWAYS use consistent response formats across endpoints
+- NEVER ignore HTTP caching headers for appropriate endpoints
+- ALWAYS implement proper CORS policies
+- ALWAYS use proper HTTP methods (GET, POST, PUT, DELETE)
+
+## Request/Response Handling
+- ALWAYS validate all input data with Pydantic models
+- ALWAYS implement proper error response formats
+- NEVER expose stack traces in production error responses
+- ALWAYS implement proper request logging and tracing
+- ALWAYS handle file uploads securely
+- NEVER trust client-provided file metadata
+- ALWAYS implement proper request timeout handling
+
+# =============================================================================
+# 🗄️ DATABASE & ORM STANDARDS
+# =============================================================================
+
+## SQLAlchemy Best Practices
+- ALWAYS use SQLAlchemy 2.0+ with async support
+- ALWAYS use declarative base for model definitions
+- NEVER use raw SQL queries without parameterization
+- ALWAYS implement proper relationships between models
+- ALWAYS use database transactions for multi-operation changes
+- NEVER commit database sessions automatically without explicit control
+- ALWAYS implement proper connection pooling
+- ALWAYS use Alembic for database schema migrations
+
+## Multi-Tenant Database Design
+- ALWAYS implement Row-Level Security (RLS) for tenant isolation
+- ALWAYS include organization_id in all tenant-specific tables
+- NEVER allow cross-tenant data access in queries
+- ALWAYS validate tenant context before database operations
+- ALWAYS use database indexes for organization_id fields
+- NEVER ignore multi-tenant security in development
+- ALWAYS test tenant isolation thoroughly
+
+## Database Performance
+- ALWAYS use proper database indexes for query optimization
+- ALWAYS implement connection pooling with appropriate limits
+- NEVER perform N+1 queries - use proper joins or eager loading
+- ALWAYS implement pagination for large result sets
+- ALWAYS monitor slow queries and optimize them
+- NEVER ignore database query performance in development
+- ALWAYS implement proper database health checks
+
+# =============================================================================
+# 🤖 AI/LLM INTEGRATION STANDARDS
+# =============================================================================
+
+## LangChain & LangGraph Integration
+- ALWAYS use LangGraph for complex AI workflow orchestration
+- ALWAYS implement proper error handling in AI workflows
+- NEVER ignore AI model failures or timeouts
+- ALWAYS implement proper cost tracking for AI operations
+- ALWAYS use proper prompt templates and management
+- NEVER hardcode prompts in source code
+- ALWAYS implement proper AI operation monitoring
+- ALWAYS implement fallback mechanisms for AI failures
+
+## OpenAI & LLM Best Practices
+- ALWAYS implement proper API key management for LLM services
+- ALWAYS implement rate limiting for LLM API calls
+- NEVER expose LLM API keys in logs or error messages
+- ALWAYS implement proper token counting and cost management
+- ALWAYS implement proper timeout handling for LLM calls
+- NEVER ignore LLM response validation
+- ALWAYS implement proper retry logic with exponential backoff
+- ALWAYS monitor LLM usage and performance
+
+## MCP (Model Context Protocol) Implementation
+- ALWAYS implement MCP servers for AI tool integration
+- ALWAYS validate all tool inputs and outputs
+- NEVER allow unrestricted tool execution
+- ALWAYS implement proper tool authorization
+- ALWAYS implement tool usage monitoring and logging
+- NEVER ignore tool execution errors
+- ALWAYS implement proper tool timeout handling
+
+# =============================================================================
+# 🔒 SECURITY & AUTHENTICATION
+# =============================================================================
+
+## Authentication & Authorization
+- ALWAYS implement proper JWT token validation
+- ALWAYS use strong password hashing (bcrypt/scrypt)
+- NEVER store passwords in plain text
+- ALWAYS implement proper session management
+- ALWAYS validate user permissions before operations
+- NEVER trust client-provided user context
+- ALWAYS implement proper API key authentication
+- ALWAYS implement rate limiting for authentication endpoints
+
+## Input Validation & Security
+- ALWAYS validate and sanitize all user inputs
+- ALWAYS use parameterized queries to prevent SQL injection
+- NEVER trust user-provided file uploads without validation
+- ALWAYS implement proper CSRF protection
+- ALWAYS validate file types and sizes for uploads
+- NEVER execute user-provided code without sandboxing
+- ALWAYS implement proper XSS prevention
+- ALWAYS use HTTPS for all API communications
+
+## Data Protection
+- ALWAYS encrypt sensitive data at rest
+- ALWAYS use proper encryption for data in transit
+- NEVER log sensitive information (passwords, tokens, PII)
+- ALWAYS implement proper key management
+- ALWAYS comply with GDPR and data protection regulations
+- NEVER store unnecessary personal data
+- ALWAYS implement proper data anonymization
+- ALWAYS implement audit logging for sensitive operations
+
+# =============================================================================
+# 📦 DEPENDENCY MANAGEMENT
+# =============================================================================
+
+## Package Management with uv
+- ALWAYS use uv for fast Python package management
+- ALWAYS pin exact dependency versions in production
+- NEVER use `pip install` without version constraints
+- ALWAYS use virtual environments for development
+- ALWAYS implement proper dependency scanning for vulnerabilities
+- NEVER ignore security updates for dependencies
+- ALWAYS use pyproject.toml for project configuration
+- ALWAYS implement dependency caching for CI/CD
+
+## Environment Management
+- ALWAYS use environment variables for configuration
+- ALWAYS implement proper configuration validation
+- NEVER hardcode secrets or API keys in source code
+- ALWAYS use different configurations for different environments
+- ALWAYS implement proper secret management
+- NEVER commit .env files with real secrets
+- ALWAYS document required environment variables
+- ALWAYS implement configuration schema validation
+
+# =============================================================================
+# 🧪 TESTING STANDARDS
+# =============================================================================
+
+## Unit Testing with pytest
+- ALWAYS write unit tests for all business logic
+- ALWAYS achieve minimum 80% code coverage
+- NEVER test implementation details, test behavior
+- ALWAYS use proper test fixtures and factories
+- ALWAYS implement proper test isolation
+- NEVER ignore failing tests
+- ALWAYS use meaningful test names and descriptions
+- ALWAYS test error conditions and edge cases
+
+## Integration Testing
+- ALWAYS test database operations with real database instances
+- ALWAYS test API endpoints with proper request/response validation
+- NEVER mock external dependencies in integration tests
+- ALWAYS test multi-tenant data isolation
+- ALWAYS implement proper test data cleanup
+- NEVER ignore test performance and execution time
+- ALWAYS test authentication and authorization flows
+
+## Testing AI/LLM Components
+- ALWAYS test AI workflows with mock LLM responses
+- ALWAYS test error handling in AI operations
+- NEVER test with real LLM APIs in unit tests (cost/flakiness)
+- ALWAYS test prompt templates and validation
+- ALWAYS test tool execution and error handling
+- NEVER ignore AI component testing due to complexity
+- ALWAYS implement proper AI testing utilities
+
+# =============================================================================
+# 📊 MONITORING & OBSERVABILITY
+# =============================================================================
+
+## Logging Standards
+- ALWAYS use structured logging with JSON format
+- ALWAYS include correlation IDs in all log messages
+- NEVER log sensitive information
+- ALWAYS implement proper log levels (DEBUG, INFO, WARNING, ERROR)
+- ALWAYS include organization_id in logs for multi-tenant tracking
+- NEVER ignore logging performance impact
+- ALWAYS implement proper log rotation and retention
+- ALWAYS use consistent logging schemas across services
+
+## Metrics & Tracing
+- ALWAYS implement OpenTelemetry for tracing and metrics
+- ALWAYS track business metrics alongside technical metrics
+- NEVER ignore error tracking and alerting
+- ALWAYS implement proper health checks for services
+- ALWAYS track AI/LLM operation costs and performance
+- NEVER ignore distributed tracing across service boundaries
+- ALWAYS implement proper dashboard visualization
+
+# =============================================================================
+# 🚀 DEPLOYMENT & OPERATIONS
+# =============================================================================
+
+## Container & Deployment
+- ALWAYS use proper Docker containers for all services
+- ALWAYS implement proper health checks in containers
+- NEVER run containers as root user
+- ALWAYS implement proper resource limits and requests
+- ALWAYS use multi-stage Docker builds for optimization
+- NEVER include secrets in container images
+- ALWAYS implement proper container scanning for vulnerabilities
+
+## Async & Concurrency
+- ALWAYS use async/await for I/O-bound operations
+- ALWAYS implement proper connection pooling
+- NEVER use blocking operations in async functions
+- ALWAYS implement proper timeout handling
+- ALWAYS use proper async context managers
+- NEVER ignore async exception handling
+- ALWAYS implement proper background task management
+
+# =============================================================================
+# 📋 CODE REVIEW & QUALITY GATES
+# =============================================================================
+
+## Pre-Commit Quality Checks
+- ✅ All code passes Black formatting
+- ✅ All code passes Ruff linting  
+- ✅ All code passes mypy type checking
+- ✅ All tests pass with minimum 80% coverage
+- ✅ All security scans pass (bandit, safety)
+- ✅ All API documentation is up to date
+- ✅ All multi-tenant security controls are tested
+- ✅ All AI/LLM integrations are properly monitored
+
+## Production Readiness
+- ✅ All services have proper health checks
+- ✅ All endpoints have proper authentication/authorization
+- ✅ All database operations use proper tenant isolation
+- ✅ All AI operations have cost controls and monitoring
+- ✅ All services have proper error handling and logging
+- ✅ All critical paths have proper testing coverage
+- ✅ All services have proper monitoring and alerting
+
+Remember: Python services form the backbone of VibeBiz's AI-powered SaaS platform. Every service must be secure, performant, and properly instrumented for multi-tenant operations.

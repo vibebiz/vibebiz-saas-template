@@ -1,0 +1,265 @@
+---
+description: rules for mobile development using react native best practices
+globs: 
+alwaysApply: false
+---
+# Mobile Development Rules - VibeBiz Standards
+# For React Native + Expo cross-platform mobile development
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 🚨 CRITICAL MOBILE DEVELOPMENT RULES
+# =============================================================================
+
+## Platform Compatibility
+- ALWAYS test on both iOS and Android devices
+- ALWAYS use Expo managed workflow for consistent experience
+- NEVER use platform-specific code without proper abstraction
+- ALWAYS implement proper responsive design for different screen sizes
+- ALWAYS test on physical devices, not just simulators
+- NEVER ignore platform-specific design guidelines
+
+## Performance Requirements
+- ALWAYS optimize for 60fps performance on target devices
+- ALWAYS implement proper image optimization and lazy loading
+- NEVER block the main thread with heavy computations
+- ALWAYS use FlatList for large data sets
+- ALWAYS implement proper memory management
+- NEVER ignore performance monitoring and profiling
+
+## Security & Data Protection
+- ALWAYS use Expo SecureStore for sensitive data
+- NEVER store API keys or secrets in AsyncStorage
+- ALWAYS implement certificate pinning for API communications
+- NEVER trust client-side validation alone
+- ALWAYS implement proper deep linking validation
+- NEVER ignore app permissions and privacy settings
+
+# =============================================================================
+# 📱 EXPO & REACT NATIVE STANDARDS
+# =============================================================================
+
+## Expo Configuration
+- ALWAYS use EAS Build for consistent builds
+- ALWAYS configure app.json/app.config.js properly
+- NEVER hardcode environment-specific values in config
+- ALWAYS use Expo SDK supported packages when available
+- ALWAYS implement proper app versioning strategy
+- NEVER skip testing on Expo Go during development
+
+## React Native Best Practices
+- ALWAYS use TypeScript for all React Native code
+- ALWAYS implement proper navigation structure with React Navigation
+- NEVER use deprecated React Native components
+- ALWAYS use Expo SDK components when available
+- ALWAYS implement proper state management (Zustand/Redux Toolkit)
+- NEVER ignore React Native performance best practices
+
+## Code Organization
+- ALWAYS follow feature-based folder structure
+- ALWAYS separate platform-specific code with .ios/.android extensions
+- NEVER mix business logic with UI components
+- ALWAYS use custom hooks for complex logic
+- ALWAYS implement proper error boundaries
+- NEVER create monolithic components
+
+# =============================================================================
+# 🎨 UI/UX DESIGN STANDARDS
+# =============================================================================
+
+## Cross-Platform Design
+- ALWAYS follow platform-specific design guidelines (iOS Human Interface Guidelines, Material Design)
+- ALWAYS implement proper touch targets (44pt minimum on iOS, 48dp on Android)
+- NEVER ignore platform-specific navigation patterns
+- ALWAYS use appropriate spacing and typography for each platform
+- ALWAYS implement proper accessibility features
+- NEVER create inconsistent user experiences across platforms
+
+## Responsive Design
+- ALWAYS design for multiple screen sizes and orientations
+- ALWAYS use Flexbox for responsive layouts
+- NEVER hardcode dimensions or pixel values
+- ALWAYS test on tablets and foldable devices
+- ALWAYS implement proper safe area handling
+- NEVER ignore different screen densities
+
+## Component Libraries
+- ALWAYS use React Native Elements or similar UI library
+- ALWAYS create reusable component library for VibeBiz branding
+- NEVER recreate common UI patterns from scratch
+- ALWAYS implement proper theming and dark mode support
+- ALWAYS use vector icons instead of raster images
+- NEVER ignore component accessibility properties
+
+# =============================================================================
+# 🔗 API INTEGRATION & DATA MANAGEMENT
+# =============================================================================
+
+## API Communication
+- ALWAYS use React Query/TanStack Query for API state management
+- ALWAYS implement proper error handling and retry logic
+- NEVER make API calls without proper authentication
+- ALWAYS implement request/response interceptors for common functionality
+- ALWAYS cache API responses appropriately
+- NEVER ignore network state and offline scenarios
+
+## Authentication
+- ALWAYS use Expo AuthSession for OAuth flows
+- ALWAYS implement proper token storage with SecureStore
+- NEVER store authentication tokens in plain text
+- ALWAYS implement token refresh logic
+- ALWAYS handle authentication errors gracefully
+- NEVER ignore biometric authentication when available
+
+## Offline Support
+- ALWAYS implement offline data persistence with SQLite/Realm
+- ALWAYS sync data when connection is restored
+- NEVER ignore offline user experience
+- ALWAYS implement proper conflict resolution for offline changes
+- ALWAYS provide feedback for network status
+- NEVER assume constant network connectivity
+
+# =============================================================================
+# 🧪 TESTING STANDARDS
+# =============================================================================
+
+## Unit Testing
+- ALWAYS test custom hooks with @testing-library/react-hooks
+- ALWAYS test components with @testing-library/react-native
+- NEVER skip testing navigation logic
+- ALWAYS mock external dependencies and APIs
+- ALWAYS test error scenarios and edge cases
+- NEVER test implementation details
+
+## Integration Testing
+- ALWAYS test API integration with real backend
+- ALWAYS test authentication flows end-to-end
+- NEVER skip testing platform-specific functionality
+- ALWAYS test deep linking and navigation flows
+- ALWAYS test push notification handling
+- NEVER ignore testing with different network conditions
+
+## E2E Testing
+- ALWAYS use Maestro or Detox for E2E testing
+- ALWAYS test critical user journeys on both platforms
+- NEVER skip testing app installation and permissions
+- ALWAYS test with different device configurations
+- ALWAYS test app backgrounding and restoration
+- NEVER ignore testing with real device variations
+
+# =============================================================================
+# 🔔 PUSH NOTIFICATIONS & BACKGROUND TASKS
+# =============================================================================
+
+## Push Notifications
+- ALWAYS use Expo Notifications API
+- ALWAYS implement proper notification permissions handling
+- NEVER send notifications without user consent
+- ALWAYS implement notification categories and actions
+- ALWAYS handle notification interactions properly
+- NEVER ignore notification delivery tracking
+
+## Background Tasks
+- ALWAYS use Expo TaskManager for background processing
+- ALWAYS implement proper background fetch for data updates
+- NEVER perform heavy operations in background
+- ALWAYS respect platform background execution limits
+- ALWAYS implement proper background sync
+- NEVER ignore battery optimization considerations
+
+# =============================================================================
+# 📦 BUILD & DEPLOYMENT
+# =============================================================================
+
+## Build Configuration
+- ALWAYS use EAS Build for consistent cross-platform builds
+- ALWAYS configure proper build profiles for development/staging/production
+- NEVER include development tools in production builds
+- ALWAYS implement proper code signing for both platforms
+- ALWAYS optimize bundle size and reduce dependencies
+- NEVER skip testing builds on physical devices
+
+## App Store Deployment
+- ALWAYS follow App Store and Google Play Store guidelines
+- ALWAYS implement proper app store optimization (ASO)
+- NEVER skip app store review guidelines compliance
+- ALWAYS prepare proper app store assets and screenshots
+- ALWAYS implement proper version management and release notes
+- NEVER ignore app store feedback and reviews
+
+## CI/CD Pipeline
+- ALWAYS implement automated testing in CI/CD
+- ALWAYS build and test on multiple device configurations
+- NEVER deploy without passing all automated tests
+- ALWAYS implement automated security scanning
+- ALWAYS generate and archive build artifacts
+- NEVER skip performance testing in CI/CD
+
+# =============================================================================
+# 🔧 DEVELOPMENT TOOLS & WORKFLOW
+# =============================================================================
+
+## Development Environment
+- ALWAYS use Expo CLI and EAS CLI
+- ALWAYS use TypeScript with strict configuration
+- NEVER ignore linting and formatting rules
+- ALWAYS use React DevTools and Flipper for debugging
+- ALWAYS implement proper logging with Flipper or remote logging
+- NEVER commit debugging code or console.logs
+
+## Code Quality
+- ALWAYS use ESLint with React Native and Expo rules
+- ALWAYS use Prettier for consistent code formatting
+- NEVER ignore type errors or warnings
+- ALWAYS implement proper error tracking with Sentry
+- ALWAYS use proper commit message conventions
+- NEVER skip code review for mobile-specific changes
+
+## Performance Monitoring
+- ALWAYS implement performance monitoring with appropriate tools
+- ALWAYS track app startup time and memory usage
+- NEVER ignore crash reporting and analytics
+- ALWAYS monitor network request performance
+- ALWAYS track user engagement and retention metrics
+- NEVER deploy without proper monitoring setup
+
+# =============================================================================
+# 🚫 MOBILE ANTI-PATTERNS
+# =============================================================================
+
+## Never Do These
+- NEVER use index as key in FlatList without unique data
+- NEVER perform blocking operations on main thread
+- NEVER ignore memory leaks and retain cycles
+- NEVER use setTimeout for critical app functionality
+- NEVER ignore app lifecycle events
+- NEVER hardcode API URLs or configuration values
+- NEVER use deprecated React Native APIs
+- NEVER ignore platform-specific behaviors
+- NEVER skip testing on slow or older devices
+- NEVER assume infinite battery or fast network
+
+# =============================================================================
+# 📋 QUALITY GATES
+# =============================================================================
+
+## Required Before Release
+- ✅ App tested on both iOS and Android devices
+- ✅ Performance requirements met (60fps, <3s startup)
+- ✅ Accessibility features implemented and tested
+- ✅ Push notifications working correctly
+- ✅ Offline functionality tested and working
+- ✅ Authentication flows tested end-to-end
+- ✅ App store guidelines compliance verified
+- ✅ Security review completed
+- ✅ Crash reporting and analytics configured
+
+## Ongoing Monitoring
+- ✅ App performance metrics tracked
+- ✅ Crash rates monitored and addressed
+- ✅ User feedback and reviews addressed
+- ✅ App store optimization maintained
+- ✅ Security vulnerabilities monitored
+- ✅ Platform updates compatibility verified
+
+Remember: Mobile users expect fast, reliable, and intuitive experiences. Never compromise on performance, security, or usability.
