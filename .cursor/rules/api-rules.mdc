@@ -1,0 +1,693 @@
+---
+description: Rules for api design and configuration
+globs:
+alwaysApply: false
+---
+# VibeBiz API Design Best Practices - .cursor/rules
+# Enforces security-first, multi-tenant API development standards
+
+# ================================
+# CORE API ARCHITECTURE PRINCIPLES
+# ================================
+
+# Multi-tenant security is MANDATORY - all data access must use PostgreSQL RLS
+# Authentication required for ALL endpoints except health checks and public docs
+# API-first design with comprehensive OpenAPI documentation
+# Zero-trust architecture - validate everything at every layer
+# GDPR/SOC2 compliance built into every endpoint
+# Performance and security monitoring from day one
+
+# ================================
+# MULTI-TENANT SECURITY (CRITICAL)
+# ================================
+
+## Row-Level Security (RLS) Requirements
+- ALWAYS use PostgreSQL RLS for tenant isolation
+- NEVER bypass RLS policies in application code
+- Set tenant context using `current_setting('app.current_tenant')` in policies
+- Validate user organization membership before setting tenant context
+- Test tenant isolation in integration tests for EVERY endpoint
+
+Required RLS policy pattern:
+```sql
+CREATE POLICY tenant_isolation ON table_name
+    FOR ALL TO application_role
+    USING (organization_id = current_setting('app.current_tenant')::uuid);
+```
+
+Required tenant context middleware:
+```python
+@app.middleware("http")
+async def tenant_context_middleware(request: Request, call_next):
+    if request.url.path.startswith("/v1/orgs/"):
+        org_id = extract_org_id_from_path(request.url.path)
+        user = await get_current_user(request)
+        await ensure_user_belongs_to_org(user, org_id)
+        await set_tenant_context(org_id)
+
+    response = await call_next(request)
+    return response
+```
+
+## Organization Access Validation
+- ALWAYS validate user belongs to requested organization
+- Use dependency injection for organization access checks
+- Implement consistent error responses for access denied scenarios
+- Log all organization access attempts (success and failure)
+
+Required organization validation pattern:
+```python
+async def get_current_user_with_org_access(
+    org_id: str = Path(..., description="Organization ID"),
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """Validates user has access to the specified organization"""
+    if not await user_service.has_org_access(current_user.id, org_id):
+        logger.warning(
+            "Unauthorized organization access attempt",
+            extra={
+                "user_id": current_user.id,
+                "requested_org_id": org_id,
+                "user_orgs": [org.id for org in current_user.organizations]
+            }
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied to organization"
+        )
+    return current_user
+```
+
+# ================================
+# AUTHENTICATION & AUTHORIZATION
+# ================================
+
+## JWT Token Management
+- Use short-lived access tokens (15 minutes maximum)
+- Implement refresh token rotation with secure storage
+- Include user and organization context in token claims
+- Validate token signature and expiration on every request
+- Implement proper token blacklisting for logout
+
+Required JWT claims structure:
+```python
+class JWTClaims(BaseModel):
+    sub: str  # user_id
+    exp: int  # expiration timestamp
+    iat: int  # issued at timestamp
+    jti: str  # JWT ID for blacklisting
+    organizations: List[str]  # accessible org IDs
+    permissions: List[str]  # user permissions
+
+    class Config:
+        validate_assignment = True
+```
+
+## Permission-Based Authorization
+- Implement granular permissions system (not just roles)
+- Check permissions at both route and resource level
+- Use dependency injection for permission checks
+- Cache permissions for performance with TTL
+- Audit all permission checks and denials
+
+Required permission validation pattern:
+```python
+def require_permission(permission: str):
+    """Decorator for permission-based authorization"""
+    def permission_dependency(
+        current_user: User = Depends(get_current_user),
+        org_id: str = Depends(get_org_id_from_path)
+    ):
+        if not current_user.has_permission(permission, org_id):
+            raise HTTPException(
+                status_code=403,
+                detail=f"Missing required permission: {permission}"
+            )
+        return current_user
+    return Depends(permission_dependency)
+
+@router.post("/v1/orgs/{org_id}/projects")
+async def create_project(
+    project_data: ProjectCreate,
+    current_user: User = require_permission("projects.create")
+):
+    # Implementation here
+```
+
+## API Key Authentication
+- Support both JWT and API key authentication
+- Implement API key scoping to specific organizations
+- Rate limit API key usage per tier
+- Log all API key usage with detailed context
+- Provide API key rotation capabilities
+
+Required API key validation:
+```python
+async def validate_api_key(api_key: str = Header(None, alias="X-API-Key")) -> APIKey:
+    """Validates API key and returns associated metadata"""
+    if not api_key:
+        raise HTTPException(401, "API key required")
+
+    key_data = await api_key_service.validate_key(api_key)
+    if not key_data or not key_data.is_active:
+        raise HTTPException(401, "Invalid or inactive API key")
+
+    # Log API key usage
+    await usage_service.log_api_usage(
+        api_key_id=key_data.id,
+        org_id=key_data.organization_id,
+        endpoint=request.url.path,
+        timestamp=datetime.utcnow()
+    )
+
+    return key_data
+```
+
+# ================================
+# INPUT VALIDATION & SANITIZATION
+# ================================
+
+## Pydantic Model Standards
+- Use Pydantic v2 for ALL request/response models
+- Implement strict field validation with constraints
+- Use custom validators for business logic validation
+- Sanitize string inputs to prevent XSS attacks
+- Validate nested objects and arrays properly
+
+Required validation patterns:
+```python
+class UserCreate(BaseModel):
+    email: EmailStr = Field(
+        ...,
+        max_length=255,
+        description="User email address"
+    )
+    full_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=255,
+        pattern=r'^[a-zA-Z\s\-\.\']+$',
+        description="User full name"
+    )
+    password: SecretStr = Field(
+        ...,
+        min_length=12,
+        description="User password (minimum 12 characters)"
+    )
+
+    @field_validator('full_name')
+    @classmethod
+    def sanitize_name(cls, v: str) -> str:
+        """Sanitize name to prevent XSS"""
+        return html.escape(v.strip())
+
+    @field_validator('email')
+    @classmethod
+    def validate_email_domain(cls, v: str) -> str:
+        """Additional email validation"""
+        if v.endswith('.test') and not settings.TESTING:
+            raise ValueError('Test email domains not allowed in production')
+        return v.lower()
+
+    model_config = ConfigDict(
+        validate_assignment=True,
+        str_strip_whitespace=True,
+        validate_default=True
+    )
+```
+
+## File Upload Validation
+- Validate file types using magic bytes, not extensions
+- Implement file size limits per organization tier
+- Scan uploaded files for viruses
+- Store files in isolated storage with signed URLs
+- Generate unique file identifiers
+
+Required file upload pattern:
+```python
+class FileUpload(BaseModel):
+    filename: str = Field(..., max_length=255)
+    content_type: str = Field(..., max_length=100)
+    size_bytes: int = Field(..., gt=0, le=100_000_000)  # 100MB max
+
+    @field_validator('filename')
+    @classmethod
+    def validate_filename(cls, v: str) -> str:
+        # Remove path traversal attempts
+        v = os.path.basename(v)
+        # Sanitize filename
+        v = re.sub(r'[^\w\-_\.]', '_', v)
+        if not v or v.startswith('.'):
+            raise ValueError('Invalid filename')
+        return v
+
+@router.post("/v1/orgs/{org_id}/files")
+async def upload_file(
+    org_id: str,
+    file: UploadFile = File(...),
+    current_user: User = require_permission("files.create")
+):
+    # Validate file magic bytes
+    await validate_file_type(file)
+
+    # Virus scan
+    scan_result = await virus_scanner.scan_file(file)
+    if not scan_result.is_clean:
+        raise HTTPException(400, "File failed security scan")
+
+    # Store with unique ID
+    file_id = await file_service.store_file(file, org_id, current_user.id)
+    return {"file_id": file_id, "status": "uploaded"}
+```
+
+# ================================
+# ERROR HANDLING & LOGGING
+# ================================
+
+## Structured Error Responses
+- Use consistent error response format across all endpoints
+- Include correlation IDs for debugging
+- Never expose internal system details
+- Implement proper HTTP status codes
+- Provide actionable error messages for developers
+
+Required error response format:
+```python
+class ErrorResponse(BaseModel):
+    error: str = Field(..., description="Error type")
+    message: str = Field(..., description="Human-readable error message")
+    correlation_id: str = Field(..., description="Unique request identifier")
+    timestamp: datetime = Field(..., description="Error timestamp")
+    details: Optional[Dict[str, Any]] = Field(None, description="Additional error context")
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    correlation_id = getattr(request.state, 'correlation_id', str(uuid.uuid4()))
+
+    logger.error(
+        "HTTP exception occurred",
+        extra={
+            "correlation_id": correlation_id,
+            "status_code": exc.status_code,
+            "detail": exc.detail,
+            "path": request.url.path,
+            "method": request.method,
+            "user_id": getattr(request.state, 'user_id', None),
+            "org_id": getattr(request.state, 'org_id', None),
+            "ip_address": request.client.host
+        }
+    )
+
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=ErrorResponse(
+            error=exc.__class__.__name__,
+            message=str(exc.detail),
+            correlation_id=correlation_id,
+            timestamp=datetime.utcnow()
+        ).model_dump()
+    )
+```
+
+## Security Event Logging
+- Log ALL authentication attempts (success and failure)
+- Log authorization failures with context
+- Log suspicious activities (multiple failures, unusual patterns)
+- Include correlation IDs for request tracing
+- Never log sensitive data (passwords, tokens, PII)
+
+Required security logging:
+```python
+async def log_security_event(
+    event_type: str,
+    user_id: Optional[str] = None,
+    org_id: Optional[str] = None,
+    ip_address: Optional[str] = None,
+    details: Optional[Dict[str, Any]] = None
+):
+    """Log security-related events for monitoring and compliance"""
+    logger.warning(
+        f"Security event: {event_type}",
+        extra={
+            "event_type": event_type,
+            "user_id": user_id,
+            "org_id": org_id,
+            "ip_address": ip_address,
+            "details": details or {},
+            "timestamp": datetime.utcnow().isoformat(),
+            "service": "api"
+        }
+    )
+
+    # Also store in security events table for SOC2 compliance
+    await security_service.log_event(
+        event_type=event_type,
+        user_id=user_id,
+        org_id=org_id,
+        ip_address=ip_address,
+        details=details
+    )
+```
+
+# ================================
+# API DESIGN STANDARDS
+# ================================
+
+## RESTful Endpoint Design
+- Use consistent HTTP methods (GET, POST, PUT, PATCH, DELETE)
+- Implement proper HTTP status codes (200, 201, 204, 400, 401, 403, 404, 409, 422, 429, 500)
+- Use path parameters for resource identification
+- Use query parameters for filtering and pagination
+- Include organization ID in path for all tenant-specific endpoints
+
+Required endpoint patterns:
+```python
+# Collection endpoints
+GET    /v1/orgs/{org_id}/projects          # List projects
+POST   /v1/orgs/{org_id}/projects          # Create project
+
+# Resource endpoints
+GET    /v1/orgs/{org_id}/projects/{id}     # Get project
+PUT    /v1/orgs/{org_id}/projects/{id}     # Replace project
+PATCH  /v1/orgs/{org_id}/projects/{id}     # Update project
+DELETE /v1/orgs/{org_id}/projects/{id}     # Delete project
+
+# Sub-resource endpoints
+GET    /v1/orgs/{org_id}/projects/{id}/members     # List project members
+POST   /v1/orgs/{org_id}/projects/{id}/members     # Add project member
+```
+
+## Pagination Standards
+- Implement cursor-based pagination for large datasets
+- Include pagination metadata in responses
+- Limit maximum page size (default 20, max 100)
+- Provide navigation links for next/previous pages
+- Support filtering and sorting with pagination
+
+Required pagination implementation:
+```python
+class PaginationParams(BaseModel):
+    cursor: Optional[str] = Field(None, description="Pagination cursor")
+    limit: int = Field(20, ge=1, le=100, description="Items per page")
+    sort: Optional[str] = Field("created_at", description="Sort field")
+    order: Literal["asc", "desc"] = Field("desc", description="Sort order")
+
+class PaginatedResponse(BaseModel, Generic[T]):
+    items: List[T]
+    next_cursor: Optional[str]
+    has_more: bool
+    total_count: Optional[int] = None
+
+@router.get("/v1/orgs/{org_id}/projects")
+async def list_projects(
+    org_id: str,
+    pagination: PaginationParams = Depends(),
+    search: Optional[str] = Query(None, max_length=255),
+    current_user: User = Depends(get_current_user_with_org_access)
+) -> PaginatedResponse[Project]:
+    return await project_service.list_paginated(
+        org_id=org_id,
+        pagination=pagination,
+        search=search
+    )
+```
+
+## OpenAPI Documentation Standards
+- Document ALL endpoints with detailed descriptions
+- Include comprehensive request/response examples
+- Document all possible error responses
+- Use semantic versioning for API versions
+- Provide SDK generation configuration
+
+Required OpenAPI configuration:
+```python
+app = FastAPI(
+    title="VibeBiz API",
+    description="Multi-tenant SaaS API with enterprise security",
+    version="1.0.0",
+    contact={
+        "name": "VibeBiz Support",
+        "email": "support@vibebiz.com",
+        "url": "https://docs.vibebiz.com"
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+    },
+    servers=[
+        {"url": "https://api.vibebiz.com", "description": "Production"},
+        {"url": "https://staging-api.vibebiz.com", "description": "Staging"}
+    ]
+)
+
+@router.post(
+    "/v1/orgs/{org_id}/projects",
+    response_model=Project,
+    status_code=201,
+    summary="Create a new project",
+    description="Creates a new project within the specified organization. "
+                "Requires 'projects.create' permission.",
+    responses={
+        201: {
+            "description": "Project created successfully",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": "proj_123",
+                        "name": "My Project",
+                        "organization_id": "org_456",
+                        "created_at": "2024-01-01T12:00:00Z"
+                    }
+                }
+            }
+        },
+        400: {"description": "Invalid input data"},
+        403: {"description": "Insufficient permissions"},
+        409: {"description": "Project with this name already exists"}
+    },
+    tags=["Projects"]
+)
+async def create_project(
+    org_id: str = Path(..., description="Organization ID"),
+    project_data: ProjectCreate = Body(..., description="Project creation data"),
+    current_user: User = require_permission("projects.create")
+) -> Project:
+    """Create a new project with comprehensive validation and audit logging"""
+    return await project_service.create(project_data, org_id, current_user.id)
+```
+
+# ================================
+# DATABASE & PERFORMANCE
+# ================================
+
+## SQLAlchemy Best Practices
+- Use async SQLAlchemy with proper session management
+- Implement proper connection pooling
+- Use prepared statements and query optimization
+- Implement database health checks
+- Monitor query performance and slow query logs
+
+Required database patterns:
+```python
+class ProjectRepository:
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def create(self, project_data: ProjectCreate, org_id: str) -> Project:
+        """Create project with automatic audit logging"""
+        project = Project(
+            id=generate_id("proj_"),
+            organization_id=org_id,
+            **project_data.model_dump(exclude_unset=True)
+        )
+
+        self.db.add(project)
+        await self.db.flush()  # Get ID without committing
+
+        # Log creation for audit trail
+        await self._log_creation(project)
+
+        await self.db.commit()
+        await self.db.refresh(project)
+        return project
+
+    async def list_by_org(
+        self,
+        org_id: str,
+        pagination: PaginationParams
+    ) -> PaginatedResponse[Project]:
+        """List projects with efficient pagination"""
+        query = select(Project).where(Project.organization_id == org_id)
+
+        # Apply filtering
+        if pagination.search:
+            query = query.where(
+                Project.name.icontains(pagination.search)
+            )
+
+        # Apply sorting
+        if pagination.sort == "name":
+            order_col = Project.name
+        else:
+            order_col = Project.created_at
+
+        if pagination.order == "desc":
+            query = query.order_by(desc(order_col))
+        else:
+            query = query.order_by(asc(order_col))
+
+        # Apply pagination
+        query = query.limit(pagination.limit + 1)  # +1 to check has_more
+
+        if pagination.cursor:
+            cursor_data = decode_cursor(pagination.cursor)
+            query = query.where(order_col > cursor_data.value)
+
+        result = await self.db.execute(query)
+        items = result.scalars().all()
+
+        has_more = len(items) > pagination.limit
+        if has_more:
+            items = items[:-1]
+
+        next_cursor = None
+        if has_more and items:
+            next_cursor = encode_cursor(items[-1], pagination.sort)
+
+        return PaginatedResponse(
+            items=items,
+            next_cursor=next_cursor,
+            has_more=has_more
+        )
+```
+
+## Rate Limiting Implementation
+- Implement rate limiting on ALL endpoints
+- Use sliding window rate limiting algorithm
+- Implement different limits for different user tiers
+- Rate limit by user, API key, and IP address
+- Provide rate limit headers in responses
+
+Required rate limiting:
+```python
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@router.post("/v1/orgs/{org_id}/projects")
+@limiter.limit("10/minute")  # 10 requests per minute per IP
+async def create_project(
+    request: Request,
+    org_id: str,
+    project_data: ProjectCreate,
+    current_user: User = require_permission("projects.create")
+):
+    # Enhanced rate limiting based on user tier
+    user_limit = get_user_rate_limit(current_user.subscription_tier)
+    if not await check_user_rate_limit(current_user.id, user_limit):
+        raise HTTPException(
+            status_code=429,
+            detail="User rate limit exceeded",
+            headers={"Retry-After": "60"}
+        )
+
+    return await project_service.create(project_data, org_id, current_user.id)
+```
+
+# ================================
+# SECURITY HEADERS & MIDDLEWARE
+# ================================
+
+## Required Security Headers
+- Implement comprehensive security headers middleware
+- Use HTTPS only with HSTS headers
+- Implement proper CORS configuration
+- Add security headers for XSS protection
+- Include CSP headers for frontend security
+
+Required security middleware:
+```python
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response = await call_next(request)
+
+    # Security headers
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+
+    # Remove server identification
+    response.headers.pop("Server", None)
+
+    return response
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allow_headers=["*"],
+    expose_headers=["X-RateLimit-*", "X-Correlation-ID"]
+)
+```
+
+## Request/Response Middleware
+- Add correlation IDs to all requests
+- Log all API requests with timing
+- Implement request size limits
+- Add response time headers
+- Monitor and alert on slow requests
+
+Required request middleware:
+```python
+@app.middleware("http")
+async def request_middleware(request: Request, call_next):
+    # Generate correlation ID
+    correlation_id = str(uuid.uuid4())
+    request.state.correlation_id = correlation_id
+
+    # Start timing
+    start_time = time.time()
+
+    # Log request
+    logger.info(
+        "API request started",
+        extra={
+            "correlation_id": correlation_id,
+            "method": request.method,
+            "path": request.url.path,
+            "query_params": str(request.query_params),
+            "ip_address": request.client.host,
+            "user_agent": request.headers.get("user-agent")
+        }
+    )
+
+    response = await call_next(request)
+
+    # Calculate response time
+    process_time = time.time() - start_time
+
+    # Add headers
+    response.headers["X-Correlation-ID"] = correlation_id
+    response.headers["X-Response-Time"] = str(process_time)
+
+    # Log response
+    logger.info(
+        "API request completed",
+        extra={
+            "correlation_id": correlation_id,
+            "status_code": response.status_code,
+            "response_time": process_time
+        }
+    )
+
+    return response
+```

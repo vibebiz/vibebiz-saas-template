@@ -1,0 +1,260 @@
+---
+description: rules for monorepo best pratices, folder structure and creating new files
+globs:
+alwaysApply: false
+---
+# Monorepo Development Best Practices - VibeBiz Standards
+# For Multi-Package Repository Management, Build Systems, and Development Workflow
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 🏗️ MONOREPO STRUCTURE & ORGANIZATION
+# =============================================================================
+
+## Directory Structure Standards
+- ALWAYS follow the VibeBiz canonical monorepo structure
+- ALWAYS group related functionality in appropriate top-level directories
+- NEVER mix application code with infrastructure or tooling
+- ALWAYS use consistent naming conventions across all packages
+- ALWAYS maintain clear separation of concerns between layers
+- NEVER create circular dependencies between packages
+
+## Core Directory Structure
+```
+vibebiz-monorepo/
+├── apps/                    # User-facing applications
+│   ├── public-web/         # Customer Next.js app
+│   ├── admin-web/          # Admin dashboard
+│   ├── dev-portal/         # Developer portal
+│   ├── mobile/             # React Native + Expo
+│   └── marketing/          # Astro marketing site
+├── services/               # Backend APIs
+│   ├── public-api/         # Core business API (FastAPI)
+│   ├── admin-api/          # Admin operations
+│   ├── auth/               # Authentication service
+│   ├── organizations/      # Multi-tenant management
+│   ├── payments/           # Stripe integration
+│   ├── notifications/      # Multi-channel notifications
+│   ├── agents/             # AI/LLM workflows
+│   └── mcp/                # MCP tool server
+├── packages/               # Shared libraries
+│   ├── ui-kit/             # React components
+│   ├── api-client/         # Generated API client
+│   ├── database/           # Schemas & migrations
+│   ├── auth-lib/           # Auth utilities
+│   ├── types/              # TypeScript types
+│   ├── config/             # Shared configuration
+│   └── utils/              # Utility functions
+├── infra/                  # Infrastructure as code
+├── docs/                   # Documentation
+├── tools/                  # Development tools
+└── tests/                  # Cross-cutting tests
+```
+
+## Package Naming Standards
+- ALWAYS prefix internal packages with @vibebiz/ scope
+- NEVER create packages with overly generic names
+- ALWAYS group related packages in logical directories
+- NEVER create packages with circular dependencies
+
+# =============================================================================
+# 📦 PACKAGE MANAGEMENT & DEPENDENCIES
+# =============================================================================
+
+## pnpm Workspace Configuration
+- ALWAYS use pnpm for package management in monorepos
+- ALWAYS define workspace packages in pnpm-workspace.yaml
+- NEVER install dependencies directly in the root without justification
+- ALWAYS use workspace references for internal packages
+- ALWAYS pin exact versions for critical dependencies
+- NEVER commit node_modules or lock files except pnpm-lock.yaml
+
+```yaml
+# pnpm-workspace.yaml
+packages:
+  - 'apps/*'
+  - 'services/*'
+  - 'packages/*'
+  - 'tools/*'
+```
+
+## Dependency Management Strategy
+- ALWAYS use workspace protocol for internal package dependencies
+- ALWAYS define peer dependencies correctly for shared packages
+- NEVER duplicate dependencies across packages unnecessarily
+- ALWAYS use consistent versions for shared dependencies
+- ALWAYS document breaking changes in package versions
+- NEVER publish internal packages to public registries
+
+# =============================================================================
+# 🔧 BUILD SYSTEM & TOOLING
+# =============================================================================
+
+## Turborepo Configuration
+- ALWAYS use Turborepo for build orchestration
+- ALWAYS define proper task dependencies and caching
+- NEVER build packages that haven't changed
+- ALWAYS optimize build pipelines for CI/CD
+- ALWAYS cache build artifacts appropriately
+- NEVER ignore build performance optimization
+
+```json
+// turbo.json essentials
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "build/**"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
+```
+
+## Shared Configuration Management
+- ALWAYS centralize common configurations in the config/ directory
+- ALWAYS extend from shared configs in individual packages
+- NEVER duplicate configuration across packages
+- ALWAYS version configuration changes appropriately
+- ALWAYS document configuration options
+- NEVER hardcode environment-specific values
+
+# =============================================================================
+# 🔄 DEVELOPMENT WORKFLOW
+# =============================================================================
+
+## Local Development Setup
+- ALWAYS provide automated setup scripts for new developers
+- ALWAYS document prerequisites and system requirements
+- NEVER require manual configuration for basic development
+- ALWAYS use consistent environment variables across packages
+- ALWAYS provide health checks for development services
+- NEVER commit sensitive environment variables
+
+## Development Commands and Scripts
+- ALWAYS provide consistent npm/pnpm scripts across packages
+- ALWAYS use Turborepo for task orchestration
+- NEVER require developers to remember complex command sequences
+- ALWAYS provide shortcuts for common development tasks
+- ALWAYS include help and documentation commands
+- NEVER leave scripts undocumented
+
+```json
+// Root package.json scripts
+{
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules .turbo"
+  }
+}
+```
+
+## Hot Reloading and Development Experience
+- ALWAYS implement fast refresh for all development environments
+- ALWAYS minimize rebuild times with proper caching
+- NEVER require full rebuilds for small changes
+- ALWAYS provide immediate feedback for errors and warnings
+- ALWAYS support incremental type checking
+- NEVER let development builds become slower than necessary
+
+# =============================================================================
+# 🧪 TESTING STRATEGIES
+# =============================================================================
+
+## Test Organization and Structure
+- ALWAYS organize tests by scope (unit, integration, e2e)
+- ALWAYS co-locate unit tests with source code
+- NEVER mix different types of tests in the same file
+- ALWAYS use descriptive test names and organize in suites
+- ALWAYS mock external dependencies appropriately
+- NEVER write tests that depend on external services in unit tests
+
+## Comprehensive Testing Configuration
+- ALWAYS achieve minimum 80% code coverage across packages
+- ALWAYS test multi-tenant data isolation
+- NEVER skip testing error conditions and edge cases
+- ALWAYS use proper test data factories and fixtures
+- ALWAYS implement proper test cleanup
+- NEVER rely on test execution order
+
+# =============================================================================
+# 📖 DOCUMENTATION STANDARDS
+# =============================================================================
+
+## Documentation Structure and Standards
+- ALWAYS maintain up-to-date documentation for all packages
+- ALWAYS include examples in API documentation
+- NEVER leave public APIs undocumented
+- ALWAYS use consistent documentation formats
+- ALWAYS include troubleshooting guides
+- NEVER assume prior knowledge in getting started docs
+
+## Package Documentation Requirements
+- Each package MUST have a README.md with usage examples
+- ALWAYS document breaking changes in CHANGELOG.md
+- ALWAYS include installation and development instructions
+- NEVER skip documenting configuration options
+- ALWAYS provide migration guides for major version changes
+
+# =============================================================================
+# 🚨 ANTI-PATTERNS TO AVOID
+# =============================================================================
+
+## Dependency Anti-Patterns
+- NEVER create circular dependencies between packages
+- NEVER duplicate large dependencies across packages
+- NEVER use different versions of the same dependency without justification
+- NEVER include dev dependencies in production builds
+- NEVER bypass workspace dependency resolution
+
+## Build Anti-Patterns
+- NEVER build all packages when only one changed
+- NEVER ignore build caching opportunities
+- NEVER create builds that take longer than necessary
+- NEVER skip incremental builds in development
+- NEVER ignore build performance metrics
+
+## Testing Anti-Patterns
+- NEVER write tests that depend on specific execution order
+- NEVER skip cleaning up test data and resources
+- NEVER use real external services in unit tests
+- NEVER ignore test failures in CI/CD
+- NEVER skip testing package boundaries and interfaces
+
+# =============================================================================
+# 📊 QUALITY GATES - MUST PASS BEFORE MERGE
+# =============================================================================
+
+## Automated Quality Checks
+- ✅ All unit tests pass with minimum 80% coverage
+- ✅ All integration tests pass with real database scenarios
+- ✅ All E2E tests pass including multi-tenant flows
+- ✅ ESLint and Prettier formatting checks pass
+- ✅ TypeScript compilation succeeds with no errors
+- ✅ Python type checking passes with mypy
+- ✅ Build artifacts generate successfully
+- ✅ No circular dependencies detected
+- ✅ Package dependency analysis passes
+
+## Performance Quality Gates
+- ✅ Build time under acceptable thresholds
+- ✅ Bundle size within limits
+- ✅ Test execution time optimized
+- ✅ Development server startup under 30s
+- ✅ Hot reload under 5s for changes
+
+Remember: Monorepo success depends on consistent structure, shared tooling, and developer experience optimization. Every package should follow the same patterns and conventions.

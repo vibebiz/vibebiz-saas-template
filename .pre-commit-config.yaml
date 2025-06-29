@@ -46,14 +46,6 @@ repos:
       - id: ruff-format # BE-01 (Black is now integrated into Ruff)
         files: \.py$
 
-  - repo: https://github.com/pycqa/isort
-    rev: 6.0.1
-    hooks:
-      - id: isort # BE-01
-        name: isort (python)
-        args: ['--profile', 'black']
-        files: \.py$
-
   - repo: https://github.com/PyCQA/bandit
     rev: 1.8.5
     hooks:
@@ -89,11 +81,11 @@ repos:
         files: \.[jt]sx?$
         # Requires .eslintrc.js and dependencies in package.json
         additional_dependencies:
-          - eslint@^9.4.0
+          - eslint@^9.30.0
           - eslint-plugin-security@^3.0.1
-          - '@typescript-eslint/parser@^8.0.0'
-          - '@typescript-eslint/eslint-plugin@^8.0.0'
-          - typescript-eslint@^8.0.0
+          - '@typescript-eslint/parser@^8.35.0'
+          - '@typescript-eslint/eslint-plugin@^8.35.0'
+          - typescript-eslint@^8.35.0
 
   - repo: local
     hooks:
@@ -124,9 +116,12 @@ repos:
       - id: markdownlint # DOC-03
         args: ['--fix']
 
-  - repo: https://github.com/spectralops/spectral-pre-commit
-    rev: 8156c8ec2a371c90259285ebff564697c3cf30be # Pinned to a commit as no tags are available
+  - repo: local
     hooks:
-      - id: spectral # DOC-02
+      - id: spectral-lint # DOC-02
+        name: Spectral API Linting
+        description: 'Lints OpenAPI specs using Spectral, requires SPECTRAL_DSN in .env'
+        entry: scripts/spectral-wrapper.sh
+        language: script
         files: \.(yaml|yml|json)$
-        # Requires a .spectral.yaml ruleset file
+        require_serial: true

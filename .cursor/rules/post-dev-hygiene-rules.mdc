@@ -1,0 +1,293 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Post-Development Hygiene Rules for LLMs
+# VibeBiz Platform - Comprehensive Checklist for Code Quality & Deployment Readiness
+# Last Updated: 2025-01-27
+
+## 🎯 MANDATORY POST-DEVELOPMENT CHECKLIST
+Execute these steps **in order** after completing any development work on the VibeBiz platform.
+
+First, create an implimentation plan to run all the rules below.  check off and verify each rule as you run it.
+
+---
+
+## 📦 1. PACKAGE VERSION MANAGEMENT
+
+### JavaScript/TypeScript Packages
+- **ALWAYS** verify packages are latest versions using web search
+- Update `package.json`, `packages/*/package.json`, and `apps/*/package.json`
+- Use semantic versioning (^X.Y.Z for compatible updates)
+- **COMMAND**: `pnpm update --latest` followed by `pnpm install`
+- **VERIFY**: Run `pnpm audit` and `pnpm outdated` to check for issues
+
+### Python Packages
+- **ALWAYS** update `pyproject.toml` dependencies to latest versions
+- Update both main dependencies and dev dependencies sections
+- **COMMAND**: `pip list --outdated` to check for updates
+- **VERIFY**: Ensure no security vulnerabilities with `pip audit` or `safety check`
+
+### Version Consistency Check
+- Ensure same package versions across all workspace packages
+- Check GitHub Actions workflow files (`.github/workflows/*.yml`) use latest action versions
+- Update Docker base images to latest stable versions
+- **VERIFY**: All version references are consistent across the monorepo
+
+---
+
+## 🐍 2. PYTHON REQUIREMENTS MANAGEMENT
+
+### Requirements Files Update
+- **IF** any Python packages were added/modified:
+  - Update `pyproject.toml` with new dependencies
+  - Regenerate `requirements.txt` if it exists: `pip freeze > requirements.txt`
+  - Update development requirements in `pyproject.toml` `[tool.poetry.group.dev.dependencies]`
+- **VERIFY**: Fresh virtual environment can install all dependencies
+- **COMMAND**: `python -m venv test_env && source test_env/bin/activate && pip install -e ".[dev,test]"`
+
+### Python Version Compatibility
+- Ensure compatibility with Python 3.11, 3.12, and 3.13
+- Update `pyproject.toml` `python` version constraints if needed
+- **VERIFY**: Check GitHub Actions matrix includes all supported Python versions
+
+---
+
+## 🗄️ 3. DATABASE PERSISTENCE & MIGRATIONS
+
+### Database Schema Changes
+- **IF** database schema was modified:
+  - Create Alembic migration: `alembic revision --autogenerate -m "descriptive_message"`
+  - Review generated migration for correctness
+  - Test migration on clean database: `alembic upgrade head`
+  - Test rollback: `alembic downgrade -1` then `alembic upgrade head`
+- **VERIFY**: Fresh database install works with: `alembic upgrade head`
+
+### Seed Data & Test Data
+- Update database seeders if new required data was added
+- Ensure test data factories in `packages/test-utils/src/factories.ts` cover new models
+- **VERIFY**: Clean install with `pnpm db:reset && pnpm db:seed` works
+
+### TypeScript/Node.js Migrations
+- **IF** database schema was modified by a Node.js service:
+  - Create Prisma/Drizzle migration: `pnpm --filter <service-name> db:migrate-dev`
+  - Review generated migration for correctness
+  - **VERIFY**: Migrations apply cleanly and data access is type-safe
+
+### Environment Variables
+- Add any new required environment variables to `.env.example`
+- Update `docs/DEPLOYMENT.md` with new environment variable documentation
+- **VERIFY**: Application starts with only `.env.example` variables set
+
+---
+
+## 📚 4. DOCUMENTATION UPDATES
+
+### Architecture Documentation
+- **MANDATORY**: Update `docs/ARCHITECTURE.md` if:
+  - New services were added
+  - API endpoints were modified
+  - Database schema changed
+  - New dependencies were introduced
+  - Security patterns were implemented
+- Include diagrams using Mermaid syntax for complex changes
+
+### Architecture Decision Records (ADRs)
+- **IF** a significant architectural decision was made (e.g., new tech, pattern change):
+  - Create a new ADR: `npx adr-tools new "Title of decision"`
+  - Fill out the new file in `docs/adr/`
+  - **VERIFY**: Decision is clearly documented with context and consequences
+
+### Event & API Documentation
+- Update OpenAPI schemas in service directories
+- Regenerate API client types: `pnpm generate:api-types`
+- Update API documentation in `docs/api/` directory
+- **VERIFY**: API documentation matches actual implementation
+
+### README Updates
+- Update main `README.md` if installation steps changed
+- Update service-specific READMEs in `services/*/README.md` and `apps/*/README.md`
+- Update version compatibility information
+- **VERIFY**: Fresh developer can follow README to get system running
+
+---
+
+## 🧪 5. TEST VALIDATION & CREATION
+
+### New Functionality Testing
+- **MANDATORY**: Create tests for all new functionality
+- **Unit Tests**: Test individual functions/methods (minimum 80% coverage)
+- **Integration Tests**: Test API endpoints and database interactions (using Testcontainers)
+- **E2E Tests**: Test critical user journeys if UI was modified (using Playwright)
+- **Contract Tests**: **IF** a consumer/provider contract changed, create/update Pact tests
+- **Advanced Tests**: Consider if Mutation (Stryker/Atheris) or Architecture (pytest-arch) tests are needed for complex changes
+
+### Test Quality Validation
+- Tests must follow VibeBiz testing patterns from `packages/test-utils`
+- Use proper test factories and mocks
+- Include both positive and negative test cases
+- Test error conditions and edge cases
+- **VERIFY**: Tests actually test the intended functionality, not just implementation details
+
+### Test Coverage Requirements
+- Maintain minimum 60% test coverage (MVP requirement)
+- New code should have 80%+ coverage
+- **COMMAND**: `pnpm test:coverage` to generate coverage reports
+- **VERIFY**: Coverage thresholds are met in Jest and pytest configurations
+
+---
+
+## ✅ 6. TEST EXECUTION & VERIFICATION
+
+### Full Test Suite Execution
+- **COMMAND**: `pnpm test` (runs all tests across all packages)
+- **REQUIREMENT**: ALL tests must pass
+- **IF TESTS FAIL**: Fix issues before proceeding - no exceptions
+- Check for flaky tests by running suite 3 times
+
+### Test Environment Verification
+- Tests run in isolated environments
+- No tests depend on external services unless explicitly mocked
+- Database tests use test database or transactions
+- **VERIFY**: Tests pass in CI environment (GitHub Actions)
+
+### Performance Test Validation
+- Ensure tests complete within reasonable time (< 5 minutes for full suite)
+- No memory leaks in test runs
+- **COMMAND**: `pnpm test:performance` if performance tests exist
+
+---
+
+## 🔍 7. CODE QUALITY & LINTING
+
+### Pre-commit Hooks
+- **COMMAND**: `pnpm lint` (runs ESLint, Prettier, TypeScript checks)
+- **COMMAND**: `ruff check . && black . && mypy .` (Python linting)
+- **REQUIREMENT**: Zero linting errors before commit
+- Fix all warnings where possible
+
+### Security Scanning
+- **COMMAND**: `pnpm audit` for JavaScript dependencies
+- **COMMAND**: `gitleaks detect --source . -v` for secret scanning
+- **COMMAND**: `semgrep scan --config auto` for deep static analysis
+- **COMMAND**: `bandit -r services/ packages/` for Python security issues
+- **COMMAND**: `safety check` for Python dependency vulnerabilities
+- **NOTE**: For IaC changes, run `tfsec` or `Checkov`. For Dockerfile changes, run `trivy`.
+- **REQUIREMENT**: No HIGH or CRITICAL security issues
+
+### Code Formatting
+- **COMMAND**: `pnpm format` (Prettier for JS/TS, Black for Python)
+- Ensure consistent code style across the platform
+- **VERIFY**: No formatting changes when running formatters
+
+### Type Checking
+- **COMMAND**: `pnpm type-check` for TypeScript
+- **COMMAND**: `mypy .` for Python
+- **REQUIREMENT**: No type errors
+
+---
+
+## 🚫 8. .gitignore MAINTENANCE
+
+### Generated Files
+- Add build artifacts: `dist/`, `.next/`, `__pycache__/`
+- Add coverage reports: `coverage/`, `.coverage`, `htmlcov/`
+- Add test results: `test-results/`, `.pytest_cache/`
+- Add OS files: `.DS_Store`, `Thumbs.db`
+
+### Environment & Secrets
+- Add environment files: `.env.local`, `.env.*.local`
+- Add IDE files: `.vscode/settings.json`, `.idea/`
+- Add temporary files: `*.tmp`, `*.temp`, `*.log`
+
+### Package Manager Files
+- Add lock files if not tracking: `pnpm-lock.yaml` (only if workspace root has it)
+- Add node_modules: `node_modules/`
+- Add Python environments: `venv/`, `.venv/`, `env/`
+
+### **VERIFY**: Run `git status` to ensure no sensitive files are staged
+
+---
+
+## 🚀 9. FINAL VERIFICATION CHECKLIST
+
+### Clean Install Test
+1. Clone repository to fresh directory
+2. Run `pnpm install`
+3. Run `pnpm build`
+4. Run `pnpm test`
+5. Run `pnpm dev` and verify system starts
+6. **REQUIREMENT**: All steps must succeed
+
+### CI/CD Pipeline Check
+- Ensure GitHub Actions workflows will pass
+- Check that all required environment variables are documented
+- Verify Docker builds succeed if applicable
+- **COMMAND**: Push to feature branch and verify CI passes
+
+### Performance & Resource Usage
+- Monitor memory usage during test runs
+- Ensure build times are reasonable (< 5 minutes)
+- Check for any resource leaks or excessive memory usage
+- **VERIFY**: System performs adequately on standard development machine
+
+---
+
+## 🔧 TROUBLESHOOTING GUIDE FOR LLMs
+
+### If Package Updates Fail
+1. Check for breaking changes in package changelogs
+2. Update configuration files for new package versions
+3. Search for migration guides for major version updates
+4. Consider pinning problematic packages temporarily
+
+### If Tests Fail After Updates
+1. Check for API changes in testing libraries
+2. Update test configurations for new package versions
+3. Review Jest/pytest configuration compatibility
+4. Update custom matchers or test utilities
+
+### If Linting Fails
+1. Update linting configurations for new rule sets
+2. Fix auto-fixable issues: `pnpm lint:fix`
+3. Update TypeScript/ESLint configs for compatibility
+4. Document any necessary rule exceptions
+
+### If Documentation Build Fails
+1. Check Markdown syntax and links
+2. Verify Mermaid diagram syntax
+3. Ensure all referenced files exist
+4. Update documentation dependencies
+
+---
+
+## 📋 SUCCESS CRITERIA
+
+**ALL of the following must be true before considering development complete:**
+
+✅ All packages are latest versions (verified via web search)
+✅ All Python requirements are updated and documented
+✅ Database migrations work on fresh install
+✅ All documentation reflects current system state
+✅ All tests pass with adequate coverage
+✅ No linting or formatting errors
+✅ No security vulnerabilities
+✅ .gitignore prevents sensitive file commits
+✅ Clean install process works completely
+✅ CI/CD pipeline will succeed
+
+**IF ANY ITEM FAILS**: Address the issue before proceeding. No exceptions.
+
+---
+
+## 🎖️ QUALITY GATES
+
+This checklist enforces the VibeBiz platform's commitment to:
+- **Security**: No vulnerabilities, proper secret management
+- **Reliability**: Comprehensive testing, database integrity
+- **Maintainability**: Clear documentation, consistent code style
+- **Performance**: Efficient builds, fast test execution
+- **Compatibility**: Latest stable versions, cross-platform support
+
+Remember: **Quality is not negotiable in a multi-tenant SaaS platform.**

@@ -1,27 +1,51 @@
 {
-  "name": "vibebiz-saas-template",
+  "name": "@vibebiz/saas-template",
   "version": "1.0.0",
-  "description": "VibeBiz SaaS Template",
+  "description": "VibeBiz SaaS Template - Progressive architecture for rapid SaaS development",
   "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:unit": "turbo run test:unit",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "format": "turbo run format",
+    "validate": "turbo run validate",
+    "all-checks": "./scripts/run-all-checks.sh"
+  },
   "devDependencies": {
-    "@commitlint/cli": "^19.3.0",
-    "@commitlint/config-conventional": "^19.2.2",
-    "eslint": "^9.4.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@types/node": "^24.0.7",
+    "@typescript-eslint/eslint-plugin": "^8.35.0",
+    "@types/jest": "^29.5.12",
+    "@typescript-eslint/parser": "^8.35.0",
+    "@testing-library/jest-dom": "^6.4.8",
+    "eslint": "^9.30.0",
     "eslint-plugin-security": "^3.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
-    "typescript-eslint": "^8.0.0",
-    "globals": "^15.6.0",
-    "prettier": "^3.3.2",
-    "typescript": "^5.4.5"
+    "globals": "^16.2.0",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.0"
   },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
     ]
   },
-  "scripts": {
-    "all-checks": "./scripts/run-all-checks.sh"
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
   },
-  "type": "module"
+  "packageManager": "pnpm@9.15.4"
 }
