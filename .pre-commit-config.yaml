@@ -1,0 +1,132 @@
+# VibeBiz Pre-Commit Hooks Configuration
+# Based on: product-requirements/vibebiz-pre-commit-requirements.md
+
+# To install:
+# 1. pip install pre-commit
+# 2. pre-commit install
+# 3. (For commit-msg hooks) pre-commit install --hook-type commit-msg
+
+# For Node.js based hooks, ensure you have a package.json with dependencies like
+# prettier, eslint, typescript, @commitlint/cli, @commitlint/config-conventional, etc.
+# Then run `npm install`.
+
+repos:
+  # ==============================================================================
+  # 1. Global & Cross-Cutting Hooks
+  # ==============================================================================
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files # GBL-03
+        args: ['--maxkb=1024'] # 1 MB
+      - id: end-of-file-fixer # GBL-04
+      - id: trailing-whitespace # GBL-05
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.27.2
+    hooks:
+      - id: gitleaks # GBL-01
+
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.22.0
+    hooks:
+      - id: commitlint # GBL-02
+        stages: [commit-msg]
+        additional_dependencies: ['@commitlint/config-conventional']
+
+  # ==============================================================================
+  # 2. Backend Hooks (Python / FastAPI)
+  # ==============================================================================
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.1
+    hooks:
+      - id: ruff # BE-03
+        args: [--fix, --exit-non-zero-on-fix]
+        files: \.py$
+      - id: ruff-format # BE-01 (Black is now integrated into Ruff)
+        files: \.py$
+
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort # BE-01
+        name: isort (python)
+        args: ['--profile', 'black']
+        files: \.py$
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.5
+    hooks:
+      - id: bandit # BE-02
+        # Consider using a baseline file for existing projects: `bandit -r . -f json -o bandit-baseline.json`
+        # Then add `args: ["-b", "bandit-baseline.json"]`
+        files: \.py$
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.16.1
+    hooks:
+      - id: mypy # BE-04
+        files: \.py$
+        # Mypy needs a config file (e.g., mypy.ini or in pyproject.toml)
+        # and all dependencies available in the environment.
+        # It can be slow, consider running it in CI.
+        additional_dependencies: [] # Add python dependencies here e.g. fastapi, pydantic
+
+  # ==============================================================================
+  # 3. Frontend Hooks (TypeScript / Next.js / Astro)
+  # ==============================================================================
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier # FE-01
+        types_or: [javascript, jsx, ts, tsx, css, scss, html, json, yaml, markdown]
+        # Ensure you have a .prettierrc or similar config file.
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.30.0
+    hooks:
+      - id: eslint # FE-02
+        files: \.[jt]sx?$
+        # Requires .eslintrc.js and dependencies in package.json
+        additional_dependencies:
+          - eslint@^9.4.0
+          - eslint-plugin-security@^3.0.1
+          - '@typescript-eslint/parser@^8.0.0'
+          - '@typescript-eslint/eslint-plugin@^8.0.0'
+          - typescript-eslint@^8.0.0
+
+  - repo: local
+    hooks:
+      - id: tsc-noemit # FE-03
+        name: tsc-noemit
+        entry: npx tsc --noEmit
+        language: node
+        types_or: [ts, tsx]
+        pass_filenames: false
+
+  # ==============================================================================
+  # 4. Infrastructure as Code (IaC) Hooks
+  # ==============================================================================
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.99.4
+    hooks:
+      - id: terraform_fmt # IAC-01
+      - id: terraform_validate # IAC-02
+      - id: terraform_tfsec # IAC-03
+      - id: terraform_checkov # IAC-03
+
+  # ==============================================================================
+  # 5. API & Documentation Hooks
+  # ==============================================================================
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint # DOC-03
+        args: ['--fix']
+
+  - repo: https://github.com/spectralops/spectral-pre-commit
+    rev: 8156c8ec2a371c90259285ebff564697c3cf30be # Pinned to a commit as no tags are available
+    hooks:
+      - id: spectral # DOC-02
+        files: \.(yaml|yml|json)$
+        # Requires a .spectral.yaml ruleset file
