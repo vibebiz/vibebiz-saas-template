@@ -3,6 +3,6 @@ const nextConfig = {
   experimental: {
     // Enable any experimental features if needed
   },
-}
+};
 
-module.exports = nextConfig 
+module.exports = nextConfig;

@@ -1,0 +1,14 @@
+name: Enforce main-source
+
+on:
+  pull_request:
+
+jobs:
+  check_source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prevent merging from non-develop
+        if: github.base_ref == 'main' && github.head_ref != 'develop'
+        run: |
+          echo "❌ ERROR: Only 'develop' branch may be merged into 'main'."
+          exit 1

@@ -1,6 +1,6 @@
 ---
 description: rules for monorepo best pratices, folder structure and creating new files
-globs: 
+globs:
 alwaysApply: false
 ---
 # Monorepo Development Best Practices - VibeBiz Standards
@@ -73,7 +73,7 @@ vibebiz-monorepo/
 # pnpm-workspace.yaml
 packages:
   - 'apps/*'
-  - 'services/*'  
+  - 'services/*'
   - 'packages/*'
   - 'tools/*'
 ```
@@ -133,7 +133,7 @@ packages:
 # 🔄 DEVELOPMENT WORKFLOW
 # =============================================================================
 
-## Local Development Setup 
+## Local Development Setup
 - ALWAYS provide automated setup scripts for new developers
 - ALWAYS document prerequisites and system requirements
 - NEVER require manual configuration for basic development
@@ -214,7 +214,7 @@ packages:
 # 🚨 ANTI-PATTERNS TO AVOID
 # =============================================================================
 
-## Dependency Anti-Patterns  
+## Dependency Anti-Patterns
 - NEVER create circular dependencies between packages
 - NEVER duplicate large dependencies across packages
 - NEVER use different versions of the same dependency without justification
@@ -230,7 +230,7 @@ packages:
 
 ## Testing Anti-Patterns
 - NEVER write tests that depend on specific execution order
-- NEVER skip cleaning up test data and resources  
+- NEVER skip cleaning up test data and resources
 - NEVER use real external services in unit tests
 - NEVER ignore test failures in CI/CD
 - NEVER skip testing package boundaries and interfaces

@@ -1,5 +1,5 @@
 ---
-description: 
+description:
 globs: *.py
 alwaysApply: false
 ---
@@ -279,7 +279,7 @@ alwaysApply: false
 
 ## Pre-Commit Quality Checks
 - ✅ All code passes Black formatting
-- ✅ All code passes Ruff linting  
+- ✅ All code passes Ruff linting
 - ✅ All code passes mypy type checking
 - ✅ All tests pass with minimum 80% coverage
 - ✅ All security scans pass (bandit, safety)

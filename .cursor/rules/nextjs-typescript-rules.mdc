@@ -1,6 +1,6 @@
 ---
 description: rules for nextjs and typescript best practices
-globs: 
+globs:
 alwaysApply: false
 ---
 # Next.js/TypeScript Development Standards - VibeBiz

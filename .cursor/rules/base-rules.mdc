@@ -1,6 +1,6 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
 # VibeBiz .cursor/rules - Comprehensive Development Standards
@@ -419,5 +419,5 @@ All other violations should be addressed before merge approval.
 ./scripts/test-all.sh
 ```
 
-Remember: Quality is not negotiable in a multi-tenant SaaS platform. 
+Remember: Quality is not negotiable in a multi-tenant SaaS platform.
 Every line of code affects multiple organizations and users.

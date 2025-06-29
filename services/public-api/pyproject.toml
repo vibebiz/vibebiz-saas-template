@@ -123,6 +123,7 @@ ensure_newline_before_comments = true
 line_length = 88
 
 [tool.mypy]
+mypy_path = "src"
 python_version = "3.12"
 check_untyped_defs = true
 ignore_missing_imports = true
@@ -136,6 +137,10 @@ warn_return_any = true
 no_implicit_reexport = true
 
 [tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -148,9 +153,7 @@ select = [
 ignore = []
 fixable = ["ALL"]
 unfixable = []
-line-length = 88
-target-version = "py312"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"tests/*" = ["B011"] 
+"tests/*" = ["B011"]

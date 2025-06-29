@@ -3,20 +3,11 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        "dist/**",
-        ".next/**",
-        "build/**",
-        "out/**"
-      ]
+      "outputs": ["dist/**", ".next/**", "build/**", "out/**"]
     },
     "test": {
       "dependsOn": ["^build"],
-      "outputs": [
-        "coverage/**",
-        ".coverage",
-        "test-results/**"
-      ],
+      "outputs": ["coverage/**", ".coverage", "test-results/**"],
       "inputs": [
         "src/**/*.ts",
         "src/**/*.tsx",
@@ -34,19 +25,11 @@
     },
     "test:unit": {
       "dependsOn": ["^build"],
-      "outputs": [
-        "coverage/**",
-        ".coverage"
-      ]
+      "outputs": ["coverage/**", ".coverage"]
     },
     "test:coverage": {
       "dependsOn": ["test"],
-      "outputs": [
-        "coverage/**",
-        ".coverage",
-        "coverage.xml",
-        "htmlcov/**"
-      ]
+      "outputs": ["coverage/**", ".coverage", "coverage.xml", "htmlcov/**"]
     },
     "lint": {
       "outputs": []
@@ -76,4 +59,4 @@
     ".env",
     ".env.local"
   ]
-} 
+}

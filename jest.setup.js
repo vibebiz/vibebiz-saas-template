@@ -22,10 +22,7 @@ beforeAll(() => {
   };
 
   console.warn = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Warning: ')
-    ) {
+    if (typeof args[0] === 'string' && args[0].includes('Warning: ')) {
       return;
     }
     originalWarn.call(console, ...args);
@@ -46,7 +43,7 @@ global.testUtils = {
     full_name: 'Test User',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    ...overrides
+    ...overrides,
   }),
 
   createMockOrganization: (overrides = {}) => ({
@@ -55,7 +52,7 @@ global.testUtils = {
     slug: 'test-org',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    ...overrides
+    ...overrides,
   }),
 
   // Mock API responses
@@ -63,12 +60,12 @@ global.testUtils = {
     status,
     data,
     headers: {
-      'content-type': 'application/json'
-    }
+      'content-type': 'application/json',
+    },
   }),
 
   // Wait for async operations
-  waitFor: (ms = 100) => new Promise(resolve => setTimeout(resolve, ms))
+  waitFor: (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms)),
 };
 
 // Environment variables for testing
@@ -82,13 +79,12 @@ const originalConsoleWarn = console.warn;
 console.warn = (...args) => {
   const message = args[0];
   if (
-    typeof message === 'string' && (
-      message.includes('componentWillMount has been renamed') ||
+    typeof message === 'string' &&
+    (message.includes('componentWillMount has been renamed') ||
       message.includes('componentWillReceiveProps has been renamed') ||
-      message.includes('React.createFactory() is deprecated')
-    )
+      message.includes('React.createFactory() is deprecated'))
   ) {
     return;
   }
   originalConsoleWarn.apply(console, args);
-}; 
+};

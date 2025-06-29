@@ -1,6 +1,6 @@
 ---
 description: rules for devops and reliability best practices
-globs: 
+globs:
 alwaysApply: false
 ---
 # DevOps & Site Reliability Engineering Best Practices - VibeBiz Standards

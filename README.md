@@ -1,10 +1,57 @@
 # VibeBiz SaaS Template
 
-A comprehensive, progressive SaaS template system for rapid development and deployment of multi-tenant applications.
+A comprehensive, progressive SaaS template system for rapid development and
+deployment of multi-tenant applications.
+
+## Local Development Setup
+
+This project uses a suite of pre-commit hooks to enforce code quality, consistency,
+and security.
+
+### Prerequisites
+
+- **Node.js & pnpm**: Install Node.js (v18+) and pnpm (`npm install -g pnpm`).
+- **Python**: Install Python (v3.10+).
+- **Homebrew** (macOS/Linux): Required for some tools like Spectral.
+
+### Setting Up Pre-Commit Hooks
+
+1. **Install Dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+2. **Install `pre-commit`**:
+
+   ```bash
+   pip install pre-commit
+   ```
+
+3. **Install Git Hooks**:
+
+   ```bash
+   pre-commit install --hook-type commit-msg --hook-type pre-commit
+   ```
+
+4. **Configure Spectral**: The API specification linter (`spectral`) requires a DSN
+   key to run scans. Please follow the instructions in our guide to set it up:
+   - **[How to Set Up Spectral](./docs/spectral-setup.md)**
+
+### Running All Checks
+
+You can manually trigger all checks on all files at any time:
+
+```bash
+pnpm all-checks
+```
+
+---
 
 ## 🧪 Unit Testing Framework
 
-This template includes a comprehensive unit testing framework that supports both TypeScript (Jest) and Python (pytest) testing across the monorepo.
+This template includes a comprehensive unit testing framework that supports both
+TypeScript (Jest) and Python (pytest) testing across the monorepo.
 
 ### Quick Start
 
@@ -33,7 +80,7 @@ pnpm test:unit
 
 ### Directory Structure
 
-```
+```text
 vibebiz-saas-template/
 ├── jest.config.js              # Root Jest configuration
 ├── jest.setup.js               # Global Jest setup
@@ -57,14 +104,15 @@ vibebiz-saas-template/
 
 ## TypeScript Testing (Jest)
 
-### Features
+### Jest Features
+
 - **Jest** with `ts-jest` for TypeScript support
 - **React Testing Library** for component testing
 - **60% coverage threshold** (configurable per package)
 - **Global test utilities** for mocking and data generation
 - **Next.js mocking** for router and navigation
 
-### Example Test
+### Example TypeScript Test
 
 ```typescript
 import { render, screen } from '@testing-library/react';
@@ -74,12 +122,12 @@ import { Button } from '../src/components/Button';
 test('calls onClick when clicked', async () => {
   const handleClick = jest.fn();
   const user = userEvent.setup();
-  
+
   render(<Button onClick={handleClick}>Click me</Button>);
-  
+
   const button = screen.getByRole('button');
   await user.click(button);
-  
+
   expect(handleClick).toHaveBeenCalledTimes(1);
 });
 ```
@@ -100,7 +148,8 @@ pnpm test:watch
 
 ## Python Testing (pytest)
 
-### Features
+### Pytest Features
+
 - **pytest** with async support (`pytest-asyncio`)
 - **Coverage reporting** with `pytest-cov`
 - **60% coverage threshold** enforced
@@ -117,16 +166,16 @@ pnpm test:watch
 @pytest.mark.auth        # Authentication tests
 ```
 
-### Example Test
+### Example Python Test
 
 ```python
 def test_generate_secure_token():
     """Test secure token generation"""
     token = generate_secure_token(length=32)
-    
+
     assert len(token) == 32
     assert isinstance(token, str)
-    
+
     # Test uniqueness
     tokens = [generate_secure_token() for _ in range(100)]
     assert len(set(tokens)) == 100
@@ -173,6 +222,7 @@ def test_example(mock_user, mock_organization):
 ## Coverage Requirements
 
 ### Minimum Thresholds (MVP)
+
 - **Lines**: 60%
 - **Functions**: 60%
 - **Branches**: 60%
@@ -211,6 +261,7 @@ The testing framework is designed for CI/CD pipelines:
 ### GitHub Actions Ready
 
 Tests output in formats compatible with GitHub Actions:
+
 - **Jest**: JSON and LCOV coverage reports
 - **pytest**: XML and JSON coverage reports
 - **JUnit**: XML test results for CI parsing

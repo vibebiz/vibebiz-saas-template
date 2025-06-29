@@ -1,6 +1,6 @@
 ---
 description: rules for Observability & Service Mesh best practices
-globs: 
+globs:
 alwaysApply: false
 ---
 # Observability & Service Mesh Standards - VibeBiz
