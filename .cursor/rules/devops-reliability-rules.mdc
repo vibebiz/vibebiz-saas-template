@@ -1,0 +1,240 @@
+---
+description: rules for devops and reliability best practices
+globs:
+alwaysApply: false
+---
+# DevOps & Site Reliability Engineering Best Practices - VibeBiz Standards
+# For Production Operations, Monitoring, Incident Response, and Reliability
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 📊 SLA/SLO/SLI DEFINITION & MONITORING
+# =============================================================================
+
+## Service Level Objectives (SLOs)
+- ALWAYS define measurable SLOs for all critical services
+- ALWAYS align SLOs with business requirements and user expectations
+- NEVER set SLOs without proper baseline measurements
+- ALWAYS monitor SLO compliance continuously
+- ALWAYS implement error budgets for reliability vs. feature velocity balance
+- NEVER ignore SLO violations or trends
+
+## VibeBiz SLO Targets
+- Web Application: 99.9% availability, <500ms 95th percentile latency
+- API Services: 99.95% availability, <200ms 99th percentile latency
+- Database: 99.99% availability, <100ms 95th percentile query latency
+- Background Jobs: 99.5% completion rate, <300s 90th percentile processing time
+
+## Error Budget Management
+- ALWAYS track error budget consumption in real-time
+- NEVER deploy new features when error budget is exhausted
+- ALWAYS prioritize reliability work when error budget is low
+- NEVER ignore error budget alerts
+- ALWAYS balance feature velocity with reliability investments
+
+# =============================================================================
+# 🚨 INCIDENT RESPONSE & MANAGEMENT
+# =============================================================================
+
+## Incident Classification
+- P0 (Critical): Complete service outage, data loss, security breach
+- P1 (High): Major feature unavailable, significant performance degradation
+- P2 (Medium): Minor feature issues, moderate performance impact
+- P3 (Low): Cosmetic issues, minimal user impact
+
+## Incident Response Requirements
+- ALWAYS acknowledge incidents within 5 minutes
+- ALWAYS communicate status updates every 15 minutes during active incidents
+- NEVER work on incidents alone for P0/P1 issues
+- ALWAYS conduct post-incident reviews (PIRs) within 48 hours
+- ALWAYS implement action items from PIRs with owners and deadlines
+- NEVER blame individuals in incident reviews
+
+## On-Call Management
+- ALWAYS maintain 24/7 on-call coverage for production systems
+- ALWAYS rotate on-call duties fairly among team members
+- NEVER have the same person on-call for more than one week
+- ALWAYS provide comprehensive runbooks for common incidents
+- ALWAYS escalate to next level if incident cannot be resolved in 30 minutes
+- NEVER ignore alerts or silence them without investigation
+
+# =============================================================================
+# 📈 MONITORING & OBSERVABILITY
+# =============================================================================
+
+## Three Pillars of Observability
+- Metrics: Quantitative measurements of system behavior
+- Logs: Detailed records of discrete events
+- Traces: Request flow through distributed systems
+
+## Monitoring Requirements
+- ALWAYS monitor golden signals: latency, traffic, errors, saturation
+- ALWAYS implement health checks for all services
+- NEVER deploy without proper monitoring instrumentation
+- ALWAYS set up alerting for SLO violations
+- ALWAYS monitor business metrics alongside technical metrics
+- NEVER create noisy alerts that cause alert fatigue
+
+## Alerting Best Practices
+- ALWAYS alert on symptoms, not causes
+- ALWAYS make alerts actionable with clear next steps
+- NEVER create alerts that fire during normal operations
+- ALWAYS include relevant context in alert notifications
+- ALWAYS test alerting rules regularly
+- NEVER ignore repeated alerts without investigation
+
+## Logging Standards
+- ALWAYS use structured logging (JSON format)
+- ALWAYS include correlation IDs for request tracing
+- NEVER log sensitive information (passwords, tokens, PII)
+- ALWAYS implement log retention policies
+- ALWAYS use appropriate log levels (ERROR, WARN, INFO, DEBUG)
+- NEVER flood logs with unnecessary debug information in production
+
+# =============================================================================
+# 🚀 DEPLOYMENT & RELEASE MANAGEMENT
+# =============================================================================
+
+## Deployment Strategy
+- ALWAYS use blue-green or canary deployments for production
+- ALWAYS implement automated rollback capabilities
+- NEVER deploy directly to production without staging validation
+- ALWAYS use feature flags for gradual rollouts
+- ALWAYS deploy during low-traffic periods when possible
+- NEVER deploy on Fridays or before holidays
+
+## CI/CD Pipeline Requirements
+- ALWAYS run full test suite before deployment
+- ALWAYS perform security scans in CI/CD pipeline
+- NEVER deploy failing builds
+- ALWAYS generate deployment artifacts with checksums
+- ALWAYS tag releases with semantic versioning
+- NEVER skip code review for production deployments
+
+## Release Management
+- ALWAYS maintain release notes with user-facing changes
+- ALWAYS coordinate deployments across dependent services
+- NEVER deploy breaking changes without proper migration strategy
+- ALWAYS notify stakeholders of planned deployments
+- ALWAYS have rollback plan ready before deployment
+- NEVER deploy multiple major changes simultaneously
+
+# =============================================================================
+# 💾 BACKUP & DISASTER RECOVERY
+# =============================================================================
+
+## Backup Requirements
+- ALWAYS maintain automated daily backups
+- ALWAYS test backup restoration procedures monthly
+- NEVER store backups in the same location as primary data
+- ALWAYS encrypt backups at rest and in transit
+- ALWAYS maintain multiple backup generations (daily, weekly, monthly)
+- NEVER ignore backup failure alerts
+
+## Disaster Recovery Planning
+- ALWAYS maintain RTO (Recovery Time Objective) < 4 hours
+- ALWAYS maintain RPO (Recovery Point Objective) < 1 hour
+- NEVER deploy without tested disaster recovery procedures
+- ALWAYS conduct disaster recovery drills quarterly
+- ALWAYS document and maintain up-to-date runbooks
+- NEVER assume disaster recovery will work without testing
+
+## Data Protection
+- ALWAYS implement point-in-time recovery capabilities
+- ALWAYS test cross-region failover procedures
+- NEVER store critical data without replication
+- ALWAYS maintain audit logs of data access and modifications
+- ALWAYS implement data retention policies
+- NEVER delete backups without proper authorization
+
+# =============================================================================
+# 🔧 INFRASTRUCTURE AS CODE
+# =============================================================================
+
+## IaC Requirements
+- ALWAYS define infrastructure using code (Terraform)
+- ALWAYS version control all infrastructure definitions
+- NEVER make manual changes to production infrastructure
+- ALWAYS test infrastructure changes in staging first
+- ALWAYS implement infrastructure change approval process
+- NEVER deploy infrastructure without proper review
+
+## Configuration Management
+- ALWAYS use immutable infrastructure patterns
+- ALWAYS separate configuration from code
+- NEVER hardcode environment-specific values
+- ALWAYS encrypt sensitive configuration data
+- ALWAYS implement configuration drift detection
+- NEVER allow configuration changes without audit trail
+
+# =============================================================================
+# 🔐 SECURITY OPERATIONS
+# =============================================================================
+
+## Security Monitoring
+- ALWAYS monitor for suspicious access patterns
+- ALWAYS implement intrusion detection systems
+- NEVER ignore security alerts or anomalies
+- ALWAYS maintain security audit logs
+- ALWAYS conduct regular vulnerability assessments
+- NEVER deploy without security scanning
+
+## Access Control
+- ALWAYS implement principle of least privilege
+- ALWAYS use multi-factor authentication for production access
+- NEVER share service accounts or credentials
+- ALWAYS rotate credentials regularly
+- ALWAYS audit access permissions quarterly
+- NEVER allow direct production database access
+
+## Compliance
+- ALWAYS maintain SOC 2 Type II compliance
+- ALWAYS implement GDPR data protection requirements
+- NEVER ignore compliance audit findings
+- ALWAYS document security procedures and controls
+- ALWAYS train staff on security best practices
+- NEVER store sensitive data without proper encryption
+
+# =============================================================================
+# 📊 CAPACITY PLANNING & SCALING
+# =============================================================================
+
+## Capacity Management
+- ALWAYS monitor resource utilization trends
+- ALWAYS plan capacity 6 months in advance
+- NEVER wait until resources are exhausted to scale
+- ALWAYS implement auto-scaling for variable workloads
+- ALWAYS test scaling procedures under load
+- NEVER ignore capacity warnings or trends
+
+## Performance Optimization
+- ALWAYS profile application performance regularly
+- ALWAYS optimize database queries and indexes
+- NEVER ignore performance degradation trends
+- ALWAYS implement caching strategies where appropriate
+- ALWAYS monitor third-party service dependencies
+- NEVER deploy performance-impacting changes without testing
+
+# =============================================================================
+# 📋 QUALITY GATES
+# =============================================================================
+
+## Production Readiness Checklist
+- ✅ SLOs defined and monitoring implemented
+- ✅ Health checks and alerting configured
+- ✅ Incident response procedures documented
+- ✅ Backup and recovery procedures tested
+- ✅ Security scanning and compliance checks passed
+- ✅ Load testing completed successfully
+- ✅ Runbooks created and reviewed
+- ✅ On-call rotation established
+
+## Operational Excellence
+- ✅ Post-incident reviews conducted for all P0/P1 incidents
+- ✅ SLO compliance tracked and reported monthly
+- ✅ Disaster recovery drills conducted quarterly
+- ✅ Security audits completed annually
+- ✅ Performance benchmarks tracked over time
+- ✅ Capacity planning reviewed quarterly
+
+Remember: Reliability is a feature. Plan for failure, monitor everything, and always prioritize user experience.

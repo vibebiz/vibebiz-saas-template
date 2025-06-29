@@ -1,0 +1,280 @@
+---
+description: rules for infrastructure best pracices
+globs:
+alwaysApply: false
+---
+# Infrastructure Development Standards - VibeBiz
+# For Terraform, Docker, Kubernetes, CI/CD, and Cloud Deployment
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 🏗️ TERRAFORM INFRASTRUCTURE AS CODE
+# =============================================================================
+
+## Terraform Code Quality Standards
+- ALWAYS use Terraform version constraints with ~> operator
+- ALWAYS pin provider versions to avoid breaking changes
+- NEVER hardcode values - use variables and locals
+- ALWAYS use consistent naming conventions with environment prefixes
+- ALWAYS implement proper resource tagging for cost tracking
+- NEVER commit terraform.tfstate files to version control
+- ALWAYS use remote state backend (GCS, S3) with state locking
+- ALWAYS validate terraform plans before applying
+
+## Terraform Structure & Organization
+- ALWAYS organize code into logical modules
+- ALWAYS use consistent file naming (main.tf, variables.tf, outputs.tf)
+- NEVER create monolithic Terraform configurations
+- ALWAYS implement proper variable validation
+- ALWAYS use local values for computed configurations
+- NEVER duplicate resource configurations across environments
+- ALWAYS implement proper data sources for external dependencies
+
+## Progressive Architecture Configuration
+- ALWAYS configure resources based on architecture stage (MVP, Growth, Full-Stack)
+- ALWAYS implement auto-scaling based on stage requirements
+- NEVER over-provision resources for early stages
+- ALWAYS plan for easy scaling transitions
+- ALWAYS implement stage-specific security configurations
+- NEVER ignore cost optimization for each stage
+
+# =============================================================================
+# 🐳 CONTAINER & DOCKER STANDARDS
+# =============================================================================
+
+## Docker Best Practices
+- ALWAYS use multi-stage builds for production images
+- ALWAYS use specific base image tags, never 'latest'
+- NEVER run containers as root user
+- ALWAYS implement proper health checks
+- ALWAYS minimize layer count and image size
+- NEVER include secrets or credentials in images
+- ALWAYS scan images for vulnerabilities before deployment
+
+## Container Security
+- ALWAYS use distroless or minimal base images
+- ALWAYS implement proper USER directive
+- NEVER install unnecessary packages
+- ALWAYS update base images regularly
+- ALWAYS implement proper image signing
+- NEVER expose unnecessary ports
+- ALWAYS implement proper resource limits
+
+## Dockerfile Standards
+- ALWAYS order instructions for optimal layer caching
+- ALWAYS use .dockerignore to exclude unnecessary files
+- NEVER copy entire source directory without filtering
+- ALWAYS implement proper COPY vs ADD usage
+- ALWAYS clean up package manager caches
+- NEVER leave debugging tools in production images
+
+# =============================================================================
+# ☸️ KUBERNETES DEPLOYMENT
+# =============================================================================
+
+## Kubernetes Resource Management
+- ALWAYS implement proper resource requests and limits
+- ALWAYS use meaningful labels and selectors
+- NEVER deploy without proper health checks
+- ALWAYS implement proper rolling update strategies
+- ALWAYS use ConfigMaps and Secrets for configuration
+- NEVER hardcode configuration in manifests
+- ALWAYS implement proper RBAC policies
+
+## Service Mesh Integration (Growth+)
+- ALWAYS implement Istio service mesh for Growth and Full-Stack stages
+- ALWAYS enable mTLS between services
+- NEVER allow unencrypted service communication
+- ALWAYS implement proper traffic policies
+- ALWAYS use service mesh for canary deployments
+- NEVER bypass service mesh security policies
+
+## Multi-Tenant Kubernetes
+- ALWAYS implement namespace-based tenant isolation
+- ALWAYS use NetworkPolicies for tenant separation
+- NEVER allow cross-tenant resource access
+- ALWAYS implement tenant-specific resource quotas
+- ALWAYS monitor resource usage per tenant
+- NEVER ignore tenant security boundaries
+
+# =============================================================================
+# 🚀 CI/CD PIPELINE STANDARDS
+# =============================================================================
+
+## Pipeline Architecture
+- ALWAYS implement multi-stage pipelines (build, test, deploy)
+- ALWAYS use proper pipeline as code
+- NEVER skip automated testing in pipelines
+- ALWAYS implement proper artifact management
+- ALWAYS use proper secret management in pipelines
+- NEVER hardcode credentials in pipeline configurations
+- ALWAYS implement proper pipeline monitoring
+
+## Deployment Strategies
+- ALWAYS implement blue-green deployments for production
+- ALWAYS use canary deployments for new features
+- NEVER deploy directly to production without staging
+- ALWAYS implement proper rollback mechanisms
+- ALWAYS monitor deployments in real-time
+- NEVER ignore deployment health checks
+- ALWAYS implement proper deployment approval gates
+
+## Security in CI/CD
+- ALWAYS scan code for vulnerabilities in pipelines
+- ALWAYS scan container images for security issues
+- NEVER deploy vulnerable dependencies to production
+- ALWAYS implement proper access controls for pipelines
+- ALWAYS audit pipeline activities
+- NEVER expose secrets in pipeline logs
+- ALWAYS implement proper code signing
+
+# =============================================================================
+# ☁️ CLOUD PLATFORM STANDARDS
+# =============================================================================
+
+## Google Cloud Platform (Primary)
+- ALWAYS use IAM with principle of least privilege
+- ALWAYS enable audit logging for all services
+- NEVER use default service accounts for applications
+- ALWAYS implement proper VPC network design
+- ALWAYS use Cloud Storage for static assets
+- NEVER store secrets in environment variables
+- ALWAYS implement proper backup and disaster recovery
+
+## AWS (Secondary/Hybrid)
+- ALWAYS use IAM roles instead of access keys
+- ALWAYS implement proper VPC security groups
+- NEVER use root account for regular operations
+- ALWAYS enable CloudTrail for audit logging
+- ALWAYS use S3 bucket policies for access control
+- NEVER allow public S3 buckets without explicit approval
+- ALWAYS implement proper cost monitoring
+
+## Multi-Cloud Considerations
+- ALWAYS abstract cloud-specific implementations
+- ALWAYS implement proper data residency controls
+- NEVER create vendor lock-in without justification
+- ALWAYS plan for disaster recovery across clouds
+- ALWAYS implement consistent security policies
+- NEVER ignore compliance requirements per region
+
+# =============================================================================
+# 🔒 INFRASTRUCTURE SECURITY
+# =============================================================================
+
+## Network Security
+- ALWAYS implement proper firewall rules
+- ALWAYS use private subnets for application resources
+- NEVER allow unrestricted inbound access
+- ALWAYS implement VPN or private connectivity
+- ALWAYS enable network flow logs
+- NEVER ignore network monitoring
+- ALWAYS implement proper DNS security
+
+## Identity & Access Management
+- ALWAYS implement proper RBAC policies
+- ALWAYS use service accounts for applications
+- NEVER share credentials between services
+- ALWAYS implement proper API key management
+- ALWAYS rotate credentials regularly
+- NEVER use static credentials in production
+- ALWAYS implement proper audit logging
+
+## Data Protection
+- ALWAYS encrypt data at rest and in transit
+- ALWAYS implement proper key management
+- NEVER store unencrypted sensitive data
+- ALWAYS implement proper backup encryption
+- ALWAYS comply with data residency requirements
+- NEVER ignore data classification requirements
+- ALWAYS implement proper data retention policies
+
+# =============================================================================
+# 📊 MONITORING & OBSERVABILITY
+# =============================================================================
+
+## Infrastructure Monitoring
+- ALWAYS monitor resource utilization and performance
+- ALWAYS implement proper alerting for critical issues
+- NEVER ignore infrastructure health checks
+- ALWAYS implement proper log aggregation
+- ALWAYS monitor security events and anomalies
+- NEVER deploy without monitoring configuration
+- ALWAYS implement proper dashboard visualization
+
+## Cost Management
+- ALWAYS implement cost monitoring and budgets
+- ALWAYS tag resources for cost allocation
+- NEVER ignore cost optimization opportunities
+- ALWAYS implement auto-scaling to optimize costs
+- ALWAYS review and optimize resource usage regularly
+- NEVER over-provision resources without justification
+- ALWAYS implement cost alerts and controls
+
+# =============================================================================
+# 🌍 DISASTER RECOVERY & BACKUP
+# =============================================================================
+
+## Backup Strategies
+- ALWAYS implement automated backup procedures
+- ALWAYS test backup restoration regularly
+- NEVER rely on single backup location
+- ALWAYS implement proper backup retention policies
+- ALWAYS encrypt backup data
+- NEVER ignore backup monitoring
+- ALWAYS document backup and recovery procedures
+
+## Disaster Recovery Planning
+- ALWAYS implement multi-region disaster recovery
+- ALWAYS define and test RTO/RPO objectives
+- NEVER ignore disaster recovery testing
+- ALWAYS implement proper failover mechanisms
+- ALWAYS maintain up-to-date recovery documentation
+- NEVER assume disaster recovery works without testing
+- ALWAYS implement proper communication plans
+
+# =============================================================================
+# �� COMPLIANCE & GOVERNANCE
+# =============================================================================
+
+## Infrastructure Compliance
+- ALWAYS implement proper compliance controls
+- ALWAYS audit infrastructure configurations
+- NEVER ignore regulatory requirements
+- ALWAYS implement proper data governance
+- ALWAYS maintain compliance documentation
+- NEVER deploy without security approval
+- ALWAYS implement proper change management
+
+## Governance Frameworks
+- ALWAYS implement infrastructure as code governance
+- ALWAYS use policy as code for compliance
+- NEVER allow manual infrastructure changes in production
+- ALWAYS implement proper approval workflows
+- ALWAYS maintain infrastructure documentation
+- NEVER ignore security and compliance policies
+- ALWAYS implement regular compliance audits
+
+# =============================================================================
+# 🔧 OPERATIONAL STANDARDS
+# =============================================================================
+
+## Infrastructure Operations
+- ALWAYS implement proper change management procedures
+- ALWAYS use infrastructure as code for all changes
+- NEVER make manual changes to production infrastructure
+- ALWAYS implement proper incident response procedures
+- ALWAYS maintain operational runbooks
+- NEVER ignore operational best practices
+- ALWAYS implement proper on-call procedures
+
+## Capacity Planning
+- ALWAYS monitor and plan for capacity requirements
+- ALWAYS implement proper auto-scaling policies
+- NEVER ignore performance trends
+- ALWAYS plan for traffic growth and spikes
+- ALWAYS implement proper load testing
+- NEVER under-provision critical resources
+- ALWAYS optimize resource allocation regularly
+
+Remember: Infrastructure is the foundation of VibeBiz's multi-tenant SaaS platform. Every component must be secure, scalable, and compliant with enterprise requirements.
