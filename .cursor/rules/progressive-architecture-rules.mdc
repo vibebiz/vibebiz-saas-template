@@ -1,0 +1,299 @@
+---
+description: rules for progressive archtitecture best practices
+globs: 
+alwaysApply: false
+---
+# Progressive Architecture Standards - VibeBiz
+# For MVP → Foundation → Growth → Full-Stack Evolution
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 🎯 PROGRESSIVE ARCHITECTURE PRINCIPLES
+# =============================================================================
+
+## Architecture Evolution Strategy
+- ALWAYS design for current stage while planning for next stage
+- ALWAYS implement stage-appropriate solutions without over-engineering
+- NEVER build Full-Stack solutions when MVP suffices
+- ALWAYS maintain clear upgrade paths between stages
+- ALWAYS validate stage transition readiness before advancing
+- NEVER skip architectural stages without clear justification
+- ALWAYS consider cost implications of each stage
+- ALWAYS implement proper monitoring to track stage metrics
+
+## Stage Transition Guidelines
+- ALWAYS monitor key metrics to determine stage readiness
+- ALWAYS plan infrastructure changes 3-6 months ahead
+- NEVER transition stages during high-growth periods
+- ALWAYS implement gradual migration strategies
+- ALWAYS maintain backward compatibility during transitions
+- NEVER rush stage transitions due to external pressure
+- ALWAYS document architectural decisions and rationale
+
+# =============================================================================
+# 🚀 MVP STAGE (0-1K USERS)
+# =============================================================================
+
+## MVP Architecture Principles
+- ALWAYS focus on core product functionality
+- ALWAYS use simplest possible technology stack
+- NEVER implement enterprise features in MVP
+- ALWAYS use managed services over self-hosted solutions
+- ALWAYS prioritize development speed over optimization
+- NEVER optimize prematurely without user data
+- ALWAYS implement basic monitoring and error tracking
+
+## MVP Technology Stack
+- ALWAYS use monolithic architecture for simplicity
+- ALWAYS use SQLite or single PostgreSQL instance
+- NEVER implement microservices in MVP stage
+- ALWAYS use serverless or PaaS for hosting
+- ALWAYS use third-party services for non-core features
+- NEVER build custom infrastructure in MVP
+- ALWAYS use simple deployment strategies
+
+## MVP Quality Standards
+- ALWAYS implement basic testing (unit tests for core logic)
+- ALWAYS implement basic security (authentication, input validation)
+- NEVER skip security fundamentals even in MVP
+- ALWAYS implement error tracking and basic monitoring
+- ALWAYS use environment-based configuration
+- NEVER hardcode secrets or configuration
+- ALWAYS implement basic backup procedures
+
+# =============================================================================
+# 🏗️ FOUNDATION STAGE (1K-10K USERS)
+# =============================================================================
+
+## Foundation Architecture Evolution
+- ALWAYS implement proper CI/CD pipelines
+- ALWAYS introduce proper monitoring and observability
+- NEVER ignore performance bottlenecks at this stage
+- ALWAYS implement proper database optimization
+- ALWAYS introduce caching layers where appropriate
+- NEVER over-engineer solutions for future scale
+- ALWAYS implement proper security controls
+
+## Foundation Infrastructure
+- ALWAYS containerize applications with Docker
+- ALWAYS implement proper environment separation
+- NEVER ignore infrastructure as code principles
+- ALWAYS implement automated testing in CI/CD
+- ALWAYS use managed database services
+- NEVER ignore backup and disaster recovery
+- ALWAYS implement proper secret management
+
+## Foundation Quality Gates
+- ALWAYS implement comprehensive testing suite
+- ALWAYS implement proper code quality controls
+- NEVER deploy without automated testing
+- ALWAYS implement security scanning in CI/CD
+- ALWAYS monitor application performance
+- NEVER ignore user experience metrics
+- ALWAYS implement proper error handling and logging
+
+# =============================================================================
+# 📈 GROWTH STAGE (10K-100K USERS)
+# =============================================================================
+
+## Growth Architecture Patterns
+- ALWAYS implement service decomposition where justified
+- ALWAYS introduce event-driven architecture patterns
+- NEVER implement microservices without clear boundaries
+- ALWAYS implement proper API versioning strategies
+- ALWAYS introduce caching at multiple layers
+- NEVER ignore database scaling strategies
+- ALWAYS implement proper load balancing
+
+## Growth Infrastructure Evolution
+- ALWAYS implement auto-scaling for compute resources
+- ALWAYS introduce content delivery networks (CDN)
+- NEVER ignore geographic distribution of users
+- ALWAYS implement proper database replication
+- ALWAYS introduce message queues for async processing
+- NEVER ignore infrastructure monitoring and alerting
+- ALWAYS implement proper capacity planning
+
+## Growth Operational Excellence
+- ALWAYS implement SRE practices and SLO/SLI monitoring
+- ALWAYS introduce chaos engineering practices
+- NEVER ignore incident response procedures
+- ALWAYS implement proper on-call rotation
+- ALWAYS introduce performance optimization programs
+- NEVER ignore cost optimization opportunities
+- ALWAYS implement proper change management
+
+# =============================================================================
+# 🏢 FULL-STACK STAGE (100K+ USERS)
+# =============================================================================
+
+## Full-Stack Architecture Principles
+- ALWAYS implement true microservices architecture
+- ALWAYS implement service mesh for service communication
+- NEVER ignore distributed system complexity
+- ALWAYS implement proper distributed tracing
+- ALWAYS introduce domain-driven design principles
+- NEVER compromise on system reliability
+- ALWAYS implement proper data consistency strategies
+
+## Full-Stack Enterprise Features
+- ALWAYS implement enterprise security requirements
+- ALWAYS support multi-region deployments
+- NEVER ignore compliance and audit requirements
+- ALWAYS implement advanced observability platforms
+- ALWAYS support enterprise integration patterns
+- NEVER ignore enterprise support requirements
+- ALWAYS implement proper disaster recovery
+
+## Full-Stack Operational Maturity
+- ALWAYS implement platform engineering teams
+- ALWAYS introduce advanced deployment strategies
+- NEVER ignore internal developer platform needs
+- ALWAYS implement proper governance frameworks
+- ALWAYS introduce advanced security scanning
+- NEVER ignore advanced monitoring and alerting
+- ALWAYS implement mature incident response
+
+# =============================================================================
+# 🔄 STAGE TRANSITION METRICS
+# =============================================================================
+
+## MVP → Foundation Transition Triggers
+- User count approaching 1,000 active users
+- Basic product-market fit validated
+- Revenue generation established
+- Core feature set stabilized
+- Team size growing beyond 5 engineers
+- Performance issues becoming user-impacting
+- Security requirements increasing
+
+## Foundation → Growth Transition Triggers
+- User count approaching 10,000 active users
+- Clear growth trajectory established
+- Revenue scaling consistently
+- Engineering team scaling beyond 10 people
+- Infrastructure costs becoming significant
+- Geographic expansion required
+- Enterprise customers showing interest
+
+## Growth → Full-Stack Transition Triggers
+- User count approaching 100,000 active users
+- Enterprise customers requiring advanced features
+- Compliance requirements becoming critical
+- Multi-region deployment required
+- Advanced integrations needed
+- Platform stability becoming business-critical
+- Engineering teams requiring platform services
+
+# =============================================================================
+# 🛠️ TECHNOLOGY EVOLUTION PATHS
+# =============================================================================
+
+## Database Evolution
+- MVP: SQLite → Single PostgreSQL
+- Foundation: PostgreSQL with read replicas
+- Growth: Partitioned PostgreSQL + Redis caching
+- Full-Stack: Multi-region PostgreSQL + advanced caching
+
+## Authentication Evolution
+- MVP: Simple JWT with local storage
+- Foundation: Secure JWT with proper session management
+- Growth: OAuth integration + SSO capabilities
+- Full-Stack: Enterprise SSO + advanced security
+
+## Deployment Evolution
+- MVP: Simple PaaS deployment (Vercel, Railway)
+- Foundation: Container deployment with CI/CD
+- Growth: Kubernetes with auto-scaling
+- Full-Stack: Multi-region Kubernetes with service mesh
+
+## Monitoring Evolution
+- MVP: Basic error tracking (Sentry)
+- Foundation: Application monitoring (Datadog/NewRelic)
+- Growth: Full observability stack (OpenTelemetry)
+- Full-Stack: Enterprise observability platform
+
+# =============================================================================
+# 💰 COST OPTIMIZATION BY STAGE
+# =============================================================================
+
+## MVP Cost Optimization
+- ALWAYS use free tiers and credits where possible
+- ALWAYS choose cost-effective managed services
+- NEVER over-provision resources in MVP
+- ALWAYS monitor costs weekly
+- ALWAYS use spot instances where appropriate
+- NEVER ignore cost alerts and budgets
+
+## Foundation Cost Management
+- ALWAYS implement proper resource tagging
+- ALWAYS monitor cost per customer/user
+- NEVER ignore cost optimization opportunities
+- ALWAYS implement auto-scaling to reduce costs
+- ALWAYS review and optimize monthly
+- NEVER over-provision for peak loads
+
+## Growth Cost Optimization
+- ALWAYS implement advanced cost monitoring
+- ALWAYS optimize based on usage patterns
+- NEVER ignore reserved instance opportunities
+- ALWAYS implement cost allocation by team/feature
+- ALWAYS negotiate enterprise pricing
+- NEVER ignore multi-cloud cost optimization
+
+## Full-Stack Cost Excellence
+- ALWAYS implement FinOps practices
+- ALWAYS use advanced cost optimization tools
+- NEVER ignore unit economics optimization
+- ALWAYS implement cost-aware engineering
+- ALWAYS optimize across multiple clouds
+- NEVER ignore vendor negotiation opportunities
+
+# =============================================================================
+# 🔒 SECURITY EVOLUTION
+# =============================================================================
+
+## Security Maturity by Stage
+- MVP: Basic authentication, input validation, HTTPS
+- Foundation: Enhanced auth, security scanning, secrets management
+- Growth: Advanced threat detection, compliance frameworks
+- Full-Stack: Zero-trust architecture, advanced compliance
+
+## Compliance Requirements Evolution
+- MVP: Basic data protection, simple privacy policy
+- Foundation: GDPR compliance, basic audit logging
+- Growth: SOC 2 Type I, enhanced security controls
+- Full-Stack: SOC 2 Type II, industry-specific compliance
+
+# =============================================================================
+# 📋 STAGE READINESS CHECKLISTS
+# =============================================================================
+
+## Foundation Stage Readiness
+- ✅ CI/CD pipeline implemented and stable
+- ✅ Monitoring and alerting configured
+- ✅ Database optimization completed
+- ✅ Security controls enhanced
+- ✅ Team processes documented
+- ✅ Cost monitoring implemented
+- ✅ Backup/recovery procedures tested
+
+## Growth Stage Readiness
+- ✅ Service boundaries identified and documented
+- ✅ Auto-scaling implemented and tested
+- ✅ Caching strategy implemented
+- ✅ Load testing completed successfully
+- ✅ SRE practices established
+- ✅ Advanced monitoring implemented
+- ✅ Cost optimization strategies active
+
+## Full-Stack Stage Readiness
+- ✅ Microservices architecture implemented
+- ✅ Service mesh deployed and configured
+- ✅ Multi-region capabilities tested
+- ✅ Enterprise security controls active
+- ✅ Advanced observability platform deployed
+- ✅ Compliance frameworks implemented
+- ✅ Platform engineering team established
+
+Remember: Progressive architecture ensures you build the right solution for your current scale while maintaining the ability to evolve. Never over-engineer early, never under-engineer at scale.

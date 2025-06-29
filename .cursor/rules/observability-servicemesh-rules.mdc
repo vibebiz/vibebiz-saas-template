@@ -1,0 +1,244 @@
+---
+description: rules for Observability & Service Mesh best practices
+globs: 
+alwaysApply: false
+---
+# Observability & Service Mesh Standards - VibeBiz
+# For OpenTelemetry, Service Mesh, AI Observability, and Production Monitoring
+# Last Updated: 2025-06-24
+
+# =============================================================================
+# 🔍 OPENTELEMETRY OBSERVABILITY REQUIREMENTS
+# =============================================================================
+
+## OpenTelemetry Implementation Standards
+- ALWAYS implement OpenTelemetry from Foundation stage onwards
+- ALWAYS include organization_id in all traces and metrics for multi-tenant isolation
+- NEVER expose tenant data across organization boundaries in observability
+- ALWAYS implement custom metrics for business logic and AI/LLM operations
+- ALWAYS use structured logging with consistent schema
+- NEVER log sensitive data like passwords, API keys, or PII
+- ALWAYS implement distributed tracing across all service boundaries
+- ALWAYS include cost tracking for AI/LLM operations
+- ALWAYS propagate trace context across service boundaries
+- NEVER miss correlation IDs in logs and traces
+
+## Required OpenTelemetry Configuration
+- ALWAYS use OTLP exporters for traces and metrics
+- ALWAYS configure resource attributes with service metadata
+- ALWAYS implement BatchSpanProcessor for performance
+- ALWAYS set up B3 propagation for distributed tracing
+- ALWAYS instrument FastAPI, SQLAlchemy, Redis, and HTTP clients
+- NEVER use synchronous exporters in production
+- ALWAYS configure appropriate sampling rates for production
+
+## Multi-Tenant Observability
+- ALWAYS include organization_id in baggage context
+- ALWAYS filter metrics and traces by organization
+- NEVER allow cross-tenant data leakage in observability
+- ALWAYS implement tenant-specific dashboards
+- ALWAYS include user_id when available for debugging
+- NEVER expose aggregated data across organizations
+
+# =============================================================================
+# 🕸️ SERVICE MESH STANDARDS
+# =============================================================================
+
+## Service Mesh Requirements (Growth Stage+)
+- ALWAYS implement Istio service mesh for Growth and Full-Stack stages
+- ALWAYS enable mTLS between all services
+- ALWAYS implement traffic management and circuit breaking
+- NEVER allow unencrypted service-to-service communication
+- ALWAYS implement policy-based access control
+- ALWAYS enable distributed tracing in service mesh
+- ALWAYS implement canary deployments through service mesh
+
+## Service Mesh Security
+- ALWAYS use SPIFFE/SPIRE for service identity
+- ALWAYS implement zero-trust networking
+- ALWAYS enable AuthorizationPolicy for all services
+- NEVER allow unrestricted service communication
+- ALWAYS implement network policies
+- ALWAYS rotate service certificates automatically
+
+## Traffic Management
+- ALWAYS implement circuit breakers with appropriate thresholds
+- ALWAYS configure retry policies with exponential backoff
+- ALWAYS implement timeout policies for all service calls
+- NEVER allow infinite retries or timeouts
+- ALWAYS implement rate limiting at service mesh level
+- ALWAYS use traffic splitting for A/B testing
+
+# =============================================================================
+# 🤖 AI/LLM OBSERVABILITY STANDARDS
+# =============================================================================
+
+## LLM Operations Monitoring
+- ALWAYS track token usage and costs per organization
+- ALWAYS monitor LLM response times and error rates
+- ALWAYS implement cost budgets and alerts per organization
+- NEVER allow unlimited AI spending without controls
+- ALWAYS track model usage patterns and performance
+- ALWAYS implement A/B testing for prompt engineering
+- ALWAYS monitor AI safety and content filtering
+
+## LangGraph Workflow Observability
+- ALWAYS instrument all LangGraph nodes with tracing
+- ALWAYS track workflow execution times and costs
+- ALWAYS monitor agent tool usage and success rates
+- NEVER miss error tracking in AI workflows
+- ALWAYS implement workflow performance dashboards
+- ALWAYS track business metrics from AI operations
+
+## MCP Tool Monitoring
+- ALWAYS monitor MCP tool invocation rates and latency
+- ALWAYS track tool success/failure rates by organization
+- ALWAYS implement tool usage quotas and rate limiting
+- NEVER allow unmonitored tool execution
+- ALWAYS log tool inputs/outputs for debugging (sanitized)
+- ALWAYS implement tool performance optimization
+
+## AI Cost Management
+- ALWAYS implement organization-level AI budgets
+- ALWAYS alert at 80% and 100% budget utilization
+- ALWAYS track cost per AI operation and model
+- NEVER allow budget overruns without alerts
+- ALWAYS implement cost optimization recommendations
+- ALWAYS provide cost transparency to customers
+
+# =============================================================================
+# 📊 METRICS AND MONITORING
+# =============================================================================
+
+## Core Business Metrics
+- ALWAYS track active users per organization
+- ALWAYS monitor feature adoption rates
+- ALWAYS track API usage and error rates
+- ALWAYS implement SLO/SLI tracking
+- ALWAYS monitor database performance per tenant
+- NEVER miss critical business KPIs
+
+## Performance Monitoring
+- ALWAYS monitor request latency percentiles (p50, p95, p99)
+- ALWAYS track error rates and types
+- ALWAYS monitor resource utilization (CPU, memory, disk)
+- ALWAYS implement synthetic monitoring for critical paths
+- NEVER ignore performance degradation alerts
+- ALWAYS implement performance budgets
+
+## Security Monitoring
+- ALWAYS monitor authentication and authorization events
+- ALWAYS track failed login attempts and security events
+- ALWAYS implement anomaly detection for unusual access patterns
+- NEVER miss security incident detection
+- ALWAYS monitor for data exfiltration attempts
+- ALWAYS implement security dashboards and alerts
+
+# =============================================================================
+# 🚨 ALERTING AND INCIDENT RESPONSE
+# =============================================================================
+
+## Alert Configuration
+- ALWAYS implement tiered alerting (info, warning, critical)
+- ALWAYS define clear alert conditions and thresholds
+- ALWAYS implement alert routing based on severity
+- NEVER create noisy alerts that cause alert fatigue
+- ALWAYS include runbook links in alert notifications
+- ALWAYS implement alert escalation policies
+
+## SLO/SLI Implementation
+- ALWAYS define SLOs for critical user journeys
+- ALWAYS implement error budgets for each service
+- ALWAYS track SLI compliance and burn rates
+- NEVER ignore SLO violations
+- ALWAYS implement SLO-based alerting
+- ALWAYS review and adjust SLOs quarterly
+
+## Incident Response
+- ALWAYS implement automated incident detection
+- ALWAYS create incident channels for major issues
+- ALWAYS implement status page automation
+- NEVER leave customers uninformed during incidents
+- ALWAYS conduct post-incident reviews
+- ALWAYS implement learnings from incidents
+
+# =============================================================================
+# 📈 DASHBOARDS AND VISUALIZATION
+# =============================================================================
+
+## Dashboard Requirements
+- ALWAYS implement service-level dashboards for each microservice
+- ALWAYS create organization-specific tenant dashboards
+- ALWAYS implement executive dashboards with business metrics
+- NEVER create dashboards without clear purpose
+- ALWAYS implement real-time alerting integration
+- ALWAYS ensure dashboards are mobile-responsive
+
+## Grafana Configuration
+- ALWAYS use Grafana for visualization with Prometheus data source
+- ALWAYS implement template variables for multi-tenant filtering
+- ALWAYS create dashboard folders organized by service/team
+- ALWAYS implement dashboard as code with version control
+- NEVER create dashboards manually in production
+- ALWAYS implement dashboard backup and restoration
+
+## Data Retention
+- ALWAYS implement appropriate data retention policies
+- ALWAYS archive historical data for compliance
+- NEVER store high-cardinality metrics indefinitely
+- ALWAYS implement data lifecycle management
+- ALWAYS balance cost with observability needs
+- ALWAYS implement data export capabilities
+
+# =============================================================================
+# 🔧 IMPLEMENTATION STANDARDS
+# =============================================================================
+
+## Code Instrumentation
+- ALWAYS add custom spans for business logic operations
+- ALWAYS include relevant attributes in spans and metrics
+- ALWAYS implement correlation IDs for request tracking
+- NEVER instrument without considering performance impact
+- ALWAYS use semantic conventions for naming
+- ALWAYS implement graceful degradation if observability fails
+
+## Deployment Standards
+- ALWAYS deploy observability infrastructure before applications
+- ALWAYS implement observability in CI/CD pipelines
+- ALWAYS validate observability configuration in staging
+- NEVER deploy to production without observability
+- ALWAYS implement observability health checks
+- ALWAYS have observability disaster recovery procedures
+
+## Compliance and Audit
+- ALWAYS implement audit logging for compliance requirements
+- ALWAYS ensure observability data retention meets regulatory needs
+- NEVER log PII or sensitive data in observability systems
+- ALWAYS implement data anonymization where required
+- ALWAYS document observability practices for audits
+- ALWAYS implement observability access controls
+
+# =============================================================================
+# 📋 QUALITY GATES
+# =============================================================================
+
+## Pre-Production Checks
+- ✅ All services have OpenTelemetry instrumentation
+- ✅ Multi-tenant context propagation is working
+- ✅ Custom business metrics are implemented
+- ✅ Dashboards and alerts are configured
+- ✅ SLOs are defined and monitored
+- ✅ AI cost tracking is implemented
+- ✅ Security monitoring is active
+- ✅ Incident response procedures are documented
+
+## Production Monitoring
+- ✅ All critical services have uptime monitoring
+- ✅ Error rates are within acceptable thresholds
+- ✅ Performance metrics meet SLO requirements
+- ✅ Cost monitoring is active and alerting
+- ✅ Security events are being detected
+- ✅ Business metrics are being collected
+- ✅ On-call procedures are documented and tested
+
+Remember: Observability is critical for multi-tenant SaaS operations. Every service must be instrumented, every organization must be isolated, and every incident must be detectable.
