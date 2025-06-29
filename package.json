@@ -1,0 +1,27 @@
+{
+  "name": "vibebiz-saas-template",
+  "version": "1.0.0",
+  "description": "VibeBiz SaaS Template",
+  "private": true,
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "eslint": "^9.4.0",
+    "eslint-plugin-security": "^3.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "typescript-eslint": "^8.0.0",
+    "globals": "^15.6.0",
+    "prettier": "^3.3.2",
+    "typescript": "^5.4.5"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "scripts": {
+    "all-checks": "./scripts/run-all-checks.sh"
+  },
+  "type": "module"
+}
