@@ -15,6 +15,7 @@
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:unit": "turbo run test:unit",
+    "test:integration": "turbo run test:integration",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean && rm -rf node_modules .turbo",

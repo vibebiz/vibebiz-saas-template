@@ -208,6 +208,9 @@ def sample_file_upload() -> dict[str, Any]:
     }
 
 
+# Integration test fixtures (imported from utils)
+
+
 # Test data factory functions
 def create_test_user(**overrides: Any) -> dict[str, Any]:
     """

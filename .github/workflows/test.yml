@@ -120,7 +120,7 @@ jobs:
         run: |
           bandit -r services/ packages/ -f json -o bandit-report.json
 
-      - name: Run unit tests
+      - name: Run Python tests
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           REDIS_URL: redis://localhost:6379/0

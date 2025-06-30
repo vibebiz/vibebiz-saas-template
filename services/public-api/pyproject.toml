@@ -19,6 +19,7 @@ dependencies = [
     "passlib[bcrypt]>=1.7.4",
     "bcrypt>=4.3.0",
     "python-multipart>=0.0.19",
+    "jsonschema>=4.21.0",
 ]
 requires-python = ">=3.12"
 
@@ -30,6 +31,7 @@ dev = [
     "pytest-mock>=3.14.1",
     "httpx>=0.28.1",
     "factory-boy>=3.3.3",
+    "testcontainers>=4.0.0",
     "black>=25.1.0",
     "isort>=6.0.1",
     "mypy>=1.16.1",
@@ -41,6 +43,7 @@ testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+asyncio_default_fixture_loop_scope = "function"
 addopts = [
     "--cov=src",
     "--cov-report=term-missing",
@@ -59,7 +62,6 @@ markers = [
     "auth: Authentication related tests",
     "api: API endpoint tests",
 ]
-asyncio_mode = "auto"
 
 [tool.coverage.run]
 source = ["src"]
