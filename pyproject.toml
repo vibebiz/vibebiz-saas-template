@@ -8,7 +8,7 @@ version = "0.1.0"
 
 [project.optional-dependencies]
 dev = [
-    "ruff",
+    "ruff==0.5.5",
     "mypy",
     "bandit",
     "safety",
@@ -24,6 +24,9 @@ packages = ["apps", "packages", "services"]
 
 [tool.ruff]
 line-length = 88
+
+[tool.ruff.format]
+quote-style = "double"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "D"]
