@@ -104,8 +104,11 @@ jobs:
       - name: Install dependencies
         run: uv pip install --system -e ".[test,dev]"
 
-      - name: Set Python Path
-        run: echo "PYTHONPATH=services/public-api" >> $GITHUB_ENV
+      - name: Debug Paths
+        run: |
+          echo "GITHUB_WORKSPACE: ${{ github.workspace }}"
+          echo "PYTHONPATH: ${{ github.workspace }}/services/public-api"
+          ls -R
 
       - name: Run linting
         run: |
@@ -121,6 +124,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           REDIS_URL: redis://localhost:6379/0
+          PYTHONPATH: ${{ github.workspace }}/services/public-api
         run: |
           pytest \
             --cov=services \
