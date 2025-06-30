@@ -1,32 +1,40 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
-name = "vibebiz-saas-template"
-version = "0.1.0"
-description = "A monorepo for the VibeBiz SaaS template."
-authors = ["Todd <todd@windsurf.ai>"]
-readme = "README.md"
+# Core metadata has been moved to the [project] table.
+# This section is for poetry-specific configuration.
 packages = [
     { include = "vibebiz_saas_template" },
 ]
 
-[tool.poetry.dependencies]
-python = "==3.12.8"
-bcrypt = "==4.3.0"
+[project]
+name = "vibebiz-saas-template"
+version = "0.1.0"
+description = "A monorepo for the VibeBiz SaaS template."
+authors = [
+  { name="Todd", email="todd@windsurf.ai" },
+]
+readme = "README.md"
+requires-python = "==3.12.8"
+dependencies = [
+    "bcrypt==4.3.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-ruff = "==0.12.1"
-mypy = "==1.16.1"
-bandit = "==1.8.5"
-safety = "==3.5.2"
-semgrep = "==1.127.1"
-
-[tool.poetry.group.test.dependencies]
-pytest = "==8.4.1"
-pytest-cov = "==6.2.1"
-pytest-asyncio = "==1.0.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.optional-dependencies]
+dev = [
+    "ruff==0.12.1",
+    "mypy==1.16.1",
+    "bandit==1.8.5",
+    "safety==3.5.2",
+    "semgrep==1.127.1",
+]
+test = [
+    "pytest==8.4.1",
+    "pytest-cov==6.2.1",
+    "pytest-asyncio==1.0.0",
+]
 
 [tool.ruff]
 line-length = 88
