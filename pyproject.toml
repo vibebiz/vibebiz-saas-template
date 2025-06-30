@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "A monorepo for the VibeBiz SaaS template."
 authors = ["Todd <todd@windsurf.ai>"]
 readme = "README.md"
-package-mode = false
+packages = [
+    { include = "vibebiz_saas_template" },
+]
 
 [tool.poetry.dependencies]
 python = "==3.12.8"
