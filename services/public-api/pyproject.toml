@@ -12,7 +12,7 @@ description = "VibeBiz Public API Service"
 dependencies = [
     "fastapi>=0.115.14",
     "uvicorn[standard]>=0.35.0",
-    "pydantic>=2.11.7",
+    "pydantic[email]>=2.11.7",
     "sqlalchemy>=2.0.41",
     "asyncpg>=0.30.0",
     "python-jose[cryptography]>=3.3.0",
@@ -36,6 +36,7 @@ dev = [
     "isort>=6.0.1",
     "mypy>=1.16.1",
     "ruff>=0.12.1",
+    "email-validator>=2.0.0",
 ]
 
 [tool.pytest.ini_options]

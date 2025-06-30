@@ -8,25 +8,22 @@ import pytest
 
 # Import the module under test
 # Note: In a real implementation, this would work once dependencies are installed
-try:
-    from src.api.utils import (
-        create_slug,
-        format_datetime,
-        generate_secure_token,
-        get_utc_now,
-        hash_password,
-        mask_sensitive_data,
-        parse_datetime,
-        sanitize_filename,
-        validate_email,
-        validate_url,
-        verify_password,
-    )
-except ImportError:
-    # Mock imports for demonstration purposes
-    pytest.skip("Dependencies not installed, skipping tests", allow_module_level=True)
+from src.api.utils import (
+    create_slug,
+    format_datetime,
+    generate_secure_token,
+    get_utc_now,
+    hash_password,
+    mask_sensitive_data,
+    parse_datetime,
+    sanitize_filename,
+    validate_email,
+    validate_url,
+    verify_password,
+)
 
 
+@pytest.mark.unit
 class TestSecureTokenGeneration:
     """Test secure token generation"""
 
@@ -58,6 +55,7 @@ class TestSecureTokenGeneration:
         assert all(char in valid_chars for char in token)  # nosec
 
 
+@pytest.mark.unit
 class TestEmailValidation:
     """Test email validation"""
 
@@ -92,6 +90,7 @@ class TestEmailValidation:
             assert not validate_email(email), f"Should be invalid: {email}"  # nosec
 
 
+@pytest.mark.unit
 class TestSlugCreation:
     """Test slug creation from names"""
 
@@ -117,6 +116,7 @@ class TestSlugCreation:
         assert create_slug("---") == ""  # nosec
 
 
+@pytest.mark.unit
 class TestFilenameSanitization:
     """Test filename sanitization"""
 
@@ -152,6 +152,7 @@ class TestFilenameSanitization:
         assert sanitize_filename("   ") == "file"  # nosec
 
 
+@pytest.mark.unit
 class TestDatetimeHandling:
     """Test datetime utility functions"""
 
@@ -192,6 +193,7 @@ class TestDatetimeHandling:
             assert result is None  # nosec
 
 
+@pytest.mark.unit
 class TestUrlValidation:
     """Test URL validation"""
 
@@ -221,6 +223,7 @@ class TestUrlValidation:
             assert not validate_url(url), f"Should be invalid: {url}"  # nosec
 
 
+@pytest.mark.unit
 class TestSensitiveDataMasking:
     """Test sensitive data masking for logging"""
 
@@ -266,6 +269,7 @@ class TestSensitiveDataMasking:
             assert masked[key] == "***"  # nosec
 
 
+@pytest.mark.unit
 class TestPasswordHashing:
     """Test password hashing and verification"""
 
@@ -286,6 +290,7 @@ class TestPasswordHashing:
 
 
 # Performance test example
+@pytest.mark.unit
 @pytest.mark.slow
 def test_token_generation_performance() -> None:
     """Test token generation performance"""
