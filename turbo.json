@@ -48,6 +48,14 @@
     "validate": {
       "dependsOn": ["lint", "type-check", "test"]
     },
+    "test:e2e": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:accessibility": {
+      "cache": false,
+      "persistent": true
+    },
     "dev": {
       "cache": false,
       "persistent": true
