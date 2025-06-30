@@ -25,7 +25,10 @@ packages = ["apps", "packages", "services"]
 
 [tool.ruff]
 line-length = 88
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "D"]
+ignore = ["D203", "D213"]
 
 [tool.mypy]
 disallow_untyped_defs = true
