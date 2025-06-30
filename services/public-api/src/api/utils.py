@@ -24,7 +24,7 @@ def hash_password(password: str) -> str:
     Returns:
         The hashed password as a string
     """
-    return pwd_context.hash(password)
+    return pwd_context.hash(password)  # type: ignore[no-any-return]
 
 
 def verify_password(password: str, hashed: str) -> bool:
@@ -38,7 +38,7 @@ def verify_password(password: str, hashed: str) -> bool:
     Returns:
         True if password matches hash, False otherwise
     """
-    return pwd_context.verify(password, hashed)
+    return pwd_context.verify(password, hashed)  # type: ignore[no-any-return]
 
 
 def generate_secure_token(length: int = 32) -> str:

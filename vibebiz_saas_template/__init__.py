@@ -1,0 +1,1 @@
+"""VibeBiz SaaS Template."""
