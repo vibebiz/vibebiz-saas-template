@@ -68,6 +68,9 @@ class DatabaseTestManager:
         if not self._db_url:
             self.start_container()
 
+        if self._db_url is None:
+            raise RuntimeError("Database URL could not be determined.")
+
         self.engine = create_async_engine(
             self._db_url,
             echo=False,  # Set to True for SQL debugging
