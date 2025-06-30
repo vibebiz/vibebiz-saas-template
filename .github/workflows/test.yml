@@ -107,7 +107,7 @@ jobs:
       - name: Run linting
         run: |
           ruff check .
-          black --check .
+          ruff format --check .
           mypy .
 
       - name: Run security checks
