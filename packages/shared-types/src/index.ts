@@ -23,7 +23,7 @@ export interface Organization {
   id: string;
   name: string;
   slug: string;
-  settings?: Record<string, any>;
+  settings?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
 }
@@ -34,13 +34,13 @@ export interface CreateOrganizationRequest {
 }
 
 // API Response types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
   status: number;
 }
 
-export interface PaginatedResponse<T = any> {
+export interface PaginatedResponse<T = unknown> {
   data: T[];
   pagination: {
     page: number;
@@ -53,7 +53,7 @@ export interface PaginatedResponse<T = any> {
 export interface ApiError {
   message: string;
   code: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 // Utility types
@@ -101,26 +101,30 @@ export function createSlug(name: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-export function isUser(obj: any): obj is User {
+export function isUser(obj: unknown): obj is User {
+  if (typeof obj !== 'object' || obj === null) {
+    return false;
+  }
+  const potentialUser = obj as Record<string, unknown>;
   return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    typeof obj.id === 'string' &&
-    typeof obj.email === 'string' &&
-    typeof obj.full_name === 'string' &&
-    typeof obj.created_at === 'string' &&
-    typeof obj.updated_at === 'string'
+    typeof potentialUser.id === 'string' &&
+    typeof potentialUser.email === 'string' &&
+    typeof potentialUser.full_name === 'string' &&
+    typeof potentialUser.created_at === 'string' &&
+    typeof potentialUser.updated_at === 'string'
   );
 }
 
-export function isOrganization(obj: any): obj is Organization {
+export function isOrganization(obj: unknown): obj is Organization {
+  if (typeof obj !== 'object' || obj === null) {
+    return false;
+  }
+  const potentialOrg = obj as Record<string, unknown>;
   return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    typeof obj.id === 'string' &&
-    typeof obj.name === 'string' &&
-    typeof obj.slug === 'string' &&
-    typeof obj.created_at === 'string' &&
-    typeof obj.updated_at === 'string'
+    typeof potentialOrg.id === 'string' &&
+    typeof potentialOrg.name === 'string' &&
+    typeof potentialOrg.slug === 'string' &&
+    typeof potentialOrg.created_at === 'string' &&
+    typeof potentialOrg.updated_at === 'string'
   );
 }
