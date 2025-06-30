@@ -5,6 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "vibebiz-saas-template"
 version = "0.1.0"
+dependencies = [
+    "bcrypt",
+]
 
 [project.optional-dependencies]
 dev = [
