@@ -144,55 +144,6 @@ jobs:
           flags: python
           name: python-coverage
 
-  combined-coverage:
-    name: Combined Coverage Report
-    runs-on: ubuntu-latest
-    needs: [typescript-tests, python-tests]
-    if: always()
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download TypeScript test results
-        uses: actions/download-artifact@v4
-        with:
-          name: typescript-test-results
-          path: coverage/typescript/
-
-      - name: Download Python test results
-        uses: actions/download-artifact@v4
-        with:
-          name: python-test-results-3.12
-          path: coverage/python/
-
-      - name: Generate combined coverage report
-        run: |
-          echo "## Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ -f "coverage/typescript/coverage-summary.json" ]; then
-            echo "### TypeScript Coverage" >> $GITHUB_STEP_SUMMARY
-            echo "See detailed coverage reports in artifacts" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-          fi
-
-          if [ -f "coverage/python/coverage.xml" ]; then
-            echo "### Python Coverage" >> $GITHUB_STEP_SUMMARY
-            echo "See detailed coverage reports in artifacts" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-          fi
-
-          echo "### Overall Status" >> $GITHUB_STEP_SUMMARY
-          echo "✅ All tests completed. Check individual job results for details." >> $GITHUB_STEP_SUMMARY
-
-      - name: Check coverage thresholds
-        run: |
-          echo "Checking coverage thresholds..."
-          # TypeScript coverage check would go here
-          # Python coverage is already checked in pytest
-          echo "Coverage threshold validation complete."
-
   security-tests:
     name: Security Tests
     runs-on: ubuntu-latest
@@ -206,9 +157,11 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Install security tools
-        run: |
-          pip install bandit safety semgrep
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv pip install --system -e ".[dev]"
 
       - name: Run Bandit security scan
         run: bandit -r services/ packages/ -f json -o bandit-report.json || true

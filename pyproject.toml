@@ -6,6 +6,20 @@ build-backend = "setuptools.build_meta"
 name = "vibebiz-saas-template"
 version = "0.1.0"
 
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "black",
+    "mypy",
+    "bandit",
+    "safety",
+    "semgrep",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+
 [tool.setuptools]
 packages = ["apps", "packages", "services"]
 
