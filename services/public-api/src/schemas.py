@@ -5,15 +5,18 @@ Pydantic models for the application
 from __future__ import annotations
 
 from datetime import datetime
+from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class User(BaseModel):
     """
     User model
     """
+
+    model_config = ConfigDict(frozen=True)
 
     id: str
     email: EmailStr
@@ -29,6 +32,8 @@ class Organization(BaseModel):
     Organization model
     """
 
+    model_config = ConfigDict(frozen=True)
+
     id: str
     name: str
     slug: str
@@ -37,17 +42,50 @@ class Organization(BaseModel):
     updated_at: datetime
 
 
+class Role(str, Enum):
+    """
+    Enumeration for user roles
+    """
+
+    OWNER = "owner"
+    ADMIN = "admin"
+    MEMBER = "member"
+    BILLING = "billing"
+
+
+class ProjectStatus(str, Enum):
+    """
+    Enumeration for project statuses
+    """
+
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    ARCHIVED = "archived"
+
+
+class InvitationStatus(str, Enum):
+    """
+    Enumeration for invitation statuses
+    """
+
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    EXPIRED = "expired"
+
+
 class Project(BaseModel):
     """
     Project model
     """
+
+    model_config = ConfigDict(frozen=True)
 
     id: str
     organization_id: str
     name: str
     slug: str
     description: str | None = None
-    status: str
+    status: ProjectStatus
     creator_id: str
     created_at: datetime
     updated_at: datetime
@@ -58,10 +96,12 @@ class OrganizationMember(BaseModel):
     OrganizationMember model
     """
 
+    model_config = ConfigDict(frozen=True)
+
     id: str
     user_id: str
     organization_id: str
-    role: str
+    role: Role
     created_at: datetime
     updated_at: datetime
 
@@ -89,9 +129,9 @@ class OrganizationInvitation(BaseModel):
     id: str
     organization_id: str
     email: EmailStr
-    role: str
+    role: Role
     token_hash: str
-    status: str
+    status: InvitationStatus
     expires_at: datetime
     invited_by: str
     created_at: datetime
@@ -122,7 +162,7 @@ class JWTPayload(BaseModel):
     sub: str  # user_id
     email: EmailStr
     org_id: str
-    role: str
+    role: Role
     iat: int
     exp: int
     jti: str

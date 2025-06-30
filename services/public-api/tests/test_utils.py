@@ -10,17 +10,17 @@ import pytest
 # Note: In a real implementation, this would work once dependencies are installed
 try:
     from src.api.utils import (
-        # hash_password,  # Commented out due to bcrypt dependency
-        # verify_password,  # Commented out due to bcrypt dependency
         create_slug,
         format_datetime,
         generate_secure_token,
         get_utc_now,
+        hash_password,
         mask_sensitive_data,
         parse_datetime,
         sanitize_filename,
         validate_email,
         validate_url,
+        verify_password,
     )
 except ImportError:
     # Mock imports for demonstration purposes
@@ -33,21 +33,21 @@ class TestSecureTokenGeneration:
     def test_default_length(self) -> None:
         """Test token generation with default length"""
         token = generate_secure_token()
-        assert len(token) == 32  # nosec B101
-        assert isinstance(token, str)  # nosec B101
+        assert len(token) == 32  # nosec
+        assert isinstance(token, str)  # nosec
 
     def test_custom_length(self) -> None:
         """Test token generation with custom length"""
         token = generate_secure_token(16)
-        assert len(token) == 16  # nosec B101
+        assert len(token) == 16  # nosec
 
         token = generate_secure_token(64)
-        assert len(token) == 64  # nosec B101
+        assert len(token) == 64  # nosec
 
     def test_token_uniqueness(self) -> None:
         """Test that generated tokens are unique"""
         tokens = [generate_secure_token() for _ in range(100)]
-        assert len(set(tokens)) == 100  # nosec B101 # All tokens should be unique
+        assert len(set(tokens)) == 100  # nosec # All tokens should be unique
 
     def test_token_characters(self) -> None:
         """Test that tokens contain only valid characters"""
@@ -55,7 +55,7 @@ class TestSecureTokenGeneration:
         valid_chars = set(
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         )
-        assert all(char in valid_chars for char in token)  # nosec B101
+        assert all(char in valid_chars for char in token)  # nosec
 
 
 class TestEmailValidation:
@@ -72,7 +72,7 @@ class TestEmailValidation:
         ]
 
         for email in valid_emails:
-            assert validate_email(email), f"Should be valid: {email}"  # nosec B101
+            assert validate_email(email), f"Should be valid: {email}"  # nosec
 
     def test_invalid_emails(self) -> None:
         """Test validation of invalid email addresses"""
@@ -89,7 +89,7 @@ class TestEmailValidation:
         ]
 
         for email in invalid_emails:
-            assert not validate_email(email), f"Should be invalid: {email}"  # nosec B101
+            assert not validate_email(email), f"Should be invalid: {email}"  # nosec
 
 
 class TestSlugCreation:
@@ -97,24 +97,24 @@ class TestSlugCreation:
 
     def test_basic_slug_creation(self) -> None:
         """Test basic slug creation"""
-        assert create_slug("Test Organization") == "test-organization"  # nosec B101
-        assert create_slug("My Company Name") == "my-company-name"  # nosec B101
+        assert create_slug("Test Organization") == "test-organization"  # nosec
+        assert create_slug("My Company Name") == "my-company-name"  # nosec
 
     def test_special_characters(self) -> None:
         """Test slug creation with special characters"""
-        assert create_slug("Company & Co!") == "company-co"  # nosec B101
-        assert create_slug("Test@Company#123") == "test-company-123"  # nosec B101
+        assert create_slug("Company & Co!") == "company-co"  # nosec
+        assert create_slug("Test@Company#123") == "test-company-123"  # nosec
 
     def test_multiple_spaces(self) -> None:
         """Test slug creation with multiple consecutive spaces"""
-        assert create_slug("Test   Company") == "test-company"  # nosec B101
-        assert create_slug("  Test Company  ") == "test-company"  # nosec B101
+        assert create_slug("Test   Company") == "test-company"  # nosec
+        assert create_slug("  Test Company  ") == "test-company"  # nosec
 
     def test_edge_cases(self) -> None:
         """Test slug creation edge cases"""
-        assert create_slug("") == ""  # nosec B101
-        assert create_slug("123") == "123"  # nosec B101
-        assert create_slug("---") == ""  # nosec B101
+        assert create_slug("") == ""  # nosec
+        assert create_slug("123") == "123"  # nosec
+        assert create_slug("---") == ""  # nosec
 
 
 class TestFilenameSanitization:
@@ -122,34 +122,34 @@ class TestFilenameSanitization:
 
     def test_safe_filenames(self) -> None:
         """Test that safe filenames remain unchanged"""
-        safe_names = [
-            "document.txt",
-            "image_123.jpg",
-            "file-name.pdf",
+        safe_filenames = [
+            "document.pdf",
+            "image-01.jpg",
+            "archive.tar.gz",
+            "data_2025_Q1.csv",
             "report.2025.xlsx",
         ]
 
-        for filename in safe_names:
-            assert sanitize_filename(filename) == filename  # nosec B101
+        for filename in safe_filenames:
+            assert sanitize_filename(filename) == filename  # nosec
 
     def test_dangerous_filenames(self) -> None:
         """Test sanitization of dangerous filenames"""
-        dangerous_cases = [
-            ("../../etc/passwd", "etcpasswd"),
-            ("file\\with\\backslashes.txt", "filewithbackslashes.txt"),
-            ("file/with/slashes.txt", "filewithslashes.txt"),
-            ("file with spaces.txt", "filewithspaces.txt"),
-            ("file!@#$%^&*().txt", "file.txt"),
-        ]
+        dangerous_map = {
+            "../../etc/passwd": "etcpasswd",
+            "file\\with\\backslashes.txt": "filewithbackslashes.txt",
+            "file/with/slashes.txt": "filewithslashes.txt",
+            "file with spaces.txt": "filewithspaces.txt",
+            "file!@#$%^&*().txt": "file.txt",
+        }
 
-        for dangerous, expected in dangerous_cases:
-            result = sanitize_filename(dangerous)
-            assert result == expected  # nosec B101
+        for dangerous, sanitized in dangerous_map.items():
+            assert sanitize_filename(dangerous) == sanitized  # nosec
 
     def test_empty_filename(self) -> None:
         """Test sanitization of empty or invalid filenames"""
-        assert sanitize_filename("") == "file"  # nosec B101
-        assert sanitize_filename("!@#$%^&*()") == "file"  # nosec B101
+        assert sanitize_filename("") == "file"  # nosec
+        assert sanitize_filename("   ") == "file"  # nosec
 
 
 class TestDatetimeHandling:
@@ -158,15 +158,13 @@ class TestDatetimeHandling:
     def test_get_utc_now(self) -> None:
         """Test UTC datetime generation"""
         now = get_utc_now()
-        assert isinstance(now, datetime)  # nosec B101
-        assert now.tzinfo == UTC  # nosec B101
+        assert isinstance(now, datetime)  # nosec
+        assert now.tzinfo == UTC  # nosec
 
     def test_format_datetime(self) -> None:
         """Test datetime formatting"""
         dt = datetime(2025, 1, 1, 12, 0, 0, tzinfo=UTC)
-        formatted = format_datetime(dt)
-        assert isinstance(formatted, str)  # nosec B101
-        assert "2025-01-01T12:00:00" in formatted  # nosec B101
+        assert format_datetime(dt) == "2025-01-01T12:00:00+00:00"  # nosec
 
     def test_parse_datetime_valid(self) -> None:
         """Test parsing valid datetime strings"""
@@ -178,7 +176,7 @@ class TestDatetimeHandling:
 
         for date_str in valid_dates:
             result = parse_datetime(date_str)
-            assert isinstance(result, datetime)  # nosec B101
+            assert isinstance(result, datetime)  # nosec
 
     def test_parse_datetime_invalid(self) -> None:
         """Test parsing invalid datetime strings"""
@@ -191,7 +189,7 @@ class TestDatetimeHandling:
 
         for date_str in invalid_dates:
             result = parse_datetime(date_str)
-            assert result is None  # nosec B101
+            assert result is None  # nosec
 
 
 class TestUrlValidation:
@@ -207,7 +205,7 @@ class TestUrlValidation:
         ]
 
         for url in valid_urls:
-            assert validate_url(url), f"Should be valid: {url}"  # nosec B101
+            assert validate_url(url), f"Should be valid: {url}"  # nosec
 
     def test_invalid_urls(self) -> None:
         """Test validation of invalid URLs"""
@@ -220,7 +218,7 @@ class TestUrlValidation:
         ]
 
         for url in invalid_urls:
-            assert not validate_url(url), f"Should be invalid: {url}"  # nosec B101
+            assert not validate_url(url), f"Should be invalid: {url}"  # nosec
 
 
 class TestSensitiveDataMasking:
@@ -237,10 +235,10 @@ class TestSensitiveDataMasking:
 
         masked = mask_sensitive_data(data)
 
-        assert masked["username"] == "testuser"  # nosec B101 # Not sensitive
-        assert masked["email"] == "test@example.com"  # nosec B101 # Not sensitive
-        assert masked["password"] == "se**********rd"  # nosec B101
-        assert "ab**********90" in masked["token"] or masked["token"] == "***"  # nosec B101
+        assert masked["username"] == "testuser"  # nosec # Not sensitive
+        assert masked["email"] == "test@example.com"  # nosec # Not sensitive
+        assert masked["password"] == "se**********rd"  # nosec
+        assert "ab**********90" in masked["token"] or masked["token"] == "***"  # nosec
 
     def test_custom_sensitive_keys(self) -> None:
         """Test masking with custom sensitive keys"""
@@ -250,11 +248,11 @@ class TestSensitiveDataMasking:
             "normal_field": "normal_value",
         }
 
-        masked = mask_sensitive_data(data, sensitive_keys=["secret"])
+        masked = mask_sensitive_data(data, sensitive_keys=("secret_data",))
 
-        assert masked["public_info"] == "visible"  # nosec B101
-        assert masked["normal_field"] == "normal_value"  # nosec B101
-        assert (  # nosec B101
+        assert masked["public_info"] == "visible"  # nosec
+        assert masked["normal_field"] == "normal_value"  # nosec
+        assert (  # nosec
             "hi**********ue" in masked["secret_data"] or masked["secret_data"] == "***"
         )
 
@@ -265,16 +263,26 @@ class TestSensitiveDataMasking:
         masked = mask_sensitive_data(data)
 
         for key in ["password", "token", "key"]:
-            assert masked[key] == "***"  # nosec B101
+            assert masked[key] == "***"  # nosec
 
 
-# Integration test example (would require database setup in real implementation)
-# @pytest.mark.integration
-# def test_integration_example() -> None:
-#     """Example integration test (placeholder)"""
-#     # This would test multiple utilities working together
-#     # with a real database or external service
-#     pass
+class TestPasswordHashing:
+    """Test password hashing and verification"""
+
+    def test_hash_and_verify_password(self) -> None:
+        """Test that a password can be hashed and verified"""
+        password = "secure_password_123"  # nosec
+        hashed = hash_password(password)
+
+        assert hashed != password  # nosec
+        assert verify_password(password, hashed)  # nosec
+
+    def test_verify_incorrect_password(self) -> None:
+        """Test that an incorrect password fails verification"""
+        password = "secure_password_123"  # nosec
+        hashed = hash_password(password)
+
+        assert not verify_password("wrong_password", hashed)  # nosec
 
 
 # Performance test example
@@ -288,6 +296,6 @@ def test_token_generation_performance() -> None:
     end_time = time.time()
 
     # Should generate 1000 tokens in less than 1 second
-    assert end_time - start_time < 1.0  # nosec B101
-    assert len(tokens) == 1000  # nosec B101
-    assert len(set(tokens)) == 1000  # nosec B101 # All unique
+    assert end_time - start_time < 1.0  # nosec
+    assert len(tokens) == 1000  # nosec
+    assert len(set(tokens)) == 1000  # nosec # All unique

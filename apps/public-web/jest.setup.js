@@ -7,12 +7,11 @@ import '@testing-library/jest-dom';
 // Global test configuration
 global.console = {
   ...console,
-  // Suppress console logs in tests
+  // Suppress informational console logs in tests to keep output clean.
+  // We don't suppress warn and error so that we can catch unexpected issues.
   log: jest.fn(),
   debug: jest.fn(),
   info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
 };
 
 // Mock Next.js router
@@ -57,7 +56,6 @@ jest.mock('next/navigation', () => ({
 
 // Mock environment variables
 process.env.NODE_ENV = 'test';
-process.env.NEXT_PUBLIC_API_URL = 'http://localhost:8000';
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
@@ -89,41 +87,3 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
-
-// Setup global test utilities
-global.testUtils = {
-  ...global.testUtils,
-
-  // Create mock component props
-  createMockProps: (overrides = {}) => ({
-    className: '',
-    children: null,
-    ...overrides,
-  }),
-
-  // Mock API responses
-  mockApiCall: (data, status = 200) =>
-    Promise.resolve({
-      ok: status >= 200 && status < 300,
-      status,
-      json: () => Promise.resolve(data),
-      text: () => Promise.resolve(JSON.stringify(data)),
-    }),
-
-  // Mock user data
-  createMockUser: (overrides = {}) => ({
-    id: 'user-123',
-    email: 'test@example.com',
-    full_name: 'Test User',
-    avatar_url: 'https://example.com/avatar.jpg',
-    ...overrides,
-  }),
-
-  // Mock organization data
-  createMockOrganization: (overrides = {}) => ({
-    id: 'org-123',
-    name: 'Test Organization',
-    slug: 'test-org',
-    ...overrides,
-  }),
-};

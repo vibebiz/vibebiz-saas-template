@@ -3,16 +3,16 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Button, ButtonProps } from '../src/components/Button';
+import { Button } from '../src/components/Button';
 
 describe('Button Component', () => {
-  const defaultProps: ButtonProps = {
+  const defaultProps = {
     children: 'Click me',
   };
 
-  const renderButton = (props: Partial<ButtonProps> = {}) => {
+  const renderButton = (props: Partial<React.ComponentProps<typeof Button>> = {}) => {
     return render(<Button {...defaultProps} {...props} />);
   };
 
@@ -115,11 +115,10 @@ describe('Button Component', () => {
     });
   });
 
-  describe('Click Handling', () => {
-    test('calls onClick when clicked', async () => {
-      const handleClick = jest.fn();
+  describe('Interactions', () => {
+    test('calls onClick handler when clicked', async () => {
       const user = userEvent.setup();
-
+      const handleClick = jest.fn();
       renderButton({ onClick: handleClick });
 
       const button = screen.getByRole('button');
@@ -129,9 +128,8 @@ describe('Button Component', () => {
     });
 
     test('does not call onClick when disabled', async () => {
-      const handleClick = jest.fn();
       const user = userEvent.setup();
-
+      const handleClick = jest.fn();
       renderButton({ onClick: handleClick, disabled: true });
 
       const button = screen.getByRole('button');
@@ -141,26 +139,14 @@ describe('Button Component', () => {
     });
 
     test('does not call onClick when loading', async () => {
-      const handleClick = jest.fn();
       const user = userEvent.setup();
-
+      const handleClick = jest.fn();
       renderButton({ onClick: handleClick, loading: true });
 
       const button = screen.getByRole('button');
       await user.click(button);
 
       expect(handleClick).not.toHaveBeenCalled();
-    });
-
-    test('handles click with fireEvent', () => {
-      const handleClick = jest.fn();
-
-      renderButton({ onClick: handleClick });
-
-      const button = screen.getByRole('button');
-      fireEvent.click(button);
-
-      expect(handleClick).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -212,26 +198,27 @@ describe('Button Component', () => {
       expect(button).toHaveFocus();
     });
 
-    test('supports keyboard navigation', async () => {
-      const handleClick = jest.fn();
+    test('supports keyboard navigation with Enter key', async () => {
       const user = userEvent.setup();
-
+      const handleClick = jest.fn();
       renderButton({ onClick: handleClick });
 
       const button = screen.getByRole('button');
       button.focus();
-      await user.keyboard('{Enter}');
 
+      // Test Enter key
+      await user.keyboard('{enter}');
       expect(handleClick).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('Edge Cases', () => {
-    test('handles undefined onClick gracefully', () => {
+    test('handles undefined onClick gracefully', async () => {
+      const user = userEvent.setup();
       renderButton({ onClick: undefined });
 
       const button = screen.getByRole('button');
-      expect(() => fireEvent.click(button)).not.toThrow();
+      await user.click(button); // Should not throw
     });
 
     test('handles empty children', () => {

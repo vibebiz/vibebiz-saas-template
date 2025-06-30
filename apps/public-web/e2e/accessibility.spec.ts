@@ -7,9 +7,7 @@ test.describe('accessibility tests', () => {
   }) => {
     await page.goto('/');
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withRules(['button-name'])
-      .analyze();
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
 
     expect(accessibilityScanResults.violations).toEqual([]);
   });

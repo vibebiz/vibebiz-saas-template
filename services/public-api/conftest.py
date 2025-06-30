@@ -256,28 +256,6 @@ def create_test_organization(**overrides: Any) -> dict[str, Any]:
     return default_org
 
 
-# Pytest configuration
-def pytest_configure(config: pytest.Config) -> None:
-    """
-    Pytest configuration hook
-    """
-    # Register custom markers
-    config.addinivalue_line(
-        "markers", "unit: Fast unit tests with no external dependencies"
-    )
-    config.addinivalue_line(
-        "markers", "integration: Integration tests with external dependencies"
-    )
-    config.addinivalue_line("markers", "slow: Tests that take longer than usual to run")
-    config.addinivalue_line(
-        "markers", "auth: Authentication and authorization related tests"
-    )
-    config.addinivalue_line("markers", "api: API endpoint tests")
-    config.addinivalue_line("markers", "database: Database related tests")
-    config.addinivalue_line("markers", "security: Security related tests")
-    config.addinivalue_line("markers", "performance: Performance and load tests")
-
-
 def pytest_collection_modifyitems(config: pytest.Config, items: list) -> None:
     """
     Modify test collection to add default markers
