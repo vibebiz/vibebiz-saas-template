@@ -31,6 +31,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install Python dependencies
+        run: uv pip install --system -e ".[test,dev]"
+
       - name: Type check
         run: pnpm type-check
 
@@ -112,13 +123,13 @@ jobs:
 
       - name: Run linting
         run: |
-          ruff check .
-          ruff format --check .
-          mypy .
+          python -m ruff check .
+          python -m ruff format --check .
+          python -m mypy .
 
       - name: Run security checks
         run: |
-          bandit -r services/ packages/ -f json -o bandit-report.json
+          python -m bandit -r services/ packages/ -f json -o bandit-report.json
 
       - name: Run Python tests
         env:
@@ -258,10 +269,10 @@ jobs:
         run: uv pip install --system -e ".[dev]"
 
       - name: Run Bandit security scan
-        run: bandit -r services/ packages/ -f json -o bandit-report.json || true
+        run: python -m bandit -r services/ packages/ -f json -o bandit-report.json || true
 
       - name: Run Safety dependency scan
-        run: safety check --json --output safety-report.json || true
+        run: python -m safety check --json --output safety-report.json || true
 
       - name: Run Semgrep scan
         run: semgrep --config=auto --json --output=semgrep-report.json . || true
