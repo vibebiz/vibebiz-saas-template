@@ -40,6 +40,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Install Python dependencies
+        working-directory: services/public-api
         run: uv pip install --system -e ".[test,dev]"
 
       - name: Type check
@@ -218,7 +219,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+        run: npx playwright install --with-deps
 
       - name: Build
         run: pnpm build
