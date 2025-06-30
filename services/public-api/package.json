@@ -15,8 +15,7 @@
     "lint:fix": "python -m ruff check --fix src tests",
     "format": "python -m black src tests && python -m isort src tests",
     "type-check": "python -m mypy src",
-    "clean": "rm -rf .pytest_cache htmlcov .coverage coverage.xml dist build *.egg-info",
-    "security": "python -m bandit -r src"
+    "clean": "rm -rf .pytest_cache htmlcov .coverage coverage.xml dist build *.egg-info"
   },
   "dependencies": {},
   "engines": {

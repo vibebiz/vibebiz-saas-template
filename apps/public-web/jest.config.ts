@@ -8,17 +8,22 @@ const createJestConfig = nextJest({
 
 // Add any custom config to be passed to Jest
 const config: Config = {
-  collectCoverage: false,
+  collectCoverage: true,
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
   // Add more setup options before each test is run
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^@vibebiz/(.*)$': '<rootDir>/../../packages/$1/src',
+    '^@vibebiz/((?!public-api).*)': '<rootDir>/../../packages/$1/src',
+    '^@vibebiz/public-api/(.*)$': '<rootDir>/../../services/public-api/src/$1',
   },
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
-  roots: ['<rootDir>/src', '<rootDir>/__tests__'],
+  testPathIgnorePatterns: [
+    '<rootDir>/.next/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/__tests__/test-utils.ts',
+    '<rootDir>/e2e/',
+  ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',
@@ -27,10 +32,10 @@ const config: Config = {
   ],
   coverageThreshold: {
     global: {
-      branches: 60,
-      functions: 60,
-      lines: 60,
-      statements: 60,
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
     },
   },
 };

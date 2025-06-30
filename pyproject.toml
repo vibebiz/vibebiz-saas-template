@@ -1,30 +1,30 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "vibebiz-saas-template"
 version = "0.1.0"
-dependencies = [
-    "bcrypt",
-]
+description = "A monorepo for the VibeBiz SaaS template."
+authors = ["Todd <todd@windsurf.ai>"]
+readme = "README.md"
+package-mode = false
 
-[project.optional-dependencies]
-dev = [
-    "ruff==0.5.5",
-    "mypy",
-    "bandit",
-    "safety",
-    "semgrep",
-]
-test = [
-    "pytest",
-    "pytest-cov",
-    "pytest-asyncio",
-]
+[tool.poetry.dependencies]
+python = "==3.12.8"
+bcrypt = "==4.3.0"
 
-[tool.setuptools]
-packages = ["apps", "packages", "services"]
+[tool.poetry.group.dev.dependencies]
+ruff = "==0.12.1"
+mypy = "==1.16.1"
+bandit = "==1.8.5"
+safety = "==3.5.2"
+semgrep = "==1.127.1"
+
+[tool.poetry.group.test.dependencies]
+pytest = "==8.4.1"
+pytest-cov = "==6.2.1"
+pytest-asyncio = "==1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 88
