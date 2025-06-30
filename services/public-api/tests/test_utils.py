@@ -269,12 +269,12 @@ class TestSensitiveDataMasking:
 
 
 # Integration test example (would require database setup in real implementation)
-@pytest.mark.integration
-def test_integration_example() -> None:
-    """Example integration test (placeholder)"""
-    # This would test multiple utilities working together
-    # with a real database or external service
-    pass
+# @pytest.mark.integration
+# def test_integration_example() -> None:
+#     """Example integration test (placeholder)"""
+#     # This would test multiple utilities working together
+#     # with a real database or external service
+#     pass
 
 
 # Performance test example

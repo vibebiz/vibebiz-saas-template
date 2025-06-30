@@ -27,6 +27,10 @@
       "dependsOn": ["^build"],
       "outputs": ["coverage/**", ".coverage"]
     },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**", ".coverage", "test-results/**"]
+    },
     "test:coverage": {
       "dependsOn": ["test"],
       "outputs": ["coverage/**", ".coverage", "coverage.xml", "htmlcov/**"]

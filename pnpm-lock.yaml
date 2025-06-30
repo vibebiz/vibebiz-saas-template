@@ -141,6 +141,8 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
+  services/public-api: {}
+
 packages:
   '@adobe/css-tools@4.4.3':
     resolution:
