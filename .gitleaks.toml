@@ -1,0 +1,7 @@
+# This file configures Gitleaks to ignore specific findings.
+
+[allowlist]
+    description = "Allow mock secrets in test files"
+    paths = [
+        '''packages/test-utils/src/__tests__/test-utils\.test\.ts$''',
+    ]
