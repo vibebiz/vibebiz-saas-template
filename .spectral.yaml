@@ -1,0 +1,20 @@
+# VibeBiz Spectral Ruleset
+# See all rulesets: https://meta.stoplight.io/docs/spectral/docs/reference/rulesets.md
+extends:
+  - spectral:oas
+  - spectral:asyncapi
+
+rules:
+  # You can override or disable rules here. For example:
+  # oas3-schema: off
+  #
+  # You can also set the severity of a rule (error, warn, info, hint, off)
+  # contact-properties:
+  #   description: "Contact object should have name, url and email."
+  #   message: "{{error}}"
+  #   given: "$.info.contact"
+  #   required:
+  #     - name
+  #     - url
+  #     - email
+  #   severity: warn

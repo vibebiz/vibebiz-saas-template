@@ -1,0 +1,7 @@
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "I", "N", "D"]
+
+[tool.mypy]
+disallow_untyped_defs = true
+ignore_missing_imports = true
