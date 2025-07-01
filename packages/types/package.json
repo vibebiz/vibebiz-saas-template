@@ -1,5 +1,5 @@
 {
-  "name": "@vibebiz/shared-types",
+  "name": "@vibebiz/types",
   "version": "1.0.0",
   "description": "Shared TypeScript types for VibeBiz SaaS Template",
   "main": "./dist/index.js",

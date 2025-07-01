@@ -5,7 +5,11 @@ module.exports = {
   testEnvironment: 'node',
 
   // Projects configuration for monorepo
-  projects: ['<rootDir>/apps/*/jest.config.js', '<rootDir>/packages/*/jest.config.js'],
+  projects: [
+    '<rootDir>/apps/*/jest.config.js',
+    '<rootDir>/packages/*/jest.config.js',
+    '<rootDir>/tests/jest.config.mjs', // Cross-cutting tests
+  ],
 
   // Coverage configuration
   collectCoverageFrom: [

@@ -1,0 +1,224 @@
+{
+  "organizations": [
+    {
+      "id": "org-test-1",
+      "name": "Test Organization One",
+      "slug": "test-org-1",
+      "domain": "test-org-1.example.com",
+      "plan": "professional",
+      "settings": {
+        "timezone": "UTC",
+        "date_format": "YYYY-MM-DD",
+        "security": {
+          "mfa_required": true,
+          "session_timeout": 3600
+        }
+      },
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "org-test-2",
+      "name": "Test Organization Two",
+      "slug": "test-org-2",
+      "domain": "test-org-2.example.com",
+      "plan": "enterprise",
+      "settings": {
+        "timezone": "America/New_York",
+        "date_format": "MM/DD/YYYY",
+        "security": {
+          "mfa_required": true,
+          "session_timeout": 7200
+        }
+      },
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-admin-1",
+      "email": "admin@test-org-1.example.com",
+      "full_name": "Admin User One",
+      "organization_id": "org-test-1",
+      "role": "admin",
+      "is_active": true,
+      "email_verified": true,
+      "last_login": "2024-01-15T10:00:00Z",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-15T10:00:00Z"
+    },
+    {
+      "id": "user-regular-1",
+      "email": "user@test-org-1.example.com",
+      "full_name": "Regular User One",
+      "organization_id": "org-test-1",
+      "role": "user",
+      "is_active": true,
+      "email_verified": true,
+      "last_login": "2024-01-15T09:30:00Z",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-15T09:30:00Z"
+    },
+    {
+      "id": "user-admin-2",
+      "email": "admin@test-org-2.example.com",
+      "full_name": "Admin User Two",
+      "organization_id": "org-test-2",
+      "role": "admin",
+      "is_active": true,
+      "email_verified": true,
+      "last_login": "2024-01-15T11:00:00Z",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-15T11:00:00Z"
+    },
+    {
+      "id": "user-regular-2",
+      "email": "user@test-org-2.example.com",
+      "full_name": "Regular User Two",
+      "organization_id": "org-test-2",
+      "role": "user",
+      "is_active": true,
+      "email_verified": true,
+      "last_login": "2024-01-15T08:45:00Z",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-15T08:45:00Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-1-org-1",
+      "title": "Organization 1 Document",
+      "content": "This is a test document for organization 1",
+      "organization_id": "org-test-1",
+      "created_by": "user-admin-1",
+      "is_public": false,
+      "tags": ["test", "organization-1"],
+      "created_at": "2024-01-10T00:00:00Z",
+      "updated_at": "2024-01-10T00:00:00Z"
+    },
+    {
+      "id": "doc-2-org-1",
+      "title": "Another Org 1 Document",
+      "content": "Another test document for organization 1",
+      "organization_id": "org-test-1",
+      "created_by": "user-regular-1",
+      "is_public": true,
+      "tags": ["test", "public"],
+      "created_at": "2024-01-12T00:00:00Z",
+      "updated_at": "2024-01-12T00:00:00Z"
+    },
+    {
+      "id": "doc-1-org-2",
+      "title": "Organization 2 Document",
+      "content": "This is a test document for organization 2",
+      "organization_id": "org-test-2",
+      "created_by": "user-admin-2",
+      "is_public": false,
+      "tags": ["test", "organization-2"],
+      "created_at": "2024-01-11T00:00:00Z",
+      "updated_at": "2024-01-11T00:00:00Z"
+    }
+  ],
+  "api_responses": {
+    "health_check": {
+      "status": "healthy",
+      "timestamp": "2024-01-15T12:00:00Z",
+      "version": "1.0.0",
+      "environment": "test"
+    },
+    "user_profile": {
+      "id": "user-admin-1",
+      "email": "admin@test-org-1.example.com",
+      "full_name": "Admin User One",
+      "organization": {
+        "id": "org-test-1",
+        "name": "Test Organization One",
+        "plan": "professional"
+      },
+      "role": "admin",
+      "permissions": ["read", "write", "admin"],
+      "last_login": "2024-01-15T10:00:00Z"
+    },
+    "error_responses": {
+      "unauthorized": {
+        "error": "Unauthorized",
+        "message": "Authentication required",
+        "code": 401
+      },
+      "forbidden": {
+        "error": "Forbidden",
+        "message": "Access denied",
+        "code": 403
+      },
+      "not_found": {
+        "error": "Not Found",
+        "message": "Resource not found",
+        "code": 404
+      },
+      "validation_error": {
+        "error": "Validation Error",
+        "message": "Invalid input data",
+        "code": 422,
+        "details": []
+      }
+    }
+  },
+  "performance_benchmarks": {
+    "api_endpoints": {
+      "health_check": {
+        "max_response_time_ms": 50,
+        "expected_status": 200
+      },
+      "user_login": {
+        "max_response_time_ms": 300,
+        "expected_status": 200
+      },
+      "document_list": {
+        "max_response_time_ms": 200,
+        "expected_status": 200
+      },
+      "document_create": {
+        "max_response_time_ms": 500,
+        "expected_status": 201
+      }
+    },
+    "database_queries": {
+      "user_by_email": {
+        "max_query_time_ms": 50
+      },
+      "documents_by_organization": {
+        "max_query_time_ms": 100
+      }
+    }
+  },
+  "security_test_data": {
+    "sql_injection_payloads": [
+      "' OR '1'='1",
+      "'; DROP TABLE users; --",
+      "' UNION SELECT * FROM users --",
+      "admin'--",
+      "' OR 1=1#"
+    ],
+    "xss_payloads": [
+      "<script>alert('xss')</script>",
+      "javascript:alert('xss')",
+      "<img src=x onerror=alert('xss')>",
+      "<svg onload=alert('xss')>",
+      "{{constructor.constructor('alert(1)')()}}"
+    ],
+    "command_injection_payloads": [
+      "; cat /etc/passwd",
+      "| whoami",
+      "&& rm -rf /",
+      "`id`",
+      "$(id)"
+    ],
+    "path_traversal_payloads": [
+      "../../../etc/passwd",
+      "..\\..\\..\\windows\\system32\\drivers\\etc\\hosts",
+      "....//....//....//etc/passwd",
+      "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
+    ]
+  }
+}

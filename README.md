@@ -97,7 +97,7 @@ vibebiz-saas-template/
 │       ├── tests/              # Python unit tests
 │       └── src/                # Python source code
 └── packages/
-    └── shared-types/           # Shared TypeScript package
+    └── types/                  # Shared TypeScript package
         ├── __tests__/          # TypeScript unit tests
         └── src/                # TypeScript source code
 ```
@@ -136,7 +136,7 @@ test('calls onClick when clicked', async () => {
 
 ```bash
 # Run tests for a specific package
-cd packages/shared-types
+cd packages/types
 pnpm test
 
 # Run tests with coverage
@@ -235,7 +235,7 @@ def test_example(mock_user, mock_organization):
 pnpm test:coverage
 
 # View TypeScript coverage
-open packages/shared-types/coverage/index.html
+open packages/types/coverage/index.html
 
 # View Python coverage
 open services/public-api/htmlcov/index.html
@@ -331,7 +331,7 @@ When adding new packages or services:
 
 - Install dependencies: `pnpm install`
 - Run the test suite: `pnpm test`
-- Explore the sample tests in `packages/shared-types` and `services/public-api`
+- Explore the sample tests in `packages/types` and `services/public-api`
 - Add your own packages following the established patterns
 
 For more information, see the [VibeBiz Documentation](https://docs.vibebiz.dev).

@@ -3,40 +3,113 @@ description: Rules for testing best practices
 globs:
 alwaysApply: false
 ---
-# VibeBiz Testing Best Practices - .cursor/rules
+# VibeBiz Testing Best Practices - Updated Implementation
 # Comprehensive testing standards for multi-tenant SaaS architecture
+# Last Updated: 2025-01-01 - Hybrid Testing Framework Implementation
 
 # =============================================================================
 # 🚨 CRITICAL TESTING REQUIREMENTS
 # =============================================================================
 
 ## Mandatory Coverage Thresholds
-- NEVER merge code without 90% minimum coverage
+- NEVER merge code without 80% minimum coverage (package-local tests)
+- NEVER deploy without 90% minimum coverage (cross-cutting tests)
 - ALWAYS test security functions with 100% coverage
 - ALWAYS test multi-tenant isolation in integration tests
 - NEVER skip testing authentication/authorization flows
 - ALWAYS test API endpoints with 100% integration coverage
 - NEVER deploy without E2E tests covering critical workflows
 
+## Hybrid Testing Architecture
+VibeBiz uses a **dual testing strategy** combining:
+1. **Package-local tests** - Fast, isolated unit and component tests within each package
+2. **Cross-cutting tests** - System-wide integration, security, performance, and E2E tests
+
 ## Test Types Required
-- Unit tests: Fast, isolated, mock all dependencies
-- Integration tests: Real database, test service interactions
-- E2E tests: Complete user workflows, cross-organizational scenarios
-- Security tests: OWASP Top 10 validation, penetration testing
-- Performance tests: Load testing, response time validation
-- Accessibility tests: WCAG 2.2 AA compliance validation
+- **Unit tests**: Fast, isolated, mock all dependencies (package-local)
+- **Integration tests**: Real database, test service interactions (cross-cutting)
+- **E2E tests**: Complete user workflows, cross-organizational scenarios (cross-cutting)
+- **Security tests**: OWASP Top 10 validation, penetration testing (cross-cutting)
+- **Performance tests**: Load testing, response time validation (cross-cutting)
+- **Accessibility tests**: WCAG 2.2 AA compliance validation (cross-cutting)
 
 # =============================================================================
-# 🔬 UNIT TESTING STANDARDS
+# 🏗️ TESTING ARCHITECTURE & STRUCTURE
+# =============================================================================
+
+## Package-Local Test Structure (Fast Feedback)
+```
+apps/public-web/
+├── __tests__/              # Component unit tests
+├── e2e/                   # App-specific E2E tests
+├── jest.config.ts         # Jest configuration
+├── jest.setup.js          # Test setup
+└── src/
+
+services/public-api/
+├── tests/                 # API unit & integration tests
+├── conftest.py            # Pytest fixtures
+├── pyproject.toml         # Python test configuration
+└── src/
+
+packages/types/
+├── __tests__/             # Type definition tests
+├── jest configuration     # In package.json
+└── src/
+```
+
+## Cross-Cutting Test Structure (System Validation)
+```
+tests/                     # Centralized cross-cutting tests
+├── integration/           # Multi-service integration tests
+│   ├── multi-tenant-isolation.test.js
+│   ├── auth-flow/
+│   ├── payment-flow/
+│   └── tenant-isolation/
+├── security/              # Security vulnerability tests
+│   ├── owasp-top10.test.js
+│   ├── penetration/
+│   ├── vulnerability/
+│   └── compliance/
+├── performance/           # Load and performance tests
+│   ├── load/
+│   ├── stress/
+│   └── benchmarks/
+├── e2e/                   # System-wide E2E tests
+│   ├── user-flows/
+│   ├── api/
+│   └── mobile/
+├── accessibility/         # System-wide accessibility tests
+├── fixtures/              # Shared test data
+│   └── shared-data.json
+├── config/                # Cross-cutting test configuration
+│   └── jest.setup.js
+├── utils/                 # Test utilities and helpers
+├── jest.config.js         # Cross-cutting Jest configuration
+├── INTEGRATION_GUIDE.md   # Framework integration guide
+└── README.md              # Cross-cutting test documentation
+```
+
+## Root Test Configuration
+```
+jest.config.js             # Root Jest config (coordinates all projects)
+jest.setup.js              # Global Jest setup
+pytest.ini                 # Root pytest configuration
+turbo.json                 # Turborepo test orchestration
+```
+
+# =============================================================================
+# 🔬 PACKAGE-LOCAL TESTING STANDARDS
 # =============================================================================
 
 ## Python Unit Testing (pytest)
 - ALWAYS mock external dependencies (database, APIs, services)
-- ALWAYS use factories for test data generation
+- ALWAYS use factories for test data generation (Factory Boy)
 - NEVER test implementation details, test behavior
 - ALWAYS test both success and failure scenarios
 - ALWAYS test edge cases and boundary conditions
 - NEVER write tests that depend on external state
+- ALWAYS use pytest markers: `@pytest.mark.unit`, `@pytest.mark.integration`
 
 ## TypeScript Unit Testing (Jest)
 - ALWAYS test React components with React Testing Library
@@ -45,25 +118,39 @@ alwaysApply: false
 - ALWAYS test component accessibility features
 - ALWAYS test error states and loading states
 - NEVER use shallow rendering, prefer full rendering
+- ALWAYS use global test utilities via `testUtils`
 
-## Test Structure Pattern
-```
-// Arrange: Set up test data and mocks
-// Act: Execute the function/component under test
-// Assert: Verify expected behavior and side effects
+## Test Structure Pattern (AAA Pattern)
+```javascript
+describe('Component Behavior', () => {
+  it('should handle user interaction correctly', () => {
+    // Arrange: Set up test data and mocks
+    const mockHandler = jest.fn();
+    const props = { onClick: mockHandler };
+
+    // Act: Execute the function/component under test
+    render(<Button {...props}>Click me</Button>);
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+
+    // Assert: Verify expected behavior and side effects
+    expect(mockHandler).toHaveBeenCalledTimes(1);
+  });
+});
 ```
 
 # =============================================================================
-# 🔗 INTEGRATION TESTING STANDARDS
+# 🔗 CROSS-CUTTING INTEGRATION TESTING STANDARDS
 # =============================================================================
 
-## Database Integration Tests
+## Multi-Tenant Integration Tests
 - ALWAYS use real database for integration tests
 - ALWAYS test with multiple organizations (multi-tenant isolation)
 - NEVER test with shared test data between tests
 - ALWAYS clean up test data after each test
 - ALWAYS test database constraints and validations
 - NEVER mock database layer in integration tests
+- ALWAYS use `crossCuttingTestUtils.createMultiTenantData()`
 
 ## API Integration Tests
 - ALWAYS test complete request/response cycles
@@ -72,6 +159,7 @@ alwaysApply: false
 - ALWAYS test rate limiting and input validation
 - ALWAYS test multi-tenant data isolation
 - NEVER test with real external services (use test doubles)
+- ALWAYS use `crossCuttingTestUtils.createApiTestClient()`
 
 ## Service Integration Tests
 - ALWAYS test service-to-service communication
@@ -80,6 +168,24 @@ alwaysApply: false
 - ALWAYS test timeout and retry mechanisms
 - ALWAYS test circuit breaker functionality
 - NEVER skip testing distributed transaction scenarios
+
+## Integration Test Example
+```javascript
+describe('Multi-Tenant Data Isolation', () => {
+  let apiClient, dbUtils, testData;
+
+  beforeAll(async () => {
+    apiClient = crossCuttingTestUtils.createApiTestClient();
+    dbUtils = crossCuttingTestUtils.createDatabaseTestUtils();
+    testData = crossCuttingTestUtils.createMultiTenantData();
+    await dbUtils.seedTestData(testData);
+  });
+
+  it('should prevent cross-tenant data access', async () => {
+    // Test implementation...
+  });
+});
+```
 
 # =============================================================================
 # 🌐 END-TO-END TESTING STANDARDS
@@ -100,6 +206,7 @@ alwaysApply: false
 - ALWAYS test with multiple user roles
 - ALWAYS test error scenarios and edge cases
 - NEVER write flaky tests that randomly fail
+- ALWAYS use shared fixtures from `tests/fixtures/shared-data.json`
 
 ## Critical E2E Workflows
 - User registration and organization setup
@@ -113,13 +220,15 @@ alwaysApply: false
 # 🔒 SECURITY TESTING STANDARDS
 # =============================================================================
 
-## Security Test Requirements
+## Security Test Implementation
+- ALWAYS use `tests/security/owasp-top10.test.js` as baseline
 - ALWAYS test against OWASP Top 10 vulnerabilities
 - ALWAYS test authentication bypass scenarios
 - NEVER skip testing authorization controls
 - ALWAYS test input validation and sanitization
 - ALWAYS test SQL injection prevention
 - NEVER ignore security scanner findings
+- ALWAYS use `crossCuttingTestUtils.createSecurityTestUtils()`
 
 ## Multi-Tenant Security Testing
 - ALWAYS test cross-organization data access prevention
@@ -129,13 +238,23 @@ alwaysApply: false
 - ALWAYS test file upload security
 - NEVER allow tests with hardcoded organization IDs
 
-## Penetration Testing
-- ALWAYS conduct automated security scans in CI/CD
-- ALWAYS perform manual penetration testing quarterly
-- NEVER ignore vulnerability scan reports
-- ALWAYS test session management security
-- ALWAYS test API rate limiting effectiveness
-- NEVER skip testing input validation bypasses
+## Security Test Example
+```javascript
+describe('OWASP A03:2021 – Injection', () => {
+  it('should prevent SQL injection attacks', async () => {
+    const securityUtils = crossCuttingTestUtils.createSecurityTestUtils();
+    const results = await securityUtils.testSqlInjection(
+      apiClient,
+      '/api/v1/users/search',
+      { query: 'test' }
+    );
+
+    results.forEach(result => {
+      expect(result.blocked).toBe(true);
+    });
+  });
+});
+```
 
 # =============================================================================
 # ⚡ PERFORMANCE TESTING STANDARDS
@@ -148,14 +267,29 @@ alwaysApply: false
 - ALWAYS test with realistic data volumes
 - ALWAYS test concurrent user scenarios
 - NEVER skip testing resource utilization
+- ALWAYS use `crossCuttingTestUtils.createPerformanceTestUtils()`
 
-## Load Testing Targets
+## Load Testing Targets (from shared-data.json benchmarks)
 - API endpoints: < 200ms response time under normal load
 - Database queries: < 100ms for simple queries
 - Page loads: < 3s for initial load, < 1s for subsequent
 - File uploads: Support files up to 100MB
 - Concurrent users: 1000+ simultaneous users
 - Data processing: Handle 10k+ records per operation
+
+## Performance Test Example
+```javascript
+it('should maintain acceptable response times', async () => {
+  const performanceUtils = crossCuttingTestUtils.createPerformanceTestUtils();
+
+  const result = await performanceUtils.measureResponseTime(
+    async () => await apiClient.get('/api/v1/documents'),
+    5 // iterations
+  );
+
+  performanceUtils.assertResponseTime(result.average, 200, 'Document list API');
+});
+```
 
 # =============================================================================
 # ♿ ACCESSIBILITY TESTING STANDARDS
@@ -168,6 +302,7 @@ alwaysApply: false
 - ALWAYS test with assistive technologies
 - ALWAYS validate ARIA labels and roles
 - NEVER skip testing focus management
+- ALWAYS use `@axe-core/playwright` for automated testing
 
 ## WCAG 2.2 AA Compliance
 - Color contrast ratio: 4.5:1 for normal text, 3:1 for large text
@@ -181,33 +316,108 @@ alwaysApply: false
 # 🛠️ TEST TOOLING AND INFRASTRUCTURE
 # =============================================================================
 
-## Required Testing Tools
-- Python: pytest, pytest-asyncio, pytest-cov, factory-boy
-- TypeScript: Jest, React Testing Library, MSW (mocking)
-- E2E: Playwright with TypeScript
-- Performance: K6 or Artillery for load testing
-- Security: OWASP ZAP, Bandit, Semgrep
-- Accessibility: axe-core, Pa11y
+## Package-Local Testing Tools
+- **Python**: pytest, pytest-asyncio, pytest-cov, factory-boy
+- **TypeScript**: Jest, React Testing Library, ts-jest
+- **Mocking**: MSW (Mock Service Worker), jest.fn()
+- **E2E**: Playwright with TypeScript (app-specific)
+
+## Cross-Cutting Testing Tools
+- **Integration**: Jest with custom configuration (`tests/jest.config.js`)
+- **Security**: OWASP ZAP, Bandit, Semgrep, custom security utils
+- **Performance**: K6 or Artillery, custom performance utils
+- **E2E**: Playwright (system-wide scenarios)
+- **Accessibility**: axe-core, Pa11y
+
+## Test Utilities Available
+```javascript
+// Package-local utilities (jest.setup.js)
+global.testUtils = {
+  createMockUser: (overrides) => ({...}),
+  createMockOrganization: (overrides) => ({...}),
+  mockApiResponse: (data, status) => ({...}),
+  waitFor: (ms) => Promise
+};
+
+// Cross-cutting utilities (tests/config/jest.setup.js)
+global.crossCuttingTestUtils = {
+  createMultiTenantData: () => ({...}),
+  createApiTestClient: (baseURL) => ({...}),
+  createDatabaseTestUtils: () => ({...}),
+  createPerformanceTestUtils: () => ({...}),
+  createSecurityTestUtils: () => ({...}),
+  waitForCondition: (fn, timeout, interval) => Promise,
+  retryAsync: (fn, maxRetries, delay) => Promise
+};
+```
 
 ## Test Environment Management
 - ALWAYS use isolated test databases
 - ALWAYS clean up test data between tests
 - NEVER share test environments between developers
 - ALWAYS use Docker for consistent test environments
-- ALWAYS seed test data with factories
+- ALWAYS seed test data with factories or shared fixtures
 - NEVER use production data in tests
+- ALWAYS use separate database URLs for cross-cutting tests
 
-## CI/CD Testing Pipeline
-- ALWAYS run tests in parallel when possible
-- ALWAYS fail fast on test failures
-- NEVER skip tests to speed up deployment
-- ALWAYS generate and publish test reports
-- ALWAYS track test performance over time
-- NEVER deploy without all tests passing
+# =============================================================================
+# 🔄 DEVELOPER WORKFLOW INTEGRATION
+# =============================================================================
+
+## Daily Development Workflow
+```bash
+# Fast feedback loop - package-local tests
+cd apps/public-web
+pnpm test:watch
+
+# Quick validation
+pnpm test                    # All package-local tests
+pnpm test:unit              # Only unit tests
+```
+
+## Pre-Commit Workflow
+```bash
+# Comprehensive validation
+pnpm test                    # Package-local tests
+pnpm test:cross-cutting     # Cross-cutting tests
+pnpm test:security          # Security tests
+```
+
+## Pre-Deployment Workflow
+```bash
+# Full system validation
+pnpm test:all               # Everything
+pnpm test:performance       # Performance validation
+pnpm test:accessibility     # Accessibility compliance
+```
+
+## Available Test Commands
+```json
+{
+  "scripts": {
+    "test": "turbo run test",                    // Package-local tests
+    "test:unit": "turbo run test:unit",          // Unit tests only
+    "test:integration": "turbo run test:integration", // Package integration
+    "test:e2e": "turbo run test:e2e",            // Package E2E tests
+    "test:cross-cutting": "cd packages/types && npx jest --config ../../tests/jest.config.js",
+    "test:performance": "cd packages/types && npx jest --config ../../tests/jest.config.js --testPathPattern=performance",
+    "test:security": "cd packages/types && npx jest --config ../../tests/jest.config.js --testPathPattern=security",
+    "test:all": "npm run test && npm run test:cross-cutting"
+  }
+}
+```
 
 # =============================================================================
 # 📊 TEST DATA MANAGEMENT
 # =============================================================================
+
+## Shared Test Data (tests/fixtures/shared-data.json)
+- **Organizations**: Multi-tenant test organizations with realistic settings
+- **Users**: Admin and regular users across different organizations
+- **Documents**: Sample documents with proper tenant isolation
+- **API Responses**: Standard response templates for mocking
+- **Performance Benchmarks**: SLA targets and performance thresholds
+- **Security Test Data**: Malicious payloads for security testing
 
 ## Test Data Principles
 - ALWAYS use factories for generating test data
@@ -216,6 +426,7 @@ alwaysApply: false
 - NEVER use production data in tests
 - ALWAYS clean up test data after tests
 - NEVER share test data between test cases
+- ALWAYS use shared fixtures for cross-cutting tests
 
 ## Multi-Tenant Test Data
 - ALWAYS create separate organizations for each test
@@ -226,7 +437,43 @@ alwaysApply: false
 - NEVER use the same user across multiple organizations
 
 # =============================================================================
-# 🚫 TESTING ANTI-PATTERNS
+# 📋 QUALITY GATES & CI/CD INTEGRATION
+# =============================================================================
+
+## Required Before Merge
+- ✅ All package-local tests pass (80% coverage minimum)
+- ✅ Cross-cutting integration tests pass (90% coverage minimum)
+- ✅ Security tests pass (100% coverage on auth/authz)
+- ✅ Performance tests within acceptable limits
+- ✅ Accessibility tests pass (WCAG 2.2 AA)
+- ✅ No flaky tests introduced
+- ✅ Test documentation updated
+
+## CI/CD Pipeline Integration
+```yaml
+# Package-local tests (fast feedback)
+unit-tests:
+  run: pnpm test
+
+# Cross-cutting tests (comprehensive validation)
+integration-tests:
+  needs: unit-tests
+  run: |
+    pnpm test:cross-cutting
+    pnpm test:performance
+    pnpm test:security
+```
+
+## Continuous Monitoring
+- ✅ Test execution time trending
+- ✅ Test failure rate monitoring
+- ✅ Coverage trend analysis (package-local vs cross-cutting)
+- ✅ Security scan results
+- ✅ Performance regression detection
+- ✅ Accessibility compliance monitoring
+
+# =============================================================================
+# 🚫 TESTING ANTI-PATTERNS TO AVOID
 # =============================================================================
 
 ## Never Do These
@@ -240,26 +487,29 @@ alwaysApply: false
 - NEVER commit tests that don't run locally
 - NEVER write tests that take longer than necessary
 - NEVER skip writing tests because "it's simple code"
+- NEVER mix package-local and cross-cutting test concerns
+- NEVER hardcode organization IDs in multi-tenant tests
 
 # =============================================================================
-# 📋 QUALITY GATES
+# 📚 DOCUMENTATION AND RESOURCES
 # =============================================================================
 
-## Required Before Merge
-- ✅ All tests pass (unit, integration, E2E)
-- ✅ Coverage threshold met (90% minimum)
-- ✅ Security tests pass
-- ✅ Performance tests within acceptable limits
-- ✅ Accessibility tests pass
-- ✅ No flaky tests introduced
-- ✅ Test documentation updated
+## Required Documentation
+- **tests/README.md**: Cross-cutting test documentation
+- **tests/INTEGRATION_GUIDE.md**: Framework integration guide
+- **Package READMEs**: Individual package testing documentation
+- **Test utilities**: Inline documentation for all test helpers
 
-## Continuous Monitoring
-- ✅ Test execution time trending
-- ✅ Test failure rate monitoring
-- ✅ Coverage trend analysis
-- ✅ Security scan results
-- ✅ Performance regression detection
-- ✅ Accessibility compliance monitoring
+## Getting Started
+1. Read `tests/INTEGRATION_GUIDE.md` for framework overview
+2. Review example tests in `tests/integration/` and `tests/security/`
+3. Use shared fixtures from `tests/fixtures/shared-data.json`
+4. Follow test utilities patterns in `tests/config/jest.setup.js`
 
-Remember: Testing is not optional. Quality cannot be retrofitted. Test early, test often, and test comprehensively.
+## Resources
+- [Jest Configuration](mdc:jest.config.js) - Root Jest coordination
+- [Cross-cutting Jest Config](mdc:tests/jest.config.js) - System-wide test config
+- [Pytest Configuration](mdc:pytest.ini) - Python testing standards
+- [Shared Test Data](mdc:tests/fixtures/shared-data.json) - Fixtures and benchmarks
+
+Remember: Testing is not optional. Quality cannot be retrofitted. Our hybrid approach ensures both fast development feedback and comprehensive system validation. Test early, test often, and test comprehensively.
