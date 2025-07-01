@@ -407,16 +407,16 @@ All other violations should be addressed before merge approval.
 ## Quick Commands for Quality Checks
 ```bash
 # Run all quality checks locally
-./scripts/quality-check.sh
+./tools/quality-check.sh
 
 # Run security scans
-./scripts/security-scan.sh
+./tools/security-scan.sh
 
 # Run accessibility tests
-./scripts/a11y-test.sh
+./tools/a11y-test.sh
 
 # Run full test suite
-./scripts/test-all.sh
+./tools/test-all.sh
 ```
 
 Remember: Quality is not negotiable in a multi-tenant SaaS platform.

@@ -100,7 +100,7 @@ repos:
       - id: spectral-lint # DOC-02
         name: Spectral API Linting
         description: 'Lints OpenAPI specs using Spectral, requires SPECTRAL_DSN in .env'
-        entry: scripts/spectral-wrapper.sh
+        entry: tools/spectral-wrapper.sh
         language: script
         files: \.(yaml|yml|json)$
         require_serial: true
