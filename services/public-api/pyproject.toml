@@ -37,6 +37,7 @@ dev = [
     "mypy>=1.16.1",
     "ruff>=0.12.1",
     "email-validator>=2.0.0",
+    "bandit>=1.7.9",
 ]
 
 [tool.pytest.ini_options]
