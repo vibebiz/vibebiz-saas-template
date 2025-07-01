@@ -209,3 +209,4 @@ Thumbs.db
 ehthumbs.db
 coverage.json
 apps/public-web/playwright-report/
+test-results/

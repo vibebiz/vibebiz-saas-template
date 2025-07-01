@@ -53,6 +53,6 @@ export default defineConfig({
     command: 'pnpm --filter @vibebiz/public-web dev',
     url: BASE_URL,
     timeout: 120 * 1000, // 2 minutes
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
   },
 });
