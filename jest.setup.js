@@ -68,11 +68,15 @@ global.testUtils = {
   waitFor: (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms)),
 };
 
-// Environment variables for testing
+// Environment variables for testing - use environment defaults or generate secure values
 process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/vibebiz_test';
-process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
-process.env.REDIS_URL = 'redis://localhost:6379/1';
+process.env.DATABASE_URL =
+  process.env.TEST_DATABASE_URL ||
+  'postgresql://postgres:postgres@localhost:5432/vibebiz_test';
+process.env.JWT_SECRET =
+  process.env.TEST_JWT_SECRET ||
+  'test-jwt-secret-' + Math.random().toString(36).substring(2, 15);
+process.env.REDIS_URL = process.env.TEST_REDIS_URL || 'redis://localhost:6379/1';
 
 // Suppress specific warnings in tests
 const originalConsoleWarn = console.warn;

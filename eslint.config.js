@@ -39,8 +39,44 @@ export default tseslint.config(
   // Project-specific rules (can be customized)
   {
     rules: {
-      // Add any project-specific rule overrides here
-      // e.g., '@typescript-eslint/no-explicit-any': 'warn',
+      // TypeScript strict rules for production
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+
+      // Security and best practices
+      'no-debugger': 'error',
+      'prefer-const': 'error',
+    },
+  },
+
+  // Stricter rules for production source code
+  {
+    files: [
+      'src/**/*.{js,ts,tsx}',
+      '!src/**/*.test.{js,ts,tsx}',
+      '!src/**/*.spec.{js,ts,tsx}',
+    ],
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': 'warn',
+      'no-console': 'warn',
+    },
+  },
+
+  // Relaxed rules for test files and configuration
+  {
+    files: [
+      '**/*.test.{js,ts,tsx}',
+      '**/*.spec.{js,ts,tsx}',
+      '**/test*.{js,ts}',
+      '**/*config*.{js,ts}',
+      '**/jest.setup.js',
+      '**/conftest.py',
+    ],
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      'no-console': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   }
 );

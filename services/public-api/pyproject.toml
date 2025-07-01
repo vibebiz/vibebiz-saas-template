@@ -16,8 +16,7 @@ dependencies = [
     "sqlalchemy>=2.0.41",
     "asyncpg>=0.30.0",
     "python-jose[cryptography]>=3.3.0",
-    "passlib[bcrypt]>=1.7.4",
-    "bcrypt>=4.3.0",
+    "pwdlib[bcrypt]>=0.2.1",
     "python-multipart>=0.0.19",
     "jsonschema>=4.21.0",
     "email-validator>=2.0.0",
@@ -51,11 +50,12 @@ addopts = [
     "--cov-report=term-missing",
     "--cov-report=html:htmlcov",
     "--cov-report=xml:coverage.xml",
-    "--cov-fail-under=20",
+    "--cov-fail-under=80",
     "--verbose",
     "--tb=short",
     "--strict-markers",
     "--asyncio-mode=auto",
+
 ]
 markers = [
     "unit: Fast unit tests with no external dependencies",
@@ -93,7 +93,7 @@ exclude_lines = [
     "class .*\\bProtocol\\):",
     "@(abc\\.)?abstractmethod",
 ]
-fail_under = 20
+fail_under = 80
 show_missing = true
 skip_covered = false
 precision = 2

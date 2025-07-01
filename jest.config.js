@@ -20,13 +20,13 @@ module.exports = {
     '!src/**/index.{ts,tsx}',
   ],
 
-  // Coverage thresholds (MVP minimum: 60%)
+  // Coverage thresholds (80% minimum per testing rules)
   coverageThreshold: {
     global: {
-      branches: 60,
-      functions: 60,
-      lines: 60,
-      statements: 60,
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
     },
   },
 

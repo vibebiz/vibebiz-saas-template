@@ -9,9 +9,10 @@ from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import urlparse
 
-from passlib.context import CryptContext
+from pwdlib.hashers.bcrypt import BcryptHasher
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use bcrypt hasher explicitly for compatibility
+password_hash = BcryptHasher()
 
 
 def hash_password(password: str) -> str:
@@ -24,7 +25,7 @@ def hash_password(password: str) -> str:
     Returns:
         The hashed password as a string
     """
-    return pwd_context.hash(password)  # type: ignore[no-any-return]
+    return password_hash.hash(password)
 
 
 def verify_password(password: str, hashed: str) -> bool:
@@ -38,7 +39,7 @@ def verify_password(password: str, hashed: str) -> bool:
     Returns:
         True if password matches hash, False otherwise
     """
-    return pwd_context.verify(password, hashed)  # type: ignore[no-any-return]
+    return password_hash.verify(password, hashed)
 
 
 def generate_secure_token(length: int = 32) -> str:
