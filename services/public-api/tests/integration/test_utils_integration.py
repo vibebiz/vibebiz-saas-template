@@ -365,22 +365,22 @@ class TestSensitiveDataMaskingIntegration:
             "secret": "ab",  # Short
             "token": "abc",  # Short
             "key": "abcd",  # Short
-            "long_password": "this_is_a_long_password_value",  # nosec B105 # Long
+            "long_password": "this_is_a_long_password_value",  # Long
         }
 
         masked = mask_sensitive_data(data)
 
         # Short values should be completely masked
-        assert masked["password"] == "***"  # nosec
-        assert masked["secret"] == "***"  # nosec
-        assert masked["token"] == "***"  # nosec
-        assert masked["key"] == "***"  # nosec
+        assert masked["password"] == "***"
+        assert masked["secret"] == "***"
+        assert masked["token"] == "***"
+        assert masked["key"] == "***"
 
         # Long values should show first/last chars
         long_masked_value = str(masked["long_password"])  # Cast to str for mypy
-        assert long_masked_value.startswith("th")  # nosec # First 2 chars
-        assert long_masked_value.endswith("ue")  # nosec # Last 2 chars
-        assert "**********" in long_masked_value  # nosec # Middle masked
+        assert long_masked_value.startswith("th")  # First 2 chars
+        assert long_masked_value.endswith("ue")  # Last 2 chars
+        assert "**********" in long_masked_value  # Middle masked
 
     def test_non_string_sensitive_values(self) -> None:
         """Test masking of non-string sensitive values"""
