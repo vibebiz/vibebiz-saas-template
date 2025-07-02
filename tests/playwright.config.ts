@@ -92,8 +92,10 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'pnpm --filter @vibebiz/public-web dev',
-    url: BASE_URL,
-    timeout: 120 * 1000, // 2 minutes
+    url: `${BASE_URL}/api/health`, // Use health check endpoint
+    timeout: 180 * 1000, // 3 minutes for server startup
     reuseExistingServer: !process.env.CI,
+    stdout: 'pipe', // Capture server output for debugging
+    stderr: 'pipe',
   },
 });

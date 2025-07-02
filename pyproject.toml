@@ -17,7 +17,7 @@ authors = [
   { name="Todd", email="todd@windsurf.ai" },
 ]
 readme = "README.md"
-requires-python = "==3.12.8"
+requires-python = ">=3.12,<4.0"
 dependencies = [
     "bcrypt==4.3.0",
 ]

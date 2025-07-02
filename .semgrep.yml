@@ -1,0 +1,52 @@
+# Semgrep configuration for VibeBiz SaaS Template
+# This file configures security scanning rules for the Foundation+ stages
+
+# Registry rules to include
+rules:
+  - id: vibebiz-hardcoded-secrets
+    pattern: |
+      "$API_KEY"
+    message: 'Potential hardcoded API key found'
+    languages: [python, javascript, typescript]
+    severity: ERROR
+
+  - id: vibebiz-sql-injection
+    pattern: |
+      cursor.execute($X + $Y)
+    message: 'Potential SQL injection vulnerability - use parameterized queries'
+    languages: [python]
+    severity: ERROR
+
+  - id: vibebiz-missing-org-isolation
+    pattern: |
+      session.query($MODEL).filter(...)
+    message: 'Database query missing organization isolation - add org_id filter'
+    languages: [python]
+    severity: ERROR
+
+  - id: vibebiz-insecure-random
+    pattern: |
+      random.randint(...)
+    message: 'Use secrets.randbelow() for cryptographically secure random numbers'
+    languages: [python]
+    severity: WARNING
+    fix: |
+      secrets.randbelow(...)
+
+  - id: vibebiz-missing-input-validation
+    pattern: |
+      request.json[$KEY]
+    message: 'Input validation missing - use Pydantic models'
+    languages: [python]
+    severity: WARNING
+
+  - id: vibebiz-cors-wildcard
+    patterns:
+      - pattern: |
+          cors(..., origins=["*"])
+      - pattern: |
+          CORSMiddleware(..., allow_origins=["*"])
+    message: 'CORS configuration allows all origins - specify allowed domains'
+    languages: [python]
+    severity: ERROR
+# CLI will use these rulesets via --config=auto or specify them explicitly

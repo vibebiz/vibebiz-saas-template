@@ -23,6 +23,7 @@
     "test:performance": "npx jest --config tests/jest.config.mjs --testPathPattern=performance",
     "test:security": "npx jest --config tests/jest.config.mjs --testPathPattern=security",
     "test:all": "npm run test && npm run test:cross-cutting",
+    "test:comprehensive": "./tools/run-comprehensive-tests.sh",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
