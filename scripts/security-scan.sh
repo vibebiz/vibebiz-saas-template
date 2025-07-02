@@ -290,7 +290,7 @@ pip-audit --fix
 npm audit fix
 
 # Re-run security scans
-./tools/security-scan.sh all
+./scripts/security-scan.sh all
 \`\`\`
 
 ---

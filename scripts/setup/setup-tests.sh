@@ -261,9 +261,9 @@ run_security_tests() {
     cd "$ROOT_DIR"
 
     # Check if security test script exists
-    if [ -f "tools/security-scan.sh" ]; then
+    if [ -f "scripts/security-scan.sh" ]; then
         log_info "Running security scan..."
-        if bash tools/security-scan.sh all; then
+        if bash scripts/security-scan.sh all; then
             log_success "Security scan completed"
         else
             log_warning "Security scan found issues"
@@ -469,7 +469,7 @@ main() {
     echo "  - Test results: test-results/"
     echo ""
     log_info "You can run tests anytime with:"
-    echo "  ./tools/run-all-tests.sh"
+    echo "  ./scripts/run-all-tests.sh"
     echo "  pnpm test"
     echo "  poetry run pytest (in service directories)"
 }

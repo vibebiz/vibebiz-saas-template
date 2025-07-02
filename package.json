@@ -8,7 +8,7 @@
     "apps/*",
     "services/*",
     "packages/*",
-    "tools/*"
+    "scripts/*"
   ],
   "scripts": {
     "dev": "turbo run dev --parallel",
@@ -23,13 +23,13 @@
     "test:performance": "npx jest --config tests/jest.config.mjs --testPathPattern=performance",
     "test:security": "npx jest --config tests/jest.config.mjs --testPathPattern=security",
     "test:all": "npm run test && npm run test:cross-cutting",
-    "test:comprehensive": "./tools/run-comprehensive-tests.sh",
+    "test:comprehensive": "./scripts/run-comprehensive-tests.sh",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
     "format": "turbo run format",
     "validate": "turbo run validate",
-    "all-checks": "./tools/run-all-checks.sh"
+    "all-checks": "./scripts/run-all-checks.sh"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

@@ -4,10 +4,10 @@
 # Provides reusable, containerized security tooling for consistent validation
 #
 # Usage:
-#   source ./tools/security-env.sh                    # Setup environment
-#   ./tools/security-env.sh install                   # Install all tools
-#   ./tools/security-env.sh validate                  # Run validation
-#   ./tools/security-env.sh docker-scan <image>       # Scan with Docker
+#   source ./scripts/security-env.sh                    # Setup environment
+#   ./scripts/security-env.sh install                   # Install all tools
+#   ./scripts/security-env.sh validate                  # Run validation
+#   ./scripts/security-env.sh docker-scan <image>       # Scan with Docker
 
 set -e
 
@@ -170,7 +170,7 @@ local_scan() {
                 safety check --json --output safety-report.json || true
                 deactivate
             else
-                log_warning "Python security environment not found. Run: ./tools/security-env.sh install"
+                log_warning "Python security environment not found. Run: ./scripts/security-env.sh install"
             fi
             ;;
         *)
@@ -188,7 +188,7 @@ validate_environment() {
 
     # Check for security environment
     if [ ! -d ".security-env" ]; then
-        log_error "Security environment not found. Run: ./tools/security-env.sh install"
+        log_error "Security environment not found. Run: ./scripts/security-env.sh install"
         issues=$((issues + 1))
     fi
 
@@ -237,11 +237,11 @@ main() {
 VibeBiz Security Environment v${SECURITY_ENV_VERSION}
 
 Usage:
-  ./tools/security-env.sh install                 # Install security environment
-  ./tools/security-env.sh validate                # Validate environment setup
-  ./tools/security-env.sh docker-scan <type>      # Run containerized scan
-  ./tools/security-env.sh local-scan <type>       # Run local scan
-  ./tools/security-env.sh version                 # Show version
+  ./scripts/security-env.sh install                 # Install security environment
+  ./scripts/security-env.sh validate                # Validate environment setup
+  ./scripts/security-env.sh docker-scan <type>      # Run containerized scan
+  ./scripts/security-env.sh local-scan <type>       # Run local scan
+  ./scripts/security-env.sh version                 # Show version
 
 Scan Types:
   secrets                                          # Secret scanning
@@ -252,10 +252,10 @@ Scan Types:
   python-security                                  # Python-specific security
 
 Examples:
-  ./tools/security-env.sh install
-  ./tools/security-env.sh docker-scan secrets
-  ./tools/security-env.sh local-scan dependencies
-  ./tools/security-env.sh docker-scan container myapp:latest
+  ./scripts/security-env.sh install
+  ./scripts/security-env.sh docker-scan secrets
+  ./scripts/security-env.sh local-scan dependencies
+  ./scripts/security-env.sh docker-scan container myapp:latest
 
 EOF
             ;;

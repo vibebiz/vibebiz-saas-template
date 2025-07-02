@@ -543,7 +543,7 @@ main() {
         echo ""
         log_info "Next steps:"
         echo "1. Start development servers: pnpm dev"
-        echo "2. Run tests: ./tools/run-all-tests.sh"
+        echo "2. Run tests: ./scripts/run-all-tests.sh"
         echo "3. Access applications:"
         echo "   - Public Web: http://localhost:3000"
         echo "   - Public API: http://localhost:8000"

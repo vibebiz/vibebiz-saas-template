@@ -3,7 +3,7 @@
 # VibeBiz Platform Setup Script
 # This script sets up the entire platform ready for development or production
 #
-# Usage: ./tools/setup/setup.sh [--production] [--skip-db] [--help]
+# Usage: ./scripts/setup/setup.sh [--production] [--skip-db] [--help]
 #
 
 set -e  # Exit on any error
@@ -45,7 +45,7 @@ while [[ $# -gt 0 ]]; do
         --help)
             echo "VibeBiz Platform Setup Script"
             echo ""
-            echo "Usage: ./tools/setup/setup.sh [options]"
+            echo "Usage: ./scripts/setup/setup.sh [options]"
             echo ""
             echo "Options:"
             echo "  --production    Set up for production (requires manual .env configuration)"
@@ -203,7 +203,7 @@ if [ "$PRODUCTION_MODE" = false ]; then
     echo "   pnpm dev"
     echo ""
     echo "2. Run tests to verify everything works:"
-    echo "   ./tools/run-all-tests.sh"
+    echo "   ./scripts/run-all-tests.sh"
     echo ""
     echo "3. Access the applications:"
     echo "   - Public Web: http://localhost:3000"

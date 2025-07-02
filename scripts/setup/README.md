@@ -7,7 +7,7 @@ This directory contains comprehensive setup scripts for the VibeBiz platform. Th
 To set up the entire platform, run:
 
 ```bash
-./tools/setup/setup.sh
+./scripts/setup/setup.sh
 ```
 
 ## Available Scripts
@@ -39,23 +39,23 @@ To set up the entire platform, run:
 
 ```bash
 # Full development setup
-./tools/setup/setup.sh
+./scripts/setup/setup.sh
 
 # Skip database setup (useful for CI/CD)
-./tools/setup/setup.sh --skip-db
+./scripts/setup/setup.sh --skip-db
 
 # Skip test setup
-./tools/setup/setup.sh --skip-tests
+./scripts/setup/setup.sh --skip-tests
 
 # Verbose output
-./tools/setup/setup.sh --verbose
+./scripts/setup/setup.sh --verbose
 ```
 
 ### Production Setup
 
 ```bash
 # Production setup (requires manual configuration)
-./tools/setup/setup.sh --production
+./scripts/setup/setup.sh --production
 ```
 
 ### Individual Steps
@@ -64,28 +64,28 @@ You can run individual setup steps if needed:
 
 ```bash
 # Check prerequisites only
-./tools/setup/check-prerequisites.sh
+./scripts/setup/check-prerequisites.sh
 
 # Setup environment files only
-./tools/setup/setup-env.sh
+./scripts/setup/setup-env.sh
 
 # Install dependencies only
-./tools/setup/install-dependencies.sh
+./scripts/setup/install-dependencies.sh
 
 # Setup database only
-./tools/setup/setup-database.sh
+./scripts/setup/setup-database.sh
 
 # Setup security only
-./tools/setup/setup-security.sh
+./scripts/setup/setup-security.sh
 
 # Build packages only
-./tools/setup/build-packages.sh
+./scripts/setup/build-packages.sh
 
 # Setup tests only
-./tools/setup/setup-tests.sh
+./scripts/setup/setup-tests.sh
 
 # Run health checks only
-./tools/setup/health-checks.sh
+./scripts/setup/health-checks.sh
 ```
 
 ## Prerequisites
@@ -195,14 +195,14 @@ The setup creates the following environment files:
 2. **Permission issues**
 
    ```bash
-   chmod +x tools/setup/*.sh
+   chmod +x scripts/setup/*.sh
    ```
 
 3. **Missing dependencies**
 
    ```bash
    # Run OS-specific setup first
-   ./tools/setup/setup-macos.sh  # or setup-linux.sh, setup-windows.sh
+   ./scripts/setup/setup-macos.sh  # or setup-linux.sh, setup-windows.sh
    ```
 
 4. **Database connection issues**
@@ -253,7 +253,7 @@ The setup creates the following environment files:
 After successful setup:
 
 1. Start development servers: `pnpm dev`
-2. Run tests: `./tools/run-all-tests.sh`
+2. Run tests: `./scripts/run-all-tests.sh`
 3. Access applications:
    - Public Web: <http://localhost:3000>
    - Public API: <http://localhost:8000>

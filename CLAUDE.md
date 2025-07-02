@@ -21,7 +21,7 @@ pnpm test:unit              # Run only unit tests
 pnpm lint                   # Run linting across all packages
 pnpm type-check             # Run TypeScript type checking
 pnpm format                # Format code with Prettier
-pnpm all-checks            # Run comprehensive quality checks (./tools/run-all-checks.sh)
+pnpm all-checks            # Run comprehensive quality checks (./scripts/run-all-checks.sh)
 pnpm validate              # Run lint, type-check, and test together
 ```
 
@@ -92,7 +92,7 @@ vibebiz-saas-template/
 │   ├── api-client/         # Generated TypeScript client (planned)
 │   └── ui-components/      # Shared React components (planned)
 ├── infra/                  # Infrastructure as Code (Terraform)
-├── tools/                  # Development tools, generators and scripts
+├── scripts/                  # Development tools, generators and scripts
 ├── docs/                   # Documentation files
 ├── .github/workflows/      # CI/CD pipeline templates
 ├── .cursor/rules/          # Comprehensive development standards (15 rule files)
@@ -353,7 +353,7 @@ The repository ignores common development artifacts:
 
 ```bash
 # Run all pre-commit checks manually
-pnpm all-checks  # Uses ./tools/run-all-checks.sh
+pnpm all-checks  # Uses ./scripts/run-all-checks.sh
 
 # Run individual checks
 pnpm lint        # ESLint for TypeScript
