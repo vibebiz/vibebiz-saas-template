@@ -10,7 +10,7 @@ VibeBiz uses a **hybrid testing approach** that balances fast development feedba
 
 **Purpose**: Quick validation during development
 **When to run**: During coding, before commits, local development
-**Tools**: Pre-commit hooks, `./tools/run-all-checks.sh`
+**Tools**: Pre-commit hooks, `./scripts/run-all-checks.sh`
 
 **Includes**:
 
@@ -32,7 +32,7 @@ VibeBiz uses a **hybrid testing approach** that balances fast development feedba
 
 **Purpose**: Full system validation before deployment
 **When to run**: CI/CD pipeline, pre-deployment, release validation
-**Tools**: `./tools/run-comprehensive-tests.sh`, `pnpm test:comprehensive`
+**Tools**: `./scripts/run-comprehensive-tests.sh`, `pnpm test:comprehensive`
 
 **Includes**:
 
@@ -68,7 +68,7 @@ VibeBiz uses a **hybrid testing approach** that balances fast development feedba
 ```bash
 # Daily development workflow
 pnpm test                    # Package-local tests only
-./tools/run-all-checks.sh    # Fast feedback (pre-commit style)
+./scripts/run-all-checks.sh    # Fast feedback (pre-commit style)
 
 # When you need comprehensive validation
 pnpm test:comprehensive      # Full test suite (may take 10-15 minutes)
@@ -83,30 +83,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: ./tools/run-all-checks.sh
+      - run: ./scripts/run-all-checks.sh
 
   comprehensive-tests:
     runs-on: ubuntu-latest
     needs: fast-feedback
     steps:
       - uses: actions/checkout@v4
-      - run: ./tools/run-comprehensive-tests.sh
+      - run: ./scripts/run-comprehensive-tests.sh
 ```
 
 ## Test Commands Reference
 
-| Command                              | Purpose             | When to Use            |
-| ------------------------------------ | ------------------- | ---------------------- |
-| `pnpm test`                          | Package-local tests | Daily development      |
-| `pnpm test:unit`                     | Unit tests only     | Quick validation       |
-| `pnpm test:integration`              | Integration tests   | Service testing        |
-| `pnpm test:e2e`                      | E2E tests only      | UI workflow testing    |
-| `pnpm test:accessibility`            | Accessibility tests | WCAG compliance        |
-| `pnpm test:security`                 | Security tests      | Vulnerability scanning |
-| `pnpm test:performance`              | Performance tests   | Load testing           |
-| `pnpm test:comprehensive`            | All tests           | Pre-deployment         |
-| `./tools/run-all-checks.sh`          | Fast feedback       | Local development      |
-| `./tools/run-comprehensive-tests.sh` | Full validation     | CI/CD                  |
+| Command                                | Purpose             | When to Use            |
+| -------------------------------------- | ------------------- | ---------------------- |
+| `pnpm test`                            | Package-local tests | Daily development      |
+| `pnpm test:unit`                       | Unit tests only     | Quick validation       |
+| `pnpm test:integration`                | Integration tests   | Service testing        |
+| `pnpm test:e2e`                        | E2E tests only      | UI workflow testing    |
+| `pnpm test:accessibility`              | Accessibility tests | WCAG compliance        |
+| `pnpm test:security`                   | Security tests      | Vulnerability scanning |
+| `pnpm test:performance`                | Performance tests   | Load testing           |
+| `pnpm test:comprehensive`              | All tests           | Pre-deployment         |
+| `./scripts/run-all-checks.sh`          | Fast feedback       | Local development      |
+| `./scripts/run-comprehensive-tests.sh` | Full validation     | CI/CD                  |
 
 ## E2E Test Infrastructure
 

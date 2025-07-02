@@ -47,7 +47,7 @@ vibebiz-monorepo/
 │   └── utils/              # Utility functions
 ├── infra/                  # Infrastructure as code
 ├── docs/                   # Documentation
-├── tools/                  # Development tools
+├── scripts/                # Development tools, generators and scripts
 └── tests/                  # Cross-cutting tests
 ```
 
@@ -75,7 +75,7 @@ packages:
   - 'apps/*'
   - 'services/*'
   - 'packages/*'
-  - 'tools/*'
+  - 'scripts/*'
 ```
 
 ## Dependency Management Strategy
