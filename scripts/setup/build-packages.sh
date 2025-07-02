@@ -186,16 +186,12 @@ build_docker_images() {
             app_name=$(basename "$app_dir")
             log_info "Building Docker image for $app_name..."
 
-            cd "$app_dir"
-
-            # Build the Docker image
-            if docker build -t "vibebiz-$app_name:latest" .; then
+            # Build the Docker image from repository root with app-specific context
+            if docker build -f "$app_dir/Dockerfile" -t "vibebiz-$app_name:latest" .; then
                 log_success "Built Docker image for $app_name"
             else
                 log_warning "Failed to build Docker image for $app_name"
             fi
-
-            cd "$ROOT_DIR"
         fi
     done
 

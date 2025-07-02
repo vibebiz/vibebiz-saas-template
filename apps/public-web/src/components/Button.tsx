@@ -25,7 +25,7 @@ export function Button({
   onClick,
   type = 'button',
   className = '',
-}: ButtonProps) {
+}: ButtonProps): React.ReactElement {
   const baseClasses =
     'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
 

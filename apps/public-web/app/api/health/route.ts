@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
  * Health check endpoint for E2E tests and monitoring
  * Returns 200 OK when the application is ready to serve requests
  */
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
     // Basic health check - application is running
     return NextResponse.json(
