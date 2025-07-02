@@ -58,8 +58,9 @@ jobs:
       - name: Run Bandit (Python Security)
         run: |
           bandit -r services/ packages/ \
+            -s B101 \
             -f json -o bandit-report.json \
-            -f sarif -o bandit-results.sarif || true
+            -f sarif -o bandit-results.sarif
 
       - name: Run Safety (Dependency Vulnerabilities)
         run: |
