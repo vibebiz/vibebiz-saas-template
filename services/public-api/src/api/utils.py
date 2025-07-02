@@ -6,7 +6,7 @@ import re
 import secrets
 import string
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
 from urllib.parse import urlparse
 
 from pwdlib.hashers.bcrypt import BcryptHasher
@@ -25,7 +25,7 @@ def hash_password(password: str) -> str:
     Returns:
         The hashed password as a string
     """
-    return password_hash.hash(password)
+    return cast(str, password_hash.hash(password))
 
 
 def verify_password(password: str, hashed: str) -> bool:
@@ -39,7 +39,7 @@ def verify_password(password: str, hashed: str) -> bool:
     Returns:
         True if password matches hash, False otherwise
     """
-    return password_hash.verify(password, hashed)
+    return cast(bool, password_hash.verify(password, hashed))
 
 
 def generate_secure_token(length: int = 32) -> str:

@@ -470,3 +470,8 @@ product-requirements/
 bandit-results.txt
 npm-audit-results.txt
 semgrep-results.txt
+trivy-fs-results.txt
+hadolint-*.txt
+trivy-image-*.txt
+security-scan-summary.md
+health-check-report.txt
