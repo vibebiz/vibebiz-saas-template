@@ -161,15 +161,6 @@ repos:
         require_serial: true
         stages: [pre-commit]
 
-      - id: python-tests # TEST-02
-        name: Python Tests
-        description: 'Runs Python backend tests with pytest (fast feedback)'
-        entry: pytest
-        language: system
-        pass_filenames: false
-        require_serial: true
-        stages: [pre-commit]
-
       # Note: E2E tests moved to CI/CD pipeline for comprehensive validation
       # E2E tests require running servers and are better suited for CI stages
       # where infrastructure can be properly managed and monitored

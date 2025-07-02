@@ -32,8 +32,8 @@ class TestPasswordSecurityIntegration:
         # Test normal workflow
         password = "SecurePassword123!"  # nosec B105
         hashed = hash_password(password)
-        assert verify_password(password, hashed)  # nosec
-        assert not verify_password("WrongPassword", hashed)  # nosec
+        assert verify_password(password, hashed)
+        assert not verify_password("WrongPassword", hashed)
 
         # Test with special characters and edge cases
         special_passwords = [
@@ -45,8 +45,8 @@ class TestPasswordSecurityIntegration:
 
         for pwd in special_passwords:
             hashed = hash_password(pwd)
-            assert verify_password(pwd, hashed)  # nosec
-            assert not verify_password(pwd + "x", hashed)  # nosec
+            assert verify_password(pwd, hashed)
+            assert not verify_password(pwd + "x", hashed)
 
     def test_password_hash_uniqueness(self) -> None:
         """Test that same password generates different hashes (salt)"""
@@ -55,11 +55,11 @@ class TestPasswordSecurityIntegration:
         hash2 = hash_password(password)
 
         # Different hashes due to salt
-        assert hash1 != hash2  # nosec
+        assert hash1 != hash2
 
         # Both verify correctly
-        assert verify_password(password, hash1)  # nosec
-        assert verify_password(password, hash2)  # nosec
+        assert verify_password(password, hash1)
+        assert verify_password(password, hash2)
 
 
 @pytest.mark.integration
@@ -72,28 +72,28 @@ class TestTokenSecurityIntegration:
         tokens = [generate_secure_token() for _ in range(1000)]
 
         # All should be unique
-        assert len(set(tokens)) == 1000  # nosec
+        assert len(set(tokens)) == 1000
 
         # All should be correct length
-        assert all(len(token) == 32 for token in tokens)  # nosec
+        assert all(len(token) == 32 for token in tokens)
 
         # All should contain only valid characters
         valid_chars = set(
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         )
         for token in tokens[:10]:  # Check first 10 for performance
-            assert all(char in valid_chars for char in token)  # nosec
+            assert all(char in valid_chars for char in token)
 
     def test_custom_length_tokens(self) -> None:
         """Test custom length token generation"""
         lengths = [1, 16, 32, 64, 128, 256]
         for length in lengths:
             token = generate_secure_token(length)
-            assert len(token) == length  # nosec
+            assert len(token) == length
 
         # Test edge case - zero length
         token = generate_secure_token(0)
-        assert len(token) == 0  # nosec
+        assert len(token) == 0
 
 
 @pytest.mark.integration
@@ -114,7 +114,7 @@ class TestInputValidationIntegration:
         ]
 
         for email in valid_emails:
-            assert validate_email(email), f"Should be valid: {email}"  # nosec
+            assert validate_email(email), f"Should be valid: {email}"
 
         # Invalid emails including edge cases
         invalid_emails = [
@@ -133,7 +133,7 @@ class TestInputValidationIntegration:
 
         # Test string emails
         for email in invalid_emails:
-            assert not validate_email(email), f"Should be invalid: {email}"  # nosec
+            assert not validate_email(email), f"Should be invalid: {email}"
 
         # Test non-string types separately
         for invalid_email in [None, 123]:
@@ -153,7 +153,7 @@ class TestInputValidationIntegration:
         ]
 
         for url in valid_urls:
-            assert validate_url(url), f"Should be valid: {url}"  # nosec
+            assert validate_url(url), f"Should be valid: {url}"
 
         invalid_urls = [
             "",  # Empty
@@ -165,11 +165,11 @@ class TestInputValidationIntegration:
 
         # Test string URLs
         for url in invalid_urls:
-            assert not validate_url(url), f"Should be invalid: {url}"  # nosec
+            assert not validate_url(url), f"Should be invalid: {url}"
 
         # Test non-string types separately
         for invalid_url in [None, 123]:
-            assert not validate_url(invalid_url), f"Should be invalid: {invalid_url}"  # type: ignore[arg-type] # nosec
+            assert not validate_url(invalid_url), f"Should be invalid: {invalid_url}"  # type: ignore[arg-type]
 
 
 @pytest.mark.integration
@@ -228,21 +228,21 @@ class TestDateTimeIntegration:
         """Test complete datetime workflow"""
         # Get current UTC time
         now = get_utc_now()
-        assert isinstance(now, datetime)  # nosec
-        assert now.tzinfo == UTC  # nosec
+        assert isinstance(now, datetime)
+        assert now.tzinfo == UTC
 
         # Format it
         formatted = format_datetime(now)
-        assert isinstance(formatted, str)  # nosec
+        assert isinstance(formatted, str)
         assert "T" in formatted  # nosec B101 # ISO format
 
         # Parse it back
         parsed = parse_datetime(formatted)
-        assert isinstance(parsed, datetime)  # nosec
+        assert isinstance(parsed, datetime)
 
         # Should be very close (within 1 second)
         time_diff = abs((parsed.replace(tzinfo=UTC) - now).total_seconds())
-        assert time_diff < 1.0  # nosec
+        assert time_diff < 1.0
 
     def test_parse_datetime_edge_cases(self) -> None:
         """Test datetime parsing edge cases"""
@@ -256,7 +256,7 @@ class TestDateTimeIntegration:
 
         for case in valid_cases:
             result = parse_datetime(case)
-            assert result is not None, f"Should parse: {case}"  # nosec
+            assert result is not None, f"Should parse: {case}"
 
         # Invalid formats
         invalid_cases = [
@@ -270,12 +270,12 @@ class TestDateTimeIntegration:
         # Test string cases
         for case in invalid_cases:
             result = parse_datetime(case)
-            assert result is None, f"Should not parse: {case}"  # nosec
+            assert result is None, f"Should not parse: {case}"
 
         # Test non-string types separately
         for invalid_case in [None, 123]:
             result = parse_datetime(invalid_case)  # type: ignore[arg-type]
-            assert result is None, f"Should not parse: {invalid_case}"  # nosec
+            assert result is None, f"Should not parse: {invalid_case}"
 
 
 @pytest.mark.integration
@@ -287,7 +287,7 @@ class TestSensitiveDataMaskingIntegration:
         sensitive_data = {
             "user_id": "12345",
             "username": "testuser",
-            "password": "SuperSecretPassword123!",  # nosec B105
+            "password": "SuperSecretPassword123!",
             "api_key": "sk_live_abcdef1234567890",
             "jwt_token": (
                 "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9."
@@ -298,7 +298,7 @@ class TestSensitiveDataMaskingIntegration:
             "auth_header": "Bearer abcd1234",
             "user_credential": "credential_value",
             "nested": {
-                "password": "nested_password",  # nosec B105
+                "password": "nested_password",
                 "secret": "nested_secret",
                 "normal_field": "normal_value",
             },
@@ -308,8 +308,8 @@ class TestSensitiveDataMaskingIntegration:
         masked = mask_sensitive_data(sensitive_data)
 
         # Sensitive fields should be masked
-        assert "password" in masked and masked["password"] != sensitive_data["password"]  # nosec
-        assert "api_key" in masked and masked["api_key"] != sensitive_data["api_key"]  # nosec
+        assert "password" in masked and masked["password"] != sensitive_data["password"]
+        assert "api_key" in masked and masked["api_key"] != sensitive_data["api_key"]
         assert (
             "jwt_token" in masked and masked["jwt_token"] != sensitive_data["jwt_token"]
         )  # nosec
@@ -327,13 +327,13 @@ class TestSensitiveDataMaskingIntegration:
         )  # nosec
 
         # Normal fields should not be masked
-        assert masked["user_id"] == sensitive_data["user_id"]  # nosec
-        assert masked["username"] == sensitive_data["username"]  # nosec
-        assert masked["normal_field"] == sensitive_data["normal_field"]  # nosec
+        assert masked["user_id"] == sensitive_data["user_id"]
+        assert masked["username"] == sensitive_data["username"]
+        assert masked["normal_field"] == sensitive_data["normal_field"]
 
         # Nested sensitive data should be masked
-        assert masked["nested"]["password"] != sensitive_data["nested"]["password"]  # nosec
-        assert masked["nested"]["secret"] != sensitive_data["nested"]["secret"]  # nosec
+        assert masked["nested"]["password"] != sensitive_data["nested"]["password"]
+        assert masked["nested"]["secret"] != sensitive_data["nested"]["secret"]
         assert (
             masked["nested"]["normal_field"] == sensitive_data["nested"]["normal_field"]
         )  # nosec
@@ -348,11 +348,13 @@ class TestSensitiveDataMaskingIntegration:
 
         # Without custom keys
         result1 = mask_sensitive_data(data)
-        assert result1["internal_code"] == data["internal_code"]  # nosec # Not masked by default
+        assert (
+            result1["internal_code"] == data["internal_code"]
+        )  # Not masked by default
 
         # With custom keys
         result2 = mask_sensitive_data(data, ("internal", "connection"))
-        assert result2["internal_code"] != data["internal_code"]  # nosec # Should be masked
+        assert result2["internal_code"] != data["internal_code"]  # Should be masked
         assert result2["db_connection"] != data["db_connection"]  # nosec # Should be masked
         assert result2["public_info"] == data["public_info"]  # nosec # Should not be masked
 
