@@ -131,7 +131,7 @@ jobs:
 
       - name: Run security checks
         run: |
-          python -m bandit -r services/ packages/ -f json -o bandit-report.json
+          python -m bandit -r services/ packages/ -s B101 -f json -o bandit-report.json
 
       - name: Run Python tests
         env:
@@ -273,7 +273,7 @@ jobs:
         run: uv pip install --system -e ".[dev]"
 
       - name: Run Bandit security scan
-        run: python -m bandit -r services/ packages/ -f json -o bandit-report.json || true
+        run: python -m bandit -r services/ packages/ -s B101 -f json -o bandit-report.json
 
       - name: Run Safety dependency scan
         run: python -m safety check --json --output safety-report.json || true

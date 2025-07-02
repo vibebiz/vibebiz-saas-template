@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "python -m uvicorn src.main:app --reload --host 0.0.0.0 --port 8000",
     "start": "python -m uvicorn src.main:app --host 0.0.0.0 --port 8000",
-    "test": "python -m pytest",
+    "test": "poetry run pytest",
     "test:unit": "python -m pytest -m unit",
     "test:integration": "python -m pytest -m integration",
     "test:coverage": "python -m pytest --cov=src --cov-report=html --cov-report=xml",

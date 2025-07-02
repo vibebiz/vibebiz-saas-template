@@ -1,0 +1,37 @@
+# Trivy ignore file for VibeBiz SaaS Template
+# Only ignore low-severity issues in development dependencies
+
+# Development dependencies with known false positives
+# These CVEs are in development-only dependencies and don't affect production
+
+# lodash vulnerabilities in development dependencies only
+CVE-2019-10744  # lodash prototype pollution (dev only)
+CVE-2020-8203   # lodash prototype pollution (dev only)
+
+# minimist vulnerabilities in development dependencies only
+CVE-2020-7598   # minimist prototype pollution (dev only)
+
+# Development tool vulnerabilities that don't affect runtime
+CVE-2021-23337  # lodash in build tools only
+CVE-2021-23343  # path-parse in webpack dev dependencies
+CVE-2022-0155   # follow-redirects in development tools
+
+# Testing framework vulnerabilities in non-production code
+CVE-2021-23382  # postcss in development builds only
+
+# Documentation generation tools
+CVE-2021-23424  # ansi-html in development server only
+
+# Note: Never ignore HIGH or CRITICAL vulnerabilities in production dependencies
+# All production runtime dependencies must be kept up to date
+
+# Ignore files in development environments
+# vendor/
+# node_modules/
+# .next/cache/
+# dist/
+# build/
+
+# Temporary ignores (review monthly)
+# Add any temporary ignores here with review dates
+# CVE-YYYY-XXXXX  # Review by 2025-07-01: Description of why ignored

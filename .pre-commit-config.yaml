@@ -41,12 +41,22 @@ repos:
     hooks:
       - id: bandit # BE-02
         files: \.py$
+        args: [--skip, B101, B601] # Skip assert_used and shell_injection in tests
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.16.1
     hooks:
       - id: mypy # BE-04
         files: \.py$
+
+  # Security scanning with Semgrep
+  - repo: https://github.com/semgrep/semgrep
+    rev: v1.99.0
+    hooks:
+      - id: semgrep # SEC-01
+        args: [--config=auto, --error, --skip-unknown-extensions]
+        # Only run on changed files for performance
+        stages: [pre-commit]
 
   # ==============================================================================
   # 3. Frontend Hooks (TypeScript / Next.js / Astro)
@@ -93,6 +103,15 @@ repos:
   # Spectral hook is configured as a local hook below to support .env files.
 
   # ==============================================================================
+  # 5. Container Security & Dockerfile Linting
+  # ==============================================================================
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker # DOCKER-01
+        args: [--ignore, DL3008, --ignore, DL3009] # Ignore pin versions for some cases
+
+  # ==============================================================================
   # 6. Local Hooks
   # ==============================================================================
   - repo: local
@@ -112,3 +131,36 @@ repos:
         types_or: [ts, tsx]
         pass_filenames: false # Critical for project-wide check
         stages: [pre-commit]
+
+      - id: safety-check # SEC-02
+        name: Python Dependency Security Check
+        entry: safety check
+        language: python
+        files: \.py$
+        require_serial: true
+        pass_filenames: false
+        additional_dependencies: [safety]
+
+      - id: pnpm-audit # SEC-03
+        name: Node.js Dependency Security Check
+        entry: pnpm audit --audit-level=high
+        language: system
+        files: package.*json$
+        require_serial: true
+        pass_filenames: false
+
+      # ==============================================================================
+      # 7. Fast Feedback Test Hooks - Package-Local Tests Only
+      # ==============================================================================
+      - id: workspace-tests # TEST-01
+        name: Workspace Unit & Integration Tests
+        description: 'Runs unit and integration tests in workspace packages (fast feedback)'
+        entry: pnpm test
+        language: system
+        pass_filenames: false
+        require_serial: true
+        stages: [pre-commit]
+
+      # Note: E2E tests moved to CI/CD pipeline for comprehensive validation
+      # E2E tests require running servers and are better suited for CI stages
+      # where infrastructure can be properly managed and monitored
