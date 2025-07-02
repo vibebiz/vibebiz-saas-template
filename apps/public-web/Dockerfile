@@ -21,19 +21,20 @@ RUN apk update && apk upgrade && \
     rm -rf /var/cache/apk/*
 
 # Copy package files for dependency installation
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/public-web/package.json ./apps/public-web/
 COPY packages/types/package.json ./packages/types/
 
 # Install dependencies
 RUN npm install -g pnpm@10.12.4 && \
+    pnpm config set registry https://registry.npmjs.org/ && \
     pnpm install --frozen-lockfile --prod=false
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN pnpm build --filter=@vibebiz/public-web
+RUN pnpm turbo build --filter=@vibebiz/public-web
 
 # Production stage
 FROM node:20-alpine AS runner
