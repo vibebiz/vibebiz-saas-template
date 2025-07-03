@@ -91,7 +91,7 @@ export default function Page(): React.ReactElement {
           <h2 className="text-3xl font-bold text-white mb-4">
             Ready to Transform Your Business?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-blue-50 mb-8">
             Join thousands of companies already using VibeBiz to accelerate their
             growth.
           </p>
