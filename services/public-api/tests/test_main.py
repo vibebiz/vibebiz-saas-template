@@ -5,28 +5,9 @@ Tests all endpoints, authentication, authorization, and error handling.
 
 from datetime import UTC, datetime
 
-import pytest
 from fastapi.testclient import TestClient
 
-from src.main import app, mock_documents, mock_users
-
-
-@pytest.fixture
-def client() -> TestClient:
-    """Create a test client for the FastAPI app."""
-    return TestClient(app)
-
-
-@pytest.fixture
-def auth_headers_user1() -> dict[str, str]:
-    """Headers for user-1 authentication."""
-    return {"Authorization": "Bearer user-1-token", "X-Organization-ID": "org-1"}
-
-
-@pytest.fixture
-def auth_headers_user2() -> dict[str, str]:
-    """Headers for user-2 authentication."""
-    return {"Authorization": "Bearer user-2-token", "X-Organization-ID": "org-2"}
+from src.main import mock_documents, mock_users
 
 
 class TestHealthCheck:
@@ -126,25 +107,18 @@ class TestDocuments:
 
     def test_get_documents_empty_organization(self, client: TestClient) -> None:
         """Test getting documents for organization with no documents."""
-        # Use org-2 which exists but has no documents initially
-        # First clear org-2 documents
-        original_org2_docs = mock_documents["org-2"].copy()
         mock_documents["org-2"] = []
 
-        try:
-            response = client.get(
-                "/api/v1/documents",
-                headers={
-                    "Authorization": "Bearer user-2-token",
-                    "X-Organization-ID": "org-2",
-                },
-            )
-            assert response.status_code == 200
-            documents = response.json()
-            assert len(documents) == 0
-        finally:
-            # Restore original data
-            mock_documents["org-2"] = original_org2_docs
+        response = client.get(
+            "/api/v1/documents",
+            headers={
+                "Authorization": "Bearer user-2-token",
+                "X-Organization-ID": "org-2",
+            },
+        )
+        assert response.status_code == 200
+        documents = response.json()
+        assert len(documents) == 0
 
     def test_create_document_success(
         self, client: TestClient, auth_headers_user1: dict[str, str]
@@ -164,19 +138,27 @@ class TestDocuments:
 
     def test_create_document_new_organization(self, client: TestClient) -> None:
         """Test creating document for new organization."""
+        from src.main import mock_users
+
+        mock_users["user-3"] = {
+            "id": "user-3",
+            "organization_id": "org-3",
+            "role": "admin",
+        }
+
         document_data = {"title": "New Org Document"}
         response = client.post(
             "/api/v1/documents",
             json=document_data,
             headers={
-                "Authorization": "Bearer user-1-token",
-                "X-Organization-ID": "org-1",
+                "Authorization": "Bearer user-3-token",
+                "X-Organization-ID": "org-3",
             },
         )
         assert response.status_code == 200
         document = response.json()
         assert document["title"] == "New Org Document"
-        assert document["organization_id"] == "org-1"
+        assert document["organization_id"] == "org-3"
 
 
 class TestDashboard:

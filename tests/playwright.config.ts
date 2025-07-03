@@ -31,7 +31,7 @@ export default defineConfig({
         ['json', { outputFile: 'test-results.json' }],
         ['html', { outputFolder: 'playwright-report', open: 'never' }],
       ]
-    : [['html', { outputFolder: 'playwright-report' }]],
+    : [['html', { outputFolder: 'playwright-report', open: 'never' }]],
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -88,14 +88,4 @@ export default defineConfig({
 
   /* Timeout for each test */
   timeout: 60 * 1000, // 60 seconds
-
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'pnpm --filter @vibebiz/public-web dev',
-    url: `${BASE_URL}/api/health`, // Use health check endpoint
-    timeout: 180 * 1000, // 3 minutes for server startup
-    reuseExistingServer: !process.env.CI,
-    stdout: 'pipe', // Capture server output for debugging
-    stderr: 'pipe',
-  },
 });

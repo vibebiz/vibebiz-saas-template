@@ -1,6 +1,7 @@
 /**
  * Button component for VibeBiz Public Web App
  */
+'use client';
 
 import React from 'react';
 import { buttonSizes, buttonVariants } from './button.config';

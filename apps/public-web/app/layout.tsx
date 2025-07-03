@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import React from 'react';
+import Navigation from '../src/components/Navigation';
+import SkipLink from '../src/components/SkipLink';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'VibeBiz Public Web',
@@ -14,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main>{children}</main>
+        <SkipLink />
+        <Navigation />
+        <main id="main-content">{children}</main>
       </body>
     </html>
   );

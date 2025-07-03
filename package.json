@@ -18,7 +18,7 @@
     "test:unit": "turbo run test:unit",
     "test:integration": "turbo run test:integration",
     "test:e2e": "playwright test --config tests/playwright.config.ts",
-    "test:accessibility": "playwright test --config tests/playwright.config.ts --grep accessibility",
+    "test:accessibility": "playwright test --config tests/playwright.config.ts --grep accessibility --reporter=list",
     "test:cross-cutting": "npx jest --config tests/jest.config.mjs",
     "test:performance": "npx jest --config tests/jest.config.mjs --testPathPattern=performance",
     "test:security": "npx jest --config tests/jest.config.mjs --testPathPattern=security",

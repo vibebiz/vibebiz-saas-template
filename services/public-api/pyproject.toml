@@ -41,6 +41,7 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+norecursedirs = [".git", ".venv", "node_modules", "htmlcov", ".tox", ".mypy_cache"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

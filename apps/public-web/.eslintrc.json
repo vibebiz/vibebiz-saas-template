@@ -1,0 +1,7 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "plugins": ["security"],
+  "rules": {
+    "security/detect-object-injection": "error"
+  }
+}
