@@ -12,6 +12,16 @@ export default defineConfig({
   testMatch: ['**/e2e/**/*.spec.ts', '**/accessibility/**/*.spec.ts'],
   outputDir: 'test-results/',
 
+  // Start the web server before running tests
+  webServer: {
+    command: 'pnpm dev',
+    url: BASE_URL,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000, // 2 minutes to start
+    stdout: 'pipe',
+    stderr: 'pipe',
+  },
+
   /* Run tests in files in parallel */
   fullyParallel: true,
 
