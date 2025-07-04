@@ -224,12 +224,42 @@ run_e2e_tests() {
 
     # Check if Playwright is available
     if command -v pnpm &> /dev/null; then
+        log_info "Starting development server for E2E tests..."
+
+        # Start the development server in background
+        pnpm dev > /dev/null 2>&1 &
+        DEV_SERVER_PID=$!
+
+        # Wait for server to be ready
+        log_info "Waiting for server to be ready..."
+        for i in {1..30}; do
+            if curl -s http://localhost:3000 > /dev/null 2>&1; then
+                log_success "Development server is ready"
+                break
+            fi
+            if [ $i -eq 30 ]; then
+                log_error "Development server failed to start within 30 seconds"
+                kill $DEV_SERVER_PID 2>/dev/null || true
+                return 1
+            fi
+            sleep 1
+        done
+
+        # Run E2E tests
         log_info "Running Playwright E2E tests..."
         if pnpm run test:e2e; then
             log_success "E2E tests passed"
+            test_result=0
         else
             log_warning "E2E tests failed"
+            test_result=1
         fi
+
+        # Stop the development server
+        log_info "Stopping development server..."
+        kill $DEV_SERVER_PID 2>/dev/null || true
+
+        return $test_result
     else
         log_warning "pnpm not available - skipping E2E tests"
     fi
@@ -243,12 +273,42 @@ run_accessibility_tests() {
 
     # Check if Playwright is available
     if command -v pnpm &> /dev/null; then
+        log_info "Starting development server for accessibility tests..."
+
+        # Start the development server in background
+        pnpm dev > /dev/null 2>&1 &
+        DEV_SERVER_PID=$!
+
+        # Wait for server to be ready
+        log_info "Waiting for server to be ready..."
+        for i in {1..30}; do
+            if curl -s http://localhost:3000 > /dev/null 2>&1; then
+                log_success "Development server is ready"
+                break
+            fi
+            if [ $i -eq 30 ]; then
+                log_error "Development server failed to start within 30 seconds"
+                kill $DEV_SERVER_PID 2>/dev/null || true
+                return 1
+            fi
+            sleep 1
+        done
+
+        # Run accessibility tests
         log_info "Running accessibility tests..."
         if pnpm run test:accessibility; then
             log_success "Accessibility tests passed"
+            test_result=0
         else
             log_warning "Accessibility tests failed"
+            test_result=1
         fi
+
+        # Stop the development server
+        log_info "Stopping development server..."
+        kill $DEV_SERVER_PID 2>/dev/null || true
+
+        return $test_result
     else
         log_warning "pnpm not available - skipping accessibility tests"
     fi
@@ -475,4 +535,4 @@ main() {
 }
 
 # Run main function
-main
+main "$@"

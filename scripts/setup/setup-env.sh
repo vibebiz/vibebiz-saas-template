@@ -62,10 +62,21 @@ create_env_file() {
 
     if [ -f "$target_file" ]; then
         log_warning "$service_name environment file already exists: $target_file"
-        read -p "Overwrite? (y/N): " -r
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            log_info "Skipping $service_name environment setup"
+        # In automation mode, don't overwrite existing files
+        if [ -n "${CI:-}" ] || [ -n "${AUTOMATED_SETUP:-}" ]; then
+            log_info "Skipping $service_name environment setup (automated mode)"
             return 0
+        else
+            # Check if we're in a non-interactive shell
+            if [ ! -t 0 ]; then
+                log_info "Skipping $service_name environment setup (non-interactive)"
+                return 0
+            fi
+            read -p "Overwrite? (y/N): " -r
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                log_info "Skipping $service_name environment setup"
+                return 0
+            fi
         fi
     fi
 
