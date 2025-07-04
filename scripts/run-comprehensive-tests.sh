@@ -27,7 +27,13 @@ pnpm test:integration
 
 # Step 2: Run Python tests
 echo "🐍 Step 2: Running Python backend tests..."
-pytest
+cd services/public-api
+if command -v poetry >/dev/null; then
+    poetry run python -m pytest
+else
+    python -m pytest
+fi
+cd "$ROOT_DIR"
 
 # Step 3: Run cross-cutting tests (security, performance)
 echo "🔒 Step 3: Running cross-cutting tests..."
