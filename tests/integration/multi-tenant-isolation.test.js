@@ -8,6 +8,9 @@
 /* eslint-env jest */
 /* global crossCuttingTestUtils */
 
+// This test suite requires a real API connection to test database RLS
+process.env.CROSS_CUTTING_USE_REAL_API = 'true';
+
 describe('Multi-Tenant Data Isolation', () => {
   let apiClient;
   let dbUtils;

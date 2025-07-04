@@ -381,6 +381,7 @@ const createMockApiClient = (baseURL = 'http://localhost:8000') => {
 // Cross-cutting test utilities
 global.crossCuttingTestUtils = {
   // Multi-tenant test data
+  // Multi-tenant test data
   createMultiTenantData: () => ({
     organizations: [
       {
@@ -397,6 +398,20 @@ global.crossCuttingTestUtils = {
       },
     ],
     users: [
+      {
+        id: 'user-1',
+        email: 'user1@org1.example.com',
+        organization_id: 'org-1',
+        role: 'admin',
+        token: 'user-1-token',
+      },
+      {
+        id: 'user-2',
+        email: 'user2@org2.example.com',
+        organization_id: 'org-2',
+        role: 'user',
+        token: 'user-2-token',
+      },
       {
         id: 'user-1',
         email: 'user1@org1.example.com',

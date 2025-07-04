@@ -3,12 +3,15 @@ Pytest configuration and shared fixtures for VibeBiz Public API
 """
 
 import asyncio
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Iterator
 from datetime import UTC, datetime
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from fastapi.testclient import TestClient
+
+from src.main import app, mock_documents, mock_users
 
 
 @pytest.fixture(scope="session")
@@ -256,7 +259,54 @@ def create_test_organization(**overrides: Any) -> dict[str, Any]:
     return default_org
 
 
-def pytest_collection_modifyitems(config: pytest.Config, items: list) -> None:
+# FastAPI Test Client Fixtures
+
+
+@pytest.fixture(scope="module")
+def client() -> TestClient:
+    """
+    Test client for the FastAPI application.
+    """
+    return TestClient(app)
+
+
+@pytest.fixture
+def auth_headers_user1() -> dict[str, str]:
+    """
+    Authentication headers for user 1.
+    """
+    return {"Authorization": "Bearer user-1-token", "X-Organization-ID": "org-1"}
+
+
+@pytest.fixture
+def auth_headers_user2() -> dict[str, str]:
+    """
+    Authentication headers for user 2.
+    """
+    return {"Authorization": "Bearer user-2-token", "X-Organization-ID": "org-2"}
+
+
+@pytest.fixture(autouse=True)
+def reset_mock_data() -> Iterator[None]:
+    """
+    Automatically reset mock data before each test.
+    """
+    original_users = mock_users.copy()
+    original_documents = {
+        org_id: docs.copy() for org_id, docs in mock_documents.items()
+    }
+
+    yield
+
+    mock_users.clear()
+    mock_users.update(original_users)
+    mock_documents.clear()
+    mock_documents.update(original_documents)
+
+
+def pytest_collection_modifyitems(
+    config: pytest.Config, items: list[pytest.Item]
+) -> None:
     """
     Modify test collection to add default markers
     """
