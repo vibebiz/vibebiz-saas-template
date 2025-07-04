@@ -5,6 +5,9 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
+[tool.poetry]
+package-mode = false
+
 [project]
 name = "vibebiz-public-api"
 version = "1.0.0"
@@ -41,6 +44,7 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+norecursedirs = [".git", ".venv", "node_modules", "htmlcov", ".tox", ".mypy_cache"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

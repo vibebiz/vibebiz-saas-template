@@ -4,7 +4,8 @@
 # This script runs comprehensive health checks to validate the setup
 #
 
-set -e
+# Note: Removing 'set -e' to allow health check to continue and report all issues
+# set -e
 
 # Colors for output
 RED='\033[0;31m'

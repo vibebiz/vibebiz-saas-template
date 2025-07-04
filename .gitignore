@@ -475,3 +475,5 @@ hadolint-*.txt
 trivy-image-*.txt
 security-scan-summary.md
 health-check-report.txt
+trivy-*.json
+tests/test-results.json

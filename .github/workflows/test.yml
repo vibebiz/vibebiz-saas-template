@@ -226,13 +226,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Start API
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
-          REDIS_URL: redis://localhost:6379/0
-          PYTHONPATH: ${{ github.workspace }}/services/public-api
-        run: python -m uvicorn src.main:app --host 0.0.0.0 --port 8000 &
-
       - name: Run integration tests
         run: pnpm test:integration
 

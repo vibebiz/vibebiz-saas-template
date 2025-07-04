@@ -131,6 +131,7 @@ async def get_current_user(authorization: str = Header(...)) -> dict[str, Any]:
     user_mapping = {
         "user-1-token": "user-1",
         "user-2-token": "user-2",
+        "user-3-token": "user-3",
     }
 
     user_id = user_mapping.get(token)
